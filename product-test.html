@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register for Free Product Test | Avantaland Academy</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header id="main-header">
+        <div class="container nav-container">
+            <a href="/" class="logo"><img src="images/av
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/courses">FREE & Paid Courses</a></li>
+                    <li><a href="/products">Products</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <a href="/courses" class="btn btn-primary">Start Learning</a>
+                <button class="mobile-menu-btn" aria-label="Toggle Menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+        <div class="mobile-nav">
+            <a href="/">Home</a>
+            <a href="/courses">FREE & Paid Courses</a>
+            <a href="/products">Products</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/courses">Start Learning</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container fade-in" style="text-align: center;">
+                <h1>Get Your <span class="text-gradient">Free Product Test.</span></h1>
+                <p>Register below to receive the comprehensive audit directly to your inbox.</p>
+                <form name="submit-to-google-sheet" class="signup-form" style="max-width: 500px; margin: 2rem auto 0; flex-direction: column; align-items: stretch; gap: 1rem;">
+                    <input type="text" name="firstName" placeholder="First Name" required style="width: 100%; border: 1px solid var(--border-color);">
+                    <input type="email" name="email" placeholder="Email Address" required style="width: 100%; border: 1px solid var(--border-color);">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Get Free Audit</button>
+                </form>
+                <div id="form-message" style="margin-top: 1rem; display: none; font-weight: 600;"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <a href="#" clagn
+            </div>
+            <div class="footer-col">
+                <h5>Academy</h5>
+                <a href="/courses">Courses</a>
+                <a href="/products">Products</a>
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2023 Avantaland Academy.</p>
+        </div>
+    </footer>
+    <script src="scripts/script.js"></script>
+    <script>
+        const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+        const form = document.forms['submit-to-google-sheet'];
+        const msg = document.getElementById('form-message');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const btn = form.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = 'Submitting...';
+            btn.disabled = true;
+
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => {
+                    msg.innerHTML = "Success! Your audit is on its way.";
+                    msg.style.display = "block";
+                    msg.style.color = "var(--accent-blue)";
+                    form.reset();
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                })
+                .catch(error => {
+                    msg.innerHTML = "Error! Please try again.";
+                    msg.style.display = "block";
+                    msg.style.color = "red";
+                    console.error('Error!', error.message);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                });
+        });
+    </script>
+</body>
+</html>
