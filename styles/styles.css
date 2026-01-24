@@ -142,9 +142,19 @@ ul { list-style: none; }
     font-size: 1.5rem;
     font-weight: 800;
     color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .logo span { color: var(--text-light); }
+
+.logo img {
+    height: 32px;
+    width: auto;
+    border-radius: 0;
+    margin-bottom: 0;
+}
 
 .desktop-nav ul { display: flex; gap: 40px; }
 .desktop-nav a { font-weight: 500; font-size: 0.95rem; }
@@ -319,7 +329,7 @@ ul { list-style: none; }
     margin-top: 3rem;
 }
 
-.card, .course-card {
+.card, .course-card, .product-card {
     background: #fff;
     padding: 2rem;
     border: 1px solid var(--border-color);
@@ -332,25 +342,25 @@ ul { list-style: none; }
     overflow: hidden;
 }
 
-.card img, .course-card img {
+.card img, .course-card img, .product-card img {
     width: 100%;
     height: 200px;
     object-fit: cover;
     margin-bottom: 1.5rem;
 }
 
-.card:hover, .course-card:hover {
+.card:hover, .course-card:hover, .product-card:hover {
     border-color: var(--accent-blue);
     box-shadow: var(--shadow-lg);
     transform: translateY(-10px);
 }
 
-.course-card h4 {
+.course-card h4, .product-card h4 {
     font-size: 1.25rem;
     margin-bottom: 0.75rem;
 }
 
-.course-card p {
+.course-card p, .product-card p {
     font-size: 0.95rem;
     margin-bottom: 1.5rem;
     flex-grow: 1;
@@ -365,7 +375,7 @@ ul { list-style: none; }
     gap: 5px;
 }
 
-.course-card:hover .arrow {
+.course-card:hover .arrow, .product-card:hover .arrow {
     transform: translateX(5px);
     transition: var(--transition);
 }
@@ -430,6 +440,12 @@ footer {
 .footer-col h5 { margin-bottom: 1.5rem; font-size: 1rem; }
 .footer-col a { display: block; margin-bottom: 0.8rem; color: var(--text-light); font-size: 0.95rem; }
 .footer-col a:hover { color: var(--accent-blue); }
+
+.footer-col .logo {
+    display: flex;
+    font-size: 1.5rem;
+    color: var(--text-main);
+}
 
 .footer-bottom {
     text-align: center;
