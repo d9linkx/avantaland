@@ -147,13 +147,24 @@ ul { list-style: none; }
     gap: 8px;
 }
 
-.logo span { color: var(--text-light); }
+.logo > span { 
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    line-height: 0.9;
+}
 
 .logo img {
     height: 32px;
     width: auto;
     border-radius: 0;
     margin-bottom: 0;
+}
+
+.logo-academy {
+    font-size: 0.35em;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
 }
 
 .desktop-nav ul { display: flex; gap: 40px; }
