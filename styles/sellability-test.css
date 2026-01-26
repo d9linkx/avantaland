@@ -1,7 +1,7 @@
 /* Sellability Test Specific Styles */
 .test-main-container {
-    padding-top: 60px;
-    padding-bottom: 60px;
+    padding-top: 160px;
+    padding-bottom: 120px;
     min-height: 80vh;
     overflow-x: hidden; /* Prevent horizontal scroll during animations */
 }
@@ -104,9 +104,6 @@
 
 .option-btn[data-score="4"] { background-color: #f6ffed; border-color: #d9f7be; }
 .option-btn[data-score="4"].selected { background-color: #73d13d; border-color: #73d13d; }
-
-.option-btn[data-score="5"] { background-color: #e6fffb; border-color: #b5f5ec; }
-.option-btn[data-score="5"].selected { background-color: #13c2c2; border-color: #13c2c2; }
 
 
 #quiz-controls {

@@ -47,11 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const options = [
-        { text: "No", score: 1 },
-        { text: "Maybe", score: 2 },
+        { text: "NO", score: 1 },
+        { text: "Not sure", score: 2 },
         { text: "I think so", score: 3 },
-        { text: "Yes", score: 4 },
-        { text: "100% Yes!", score: 5 },
+        { text: "100% Yes!", score: 4 },
     ];
 
     // --- Functions ---
@@ -162,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showResults = () => {
         const totalScore = userAnswers.reduce((sum, score) => sum + (score || 0), 0);
         
-        const maxScore = questions.length * 5;
+        const maxScore = questions.length * 4;
         const scorePercentage = (totalScore / maxScore);
         const gaugeRotation = scorePercentage * 0.5; // 0.5 turn for 180 degrees
         
@@ -175,12 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         scoreText.innerText = totalScore;
 
-        if (totalScore <= 29) {
+        if (totalScore <= 24) {
             statusText.innerText = "STATUS: THE EMERGENCY ZONE 📉";
             statusText.className = 'emergency';
             meaningText.innerText = "You have a hobby, not a business. You are losing money. Stop building and fix your foundation now.";
             ctaButton.innerText = "My Product is At Risk—Send me the 33 Brutal Truths to fix it ($6.99)";
-        } else if (totalScore <= 49) {
+        } else if (totalScore <= 39) {
             statusText.innerText = "STATUS: THE VULNERABLE ZONE ⚠️";
             statusText.className = 'vulnerable';
             meaningText.innerText = "You have a good start, but you are guessing too much. You are one bad month away from failing.";
@@ -188,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             statusText.innerText = "STATUS: THE ELITE ZONE 🏆";
             statusText.className = 'elite';
-            meaningText.innerText = "You are a real builder. You have a plan. Now you need the 'Unfair Advantage' to stay ahead.";
+            meaningText.innerText = "You are a real builder. You have a plan. Now you need the 'Unfair Advantage' to stay ahead of your competitors.";
             ctaButton.innerText = "Get the 'Unfair Advantage' with the 33 Brutal Truths ($6.99)";
         }
     };
