@@ -61,6 +61,7 @@
                     msg.style.color = "var(--accent-blue)";
                     setTimeout(() => {
                         whatsappPrompt.style.display = "block";
+                        whatsappPrompt.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 5000);
                     form.reset();
                 } else {
