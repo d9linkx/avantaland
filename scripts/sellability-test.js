@@ -35,6 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentQuestionIndex = 0;
     let userAnswers = [];
     let typeWriterTimeout;
+    const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'); // Subtle click sound
+    const happyClickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3'); // Happy/Exciting sound
+    
+    const emergencySound = new Audio('https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3'); // Low/Fail sound
+    const vulnerableSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3'); // Neutral/Okay sound
+    const eliteSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3'); // Success/Win sound
 
     const questions = [
         { question: "Is the customer problem you're trying to solve a 'Top 3' problem?", proTip: "Is your customer so stressed by this problem that they would pay some money to fix it today?" },
@@ -221,7 +227,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 button.className = 'option-btn';
                 button.innerText = opt.text;
                 button.dataset.score = opt.score;
-                button.onclick = () => selectOption(button, opt.score);
+                button.onclick = () => {
+                    if (opt.score === 4) { // 100% Yes!
+                        happyClickSound.currentTime = 0;
+                        happyClickSound.play().catch(e => console.log("Audio play failed:", e));
+                    } else {
+                        clickSound.currentTime = 0;
+                        clickSound.play().catch(e => console.log("Audio play failed:", e));
+                    }
+                    selectOption(button, opt.score);
+                };
+                
+                // Visual Focus: Dim others on hover
+                button.onmouseenter = () => optionsContainer.classList.add('options-dimmed');
+                button.onmouseleave = () => optionsContainer.classList.remove('options-dimmed');
+
                 optionsContainer.appendChild(button);
             });
 
@@ -229,6 +249,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             questionContainer.classList.remove('slide-out');
             questionContainer.classList.add('slide-in');
+            
+            // Add Active Pulse to Card
+            document.querySelector('.game-quiz-card').classList.add('active-pulse');
         }, 300);
     };
 
@@ -320,18 +343,24 @@ document.addEventListener('DOMContentLoaded', () => {
             statusText.className = 'emergency';
             meaningText.innerText = "You have a hobby, not a business. You are losing money. Stop building and fix your foundation now.";
             resultsFace.innerHTML = faces.shocked;
+            emergencySound.currentTime = 0;
+            emergencySound.play().catch(e => console.log("Audio play failed:", e));
             ctaButton.innerText = "My Product is At Risk—Send me the 33 Brutal Truths to fix it ($6.99)";
         } else if (totalScore <= 39) {
             statusText.innerText = "STATUS: THE VULNERABLE ZONE ⚠️";
             statusText.className = 'vulnerable';
             meaningText.innerText = "You have a good start, but you are guessing too much. You are one bad month away from failing.";
             resultsFace.innerHTML = faces.neutral;
+            vulnerableSound.currentTime = 0;
+            vulnerableSound.play().catch(e => console.log("Audio play failed:", e));
             ctaButton.innerText = "Strengthen My Foundation with the 33 Brutal Truths ($6.99)";
         } else {
             statusText.innerText = "STATUS: THE ELITE ZONE 🏆";
             statusText.className = 'elite';
             meaningText.innerText = "You are a real builder. You have a plan. Now you need the 'Unfair Advantage' to stay ahead of your competitors.";
             resultsFace.innerHTML = faces.happy;
+            eliteSound.currentTime = 0;
+            eliteSound.play().catch(e => console.log("Audio play failed:", e));
             ctaButton.innerText = "Get the 'Unfair Advantage' with the 33 Brutal Truths ($6.99)";
         }
     };
