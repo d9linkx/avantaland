@@ -73,34 +73,40 @@
     </footer>
     <script src="scripts/script.js"></script>
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzthbqTt8pdYtn12C_hypbUolE8cdzd2s4Rp_Gi3eCrKRjBNKud-Wgv2eg2gnKfMmdo/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwlFw14bbV9u9YKKhePKHOuzvHMeLet461pl3sJZt5CqEeylEKtch1hg9viKcisX4wd/exec';
         const form = document.forms['submit-to-google-sheet'];
         const msg = document.getElementById('form-message');
 
-        form.addEventListener('submit', e => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = form.querySelector('button');
             const originalText = btn.innerText;
             btn.innerText = 'Submitting...';
             btn.disabled = true;
+            msg.style.display = "none"; // Hide previous messages
 
-            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-                .then(response => {
-                    msg.innerHTML = "Success! Your audit is on its way.";
-                    msg.style.display = "block";
+            try {
+                const response = await fetch(scriptURL, { method: 'POST', body: new FormData(form)});
+                const data = await response.json(); // Assumes the script returns JSON
+
+                if (data.result === 'success') {
+                    msg.innerHTML = data.message;
                     msg.style.color = "var(--accent-blue)";
                     form.reset();
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                })
-                .catch(error => {
-                    msg.innerHTML = "Error! Please try again.";
-                    msg.style.display = "block";
+                } else {
+                    // Handles errors from the script, including duplicate emails
+                    msg.innerHTML = data.message;
                     msg.style.color = "red";
-                    console.error('Error!', error.message);
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                });
+                }
+            } catch (error) {
+                msg.innerHTML = "Error! An unexpected issue occurred. Please try again.";
+                msg.style.color = "red";
+                console.error('Error!', error.message);
+            } finally {
+                msg.style.display = "block";
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         });
     </script>
 </body>
