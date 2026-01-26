@@ -32,18 +32,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let userAnswers = [];
 
     const questions = [
-        { question: "Is this a 'Top 3' problem?", proTip: "Is your customer so stressed by this problem that they would pay money to fix it today?" },
-        { question: "Can a 10-year-old understand you?", proTip: "If you explain your business to a child, can they explain it back to you correctly without being confused?" },
-        { question: "Do you know who NOT to sell to?", proTip: "Can you list 3 types of people you will refuse to help so you can stay focused on the right customers?" },
-        { question: "Can you launch in 30 days?", proTip: "Can you start selling a simple version that solves just one main problem in less than a month?" },
-        { question: "Have you talked to 10 'mean' strangers?", proTip: "Do you have a list of 10 people who don’t know you and will give you honest, brutal feedback?" },
-        { question: "Are you 10x better than the old way?", proTip: "Is your solution much better than what they do now, or are you just 'slightly cheaper'?" },
-        { question: "Have you asked for money yet?", proTip: "Have you asked a customer to pay (or sign a letter) before the product is even finished?" },
-        { question: "Do you know where your customers 'hide'?", proTip: "Can you name the exact physical or digital place where you will find your first 50 paying customers?" },
-        { question: "Do you know your 'Death Date'?", proTip: "If you make $0 starting today, do you know exactly what date your business runs out of cash and dies?" },
-        { question: "Is your partnership 'legal'?", proTip: "If you have a partner, do you have a signed paper that says who does what and what happens if someone quits?" },
-        { question: "Are you ready to fire a friend?", proTip: "Are you willing to fire a friend or family member if they are working poorly and hurting the company?" },
-        { question: "Are you spending 50% of your time selling?", proTip: "Do you spend at least half of your day on marketing and sales, or are you just 'fixing the logo'?" },
+        { question: "Is the customer problem you're trying to solve a 'Top 3' problem?", proTip: "Is your customer so stressed by this problem that they would pay some money to fix it today?" },
+        { question: "Can a 10-year-old understand you?", proTip: "If you explain your business idea or model to a 10-year-old child, can they explain it back to you correctly without being confused?" },
+        { question: "Do you know who NOT to sell to?", proTip: "Can you list 3 types of people you will refuse to offer your products to so you can stay focused on your real customers?" },
+        { question: "Can you launch the product or business in 30 days?", proTip: "Is it possible to start selling a simple version of that product or service that solves just ONE main problem, in less than a month?" },
+        { question: "Have you talked to 10 total strangers about your product?", proTip: "Do you have a list of 10 people who don’t know you but will give you honest, brutal feedback on what they don't like about your product/service?" },
+        { question: "Is your product up to 50% better than what they already use?", proTip: "Is your solution much better than what they  use right now, or are you just 'slightly cheaper' than the others?" },
+        { question: "Has anyone paid you for your product before launch?", proTip: "Have you asked a customer to pay (or sign a letter of near-future payment) before the product is even ready?" },
+        { question: "Do you know where your customers 'live'?", proTip: "Can you name the exact physical or online location where you will find your first 50 paying customers?" },
+        { question: "Do you know your product's 'Death Date'?", proTip: "If you make $0 after sales, do you know exactly what date your business runs out of cash and dies?" },
+        { question: "Are your agreements 'legalised'?", proTip: "If you have a partner or collaborate with someone or another business, do you have a signed document that says who does what and what happens if someone does quits, dies, commits crimes, or works with a competitor?" },
+        { question: "Are you ready to fire your family member or friend?", proTip: "Are you willing to fire a friend or family member if they are working poorly or hurting the business?" },
+        { question: "Do you spend 50% (or more) of your time 'selling'?", proTip: "Do you spend at least half of your day in your business focusing solely on sales and marketing, or are you just 'fixing the logo', designing this and that, or sitting idle waiting for customers to find you?" },
     ];
 
     const options = [
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 switchScreen('quiz');
                 initQuiz();
             } else {
-                emailErrorMsg.innerText = "Email not found. Please register on the previous page first.";
+                emailErrorMsg.innerHTML = "Email not registered. Please register on <a href='product-test.html' style='text-decoration: underline;'>this page</a> first.";
             }
         } catch (error) {
             emailErrorMsg.innerText = "An error occurred. Please try again.";
