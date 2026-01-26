@@ -22,6 +22,11 @@
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Get Free Audit</button>
                 </form>
                 <div id="form-message" style="margin-top: 1rem; display: none; font-weight: 600;"></div>
+                <div id="whatsapp-prompt" style="display: none; margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: 16px; background-color: var(--bg-light); text-align: left;">
+                    <h4 style="text-align: center; margin-bottom: 1rem;">Didn't receive the email?</h4>
+                    <p style="margin-bottom: 1rem; font-size: 1rem;">If you don't see the audit in your inbox within a few minutes (please check your spam folder), send us a message on WhatsApp and we'll send it to you directly.</p>
+                    <a href="https://wa.me/2347070989034" target="_blank" class="btn" style="width: 100%; background-color: #25D366; border-color: #25D366; color: white;">Message on WhatsApp</a>
+                </div>
             </div>
         </section>
     </main>
@@ -34,6 +39,7 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwxzZ3rj0gBgAJJ3KDdLKLVhc2-rs4-aIfxn42-IqdzfMo8yMgMAdwtN2t2r1wuK7RF/exec';
         const form = document.forms['submit-to-google-sheet'];
         const msg = document.getElementById('form-message');
+        const whatsappPrompt = document.getElementById('whatsapp-prompt');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -50,6 +56,7 @@
                 if (data.result === 'success') {
                     msg.innerHTML = data.message;
                     msg.style.color = "var(--accent-blue)";
+                    whatsappPrompt.style.display = "block";
                     form.reset();
                 } else {
                     // Handles errors from the script, including duplicate emails
