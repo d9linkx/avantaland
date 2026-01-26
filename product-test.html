@@ -20,18 +20,9 @@
                     <input type="text" name="firstName" placeholder="First Name" required>
                     <input type="email" name="email" placeholder="Email Address" required>
                     <button type="submit" class="btn btn-primary">Get the FREE test</button>
+                    <a href="sellability-test.html" id="access-tool-btn" class="btn btn-primary" style="display: none; background-color: var(--accent-yellow); color: var(--text-main); border-color: var(--accent-yellow);">Start the Test Now</a>
                 </form>
-                <div class="hero-social-proof" style="justify-content: center; margin-top: 1.5rem;">
-                    <div class="avatars">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Business Owner">
-                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" alt="Business Owner">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Business Owner">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Business Owner">
-                        <img src="https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=100&q=80" alt="Business Owner">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Business Owner">
-                    </div>
-                    <div class="social-text">Trusted by <span>100+</span> business owners</div>
-                </div>
+                <div class="hero-social-proof" style="justify-content: center; margin-top: 1.5rem;"> <div class="avatars"> <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> </div> <div class="social-text">Trusted by <span>100+</span> business owners</div> </div>
                 <div id="form-message" style="margin-top: 1rem; display: none; font-weight: 600;"></div>
                 <div id="whatsapp-prompt" style="display: none; margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: 16px; background-color: var(--bg-light); text-align: left;">
                     <h4 class="text-center mb-1">Didn't receive the email?</h4>
@@ -177,17 +168,18 @@
 
     <script src="scripts/script.js"></script>
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwxzZ3rj0gBgAJJ3KDdLKLVhc2-rs4-aIfxn42-IqdzfMo8yMgMAdwtN2t2r1wuK7RF/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyxOl6sCgtnorLm6efn9UgB3KlEF8xEdtqtLlNuZIFSfX6otqDmFbFlrAHFq4P96dsj/exec';
         const form = document.forms['submit-to-google-sheet'];
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const accessBtn = document.getElementById('access-tool-btn');
         const msg = document.getElementById('form-message');
         const whatsappPrompt = document.getElementById('whatsapp-prompt');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = form.querySelector('button');
-            const originalText = btn.innerText;
-            btn.innerText = 'Submitting...';
-            btn.disabled = true;
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = 'Submitting...';
+            submitBtn.disabled = true;
             msg.style.display = "none"; // Hide previous messages
 
             try {
@@ -195,13 +187,15 @@
                 const data = await response.json(); // Assumes the script returns JSON
 
                 if (data.result === 'success') {
-                    msg.innerHTML = data.message;
+                    msg.innerHTML = "Success! You can now access the test.";
                     msg.style.color = "var(--accent-blue)";
+                    submitBtn.style.display = 'none';
+                    accessBtn.style.display = 'inline-block';
                     setTimeout(() => {
                         whatsappPrompt.style.display = "block";
                         whatsappPrompt.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 5000);
-                    form.reset();
+                    // form.reset(); // Keep email in field for context
                 } else {
                     // Handles errors from the script, including duplicate emails
                     msg.innerHTML = data.message;
@@ -213,8 +207,10 @@
                 console.error('Error!', error.message);
             } finally {
                 msg.style.display = "block";
-                btn.innerText = originalText;
-                btn.disabled = false;
+                if (submitBtn.style.display !== 'none') {
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
+                }
             }
         });
     </script>
