@@ -1,7 +1,7 @@
 /* Sellability Test Specific Styles */
 .test-main-container {
-    padding-top: 160px;
-    padding-bottom: 120px;
+    padding-top: 60px;
+    padding-bottom: 60px;
     min-height: 80vh;
     overflow-x: hidden; /* Prevent horizontal scroll during animations */
 }
