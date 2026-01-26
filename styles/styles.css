@@ -66,6 +66,22 @@ ul { list-style: none; }
 .section-padding { padding: 100px 0; }
 .bg-light { background-color: var(--bg-light); }
 
+.text-center {
+    text-align: center;
+}
+
+.section-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+}
+
+.section-header p {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
@@ -144,6 +160,15 @@ ul { list-style: none; }
     height: 20px;
     fill: currentColor;
 }
+
+/* --- Margin Utilities --- */
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mt-3 { margin-top: 3rem; }
+.mt-4 { margin-top: 4rem; }
+.mt-5 { margin-top: 5rem; }
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 1rem; }
 
 /* --- Header & Nav --- */
 #main-header {
@@ -505,6 +530,97 @@ footer {
     transform: translateY(0);
 }
 
+/* --- Component-specific classes --- */
+.form-narrow {
+    max-width: 500px;
+    margin: 2rem auto 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+}
+
+.form-narrow input {
+    width: 100%;
+    border: 1px solid var(--border-color);
+}
+
+.form-full-width {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.form-full-width input,
+.form-full-width textarea {
+    width: 100%;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.form-full-width textarea {
+    padding: 12px 20px;
+    border-radius: 16px;
+    font-family: inherit;
+}
+
+.checklist {
+    list-style: none;
+    padding-left: 0;
+    color: var(--text-light);
+    margin-top: 2rem;
+}
+
+.checklist li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+}
+
+.checklist li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+    font-weight: bold;
+    font-size: 1.2rem;
+    top: -2px;
+}
+
+.img-round {
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    object-fit: cover;
+    width: 150px;
+    height: 150px;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.testimonial-author img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 0;
+    object-fit: cover;
+}
+
+.cta-inline {
+    background: none;
+    padding: 80px 0 0 0;
+}
+
+.cta-inline h2, .cta-inline p {
+    color: var(--text-main);
+}
+
+.cta-inline p {
+    color: var(--text-light);
+}
+
 /* --- Contact Page Specifics --- */
 .contact-grid {
     display: grid;
@@ -534,4 +650,10 @@ footer {
     
     .btn-secondary { margin-left: 0; }
     .hero-btns .btn { width: 100%; }
+
+    .btn-whatsapp {
+        padding: 16px 24px;
+        font-size: 1.1rem;
+        box-shadow: 0 10px 20px -5px rgba(37, 211, 102, 0.4);
+    }
 }

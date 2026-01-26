@@ -12,23 +12,88 @@
     <div id="header-placeholder"></div>
 
     <main>
-        <section class="hero">
-            <div class="container fade-in" style="text-align: center;">
-                <h1>Get Your <span class="text-gradient">Free Product Test.</span></h1>
-                <p>Submit your details below to receive the comprehensive product test directly to your inbox.</p>
-                <form name="submit-to-google-sheet" class="signup-form" style="max-width: 500px; margin: 2rem auto 0; flex-direction: column; align-items: stretch; gap: 1rem;">
-                    <input type="text" name="firstName" placeholder="First Name" required style="width: 100%; border: 1px solid var(--border-color);">
-                    <input type="email" name="email" placeholder="Email Address" required style="width: 100%; border: 1px solid var(--border-color);">
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Get the FREE test</button>
+        <section class="hero" id="get-audit-form">
+            <div class="container fade-in text-center">
+                <h1>Find Out If Your Idea <span class="text-gradient">Will Make Money.</span></h1>
+                <p>Don't waste time building something nobody wants. Get our free test to check your idea first.</p>
+                <form name="submit-to-google-sheet" class="signup-form form-narrow">
+                    <input type="text" name="firstName" placeholder="First Name" required>
+                    <input type="email" name="email" placeholder="Email Address" required>
+                    <button type="submit" class="btn btn-primary">Get the FREE test</button>
                 </form>
                 <div id="form-message" style="margin-top: 1rem; display: none; font-weight: 600;"></div>
                 <div id="whatsapp-prompt" style="display: none; margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: 16px; background-color: var(--bg-light); text-align: left;">
-                    <h4 style="text-align: center; margin-bottom: 1rem;">Didn't receive the email?</h4>
-                    <p style="margin-bottom: 1rem; font-size: 1rem;">Check our spam folder, or get the FREE test directly on WhatsApp.</p>
+                    <h4 class="text-center mb-1">Didn't receive the email?</h4>
+                    <p class="mb-1" style="font-size: 1rem;">Check our spam folder, or get the FREE test directly on WhatsApp.</p>
                     <a href="https://wa.me/2347070989034?text=Hi%2C%20I%20didn%27t%20receive%20the%20FREE%20Product%20test%20email.%20Could%20you%20please%20send%20it%20to%20me%20here%3F" target="_blank" class="btn btn-whatsapp" style="width: 100%;">
                         <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>WhatsApp</title><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52s-.67-.165-.917-.325-.512-.198-.71-.198c-.198 0-.42.074-.665.371-.246.297-.967.925-.967 2.255 0 1.33.99 2.615 1.14 2.812.149.198 1.958 3.102 4.743 4.185.67.262 1.19.417 1.6.558.61.21 1.168.18 1.613.108.494-.074 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12.05 2.01C6.55 2.01 2.06 6.5 2.06 12.002c0 1.756.455 3.416 1.252 4.852L2.06 22l5.305-1.392c1.388.762 2.96 1.19 4.685 1.19 5.5 0 9.99-4.49 9.99-9.99s-4.49-9.99-9.99-9.99zM12.05 20.13c-1.58 0-3.07-.38-4.39-.99l-.32-.19-3.26 1.07.8-3.18-.21-.34c-.7-1.4-1.08-3-1.08-4.66 0-4.48 3.65-8.13 8.14-8.13 4.49 0 8.14 3.65 8.14 8.13s-3.65 8.14-8.14 8.14z"/></svg>
-                        <span>Get it on WhatsApp</span>
+                        <span>Message on WhatsApp</span>
                     </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Problem-Idea-Solution-Proof-CTA Section -->
+        <section class="section-padding bg-light">
+            <div class="container">
+                <!-- Problem -->
+                <div class="section-header fade-in">
+                    <h2>The Hard Truth: Most Ideas Fail.</h2>
+                    <p>It’s exciting to have a new business idea. But it’s painful to spend months working on it, only to launch and get zero sales. That’s time and money you can’t get back.</p>
+                </div>
+
+                <!-- Idea -->
+                <div class="hero-grid-layout fade-in mt-4">
+                    <div>
+                        <h3>There is a Better Way.</h3>
+                        <p>You don't have to guess. Smart entrepreneurs test their ideas first. Imagine knowing for sure that people want to buy your product before you even create it.</p>
+                        <p>This simple test gives you the answers you need so you can move forward without worry.</p>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Analyzing product data on a chart">
+                </div>
+
+                <!-- Solution -->
+                <div class="mt-5">
+                    <div class="section-header fade-in">
+                        <h2>What You Get Inside</h2>
+                        <p>This isn't a complicated textbook. It's the simple checklist we use to spot winning ideas.</p>
+                    </div>
+                    <div class="grid-3 mt-3">
+                        <div class="card fade-in">
+                            <div class="floating-icon mb-1">🎯</div>
+                            <h4>Will People Buy It?</h4>
+                            <p>Find out if there are enough people actually looking for what you want to sell.</p>
+                        </div>
+                        <div class="card fade-in">
+                            <div class="floating-icon mb-1">💰</div>
+                            <h4>Will It Make Money?</h4>
+                            <p>Check your costs and prices to make sure you'll actually make a profit.</p>
+                        </div>
+                        <div class="card fade-in">
+                            <div class="floating-icon mb-1">🏆</div>
+                            <h4>Can You Win?</h4>
+                            <p>See how you stack up against others and find your special advantage.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proof -->
+                <div class="hero-grid-layout fade-in mt-5">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80" alt="Success">
+                    <div>
+                        <h3>It Works For Us</h3>
+                        <p>We don't just teach this; we do it. We use this exact test for every product we launch at Avantaland.</p>
+                        <p>It has saved us from bad ideas and helped us find the winning products that make six figures. Now, we're giving it to you for free.</p>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="cta-inline">
+                    <div class="container fade-in text-center">
+                        <h2>Ready to Test Your Idea?</h2>
+                        <p>It's 100% free. Get the checklist and start building with confidence.</p>
+                        <a href="#get-audit-form" class="btn btn-primary mt-2">Get My Free Test</a>
+                    </div>
                 </div>
             </div>
         </section>
