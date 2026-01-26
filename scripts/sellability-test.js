@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         entry: document.getElementById('entry-screen'),
         quiz: document.getElementById('quiz-screen'),
         results: document.getElementById('results-screen'),
+        loading: document.getElementById('loading-screen'),
     };
     const emailCheckForm = document.getElementById('email-check-form');
     const testEmailInput = document.getElementById('test-email');
@@ -25,11 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusText = document.getElementById('status-text');
     const meaningText = document.getElementById('meaning-text');
     const ctaButton = document.getElementById('cta-button');
+    const loadingText = document.getElementById('loading-text');
 
     // --- App State ---
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNmyEzGRG_lKCNT3wZ7bzc7A9pnOD-RUJ_rlhBQd2oUCwEEBD9p242JOCQBc48hlmK/exec';
     let currentQuestionIndex = 0;
     let userAnswers = [];
+    let typeWriterTimeout;
 
     const questions = [
         { question: "Is the customer problem you're trying to solve a 'Top 3' problem?", proTip: "Is your customer so stressed by this problem that they would pay some money to fix it today?" },
@@ -90,6 +93,20 @@ document.addEventListener('DOMContentLoaded', () => {
         displayQuestion(currentQuestionIndex);
     };
 
+    const typeWriter = (text, element, speed = 20) => {
+        if (typeWriterTimeout) clearTimeout(typeWriterTimeout);
+        element.innerHTML = '';
+        let i = 0;
+        function type() {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                typeWriterTimeout = setTimeout(type, speed);
+            }
+        }
+        type();
+    };
+
     const displayQuestion = (index) => {
         const question = questions[index];
         const questionContainer = document.getElementById('question-container');
@@ -99,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             currentQNumber.innerText = index + 1;
-            questionText.innerText = question.question;
+            typeWriter(question.question, questionText);
             questionProTip.innerText = question.proTip;
 
             optionsContainer.innerHTML = '';
@@ -144,10 +161,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const handleNext = () => {
         if (currentQuestionIndex < questions.length - 1) {
-            currentQuestionIndex++;
-            displayQuestion(currentQuestionIndex);
+            // Snap Animation
+            const card = document.querySelector('.game-quiz-card');
+            card.classList.add('card-snap');
+            
+            setTimeout(() => {
+                card.classList.remove('card-snap');
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+            }, 200);
         } else {
-            showResults();
+            runLoadingSequence();
         }
     };
 
@@ -156,6 +180,27 @@ document.addEventListener('DOMContentLoaded', () => {
             currentQuestionIndex--;
             displayQuestion(currentQuestionIndex);
         }
+    };
+
+    const runLoadingSequence = () => {
+        switchScreen('loading');
+        const messages = [
+            "Analyzing Market Data...",
+            "Calculating Burn Rate...",
+            "Checking Competitor Density...",
+            "Finalizing Audit..."
+        ];
+        
+        let step = 0;
+        const interval = setInterval(() => {
+            if (step < messages.length) {
+                loadingText.innerText = messages[step];
+                step++;
+            } else {
+                clearInterval(interval);
+                showResults();
+            }
+        }, 800);
     };
 
     const showResults = () => {
