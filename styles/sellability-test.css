@@ -72,8 +72,8 @@ footer {
     border: 1px solid var(--lab-border);
     box-shadow: var(--shadow-soft);
     border-radius: 32px;
-    padding: 4rem 2rem;
-    max-width: 640px;
+    padding: 3rem 2rem;
+    max-width: 500px;
     margin: 0 auto;
     position: relative;
     overflow: hidden;
@@ -480,4 +480,11 @@ footer {
     font-family: monospace;
     letter-spacing: 2px;
     color: var(--brand-blue);
+}
+
+@media (min-width: 769px) {
+    .game-lobby-card {
+        padding: 2.5rem 2rem;
+        max-width: 480px;
+    }
 }
