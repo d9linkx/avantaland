@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsFace = document.getElementById('results-face');
 
     // --- App State ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNmyEzGRG_lKCNT3wZ7bzc7A9pnOD-RUJ_rlhBQd2oUCwEEBD9p242JOCQBc48hlmK/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9YlOv53uK1Ij1KQUfy4ZsSXIkMuf1UqYLOC9PuHQDUdkbKES97urTZTs99MSLki_A/exec';
     let currentQuestionIndex = 0;
     let userAnswers = [];
     let typeWriterTimeout;
