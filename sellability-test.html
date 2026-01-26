@@ -14,43 +14,40 @@
     <main class="test-main-container">
         <section id="entry-screen" class="test-screen active">
             <div class="container text-center">
-                <div class="game-lobby-card">
-                    <div class="game-intro-visual">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                    </div>
-                    <h1>FREE Product Sellability Test</h1>
-                    <p>Enter the email you submitted earlier.</p>
-                    <form id="email-check-form" class="signup-form form-narrow">
-                        <input type="email" id="test-email" placeholder="Your registered email" required>
-                        <button type="submit" class="btn btn-primary btn-game-start">Start Test</button>
-                    </form>
-                    <p id="email-error-msg" class="error-msg"></p>
+                <div class="game-intro-visual">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                 </div>
+                <h1>FREE Product Sellability Test</h1>
+                <p>Enter the email you submitted earlier.</p>
+                <form id="email-check-form" class="signup-form form-narrow">
+                    <input type="email" id="test-email" placeholder="Enter your registered email" required>
+                    <button type="submit" class="btn btn-primary btn-game-start">Start Test</button>
+                </form>
+                <p class="mt-1" style="font-size: 0.9rem;">Not registered yet? <a href="product-test.html" style="text-decoration: underline;">Sign up</a> to get access.</p>
+                <p id="email-error-msg" class="error-msg"></p>
             </div>
         </section>
 
         <section id="quiz-screen" class="test-screen">
             <div class="container">
-                <div class="game-lobby-card game-quiz-card">
-                    <div class="quiz-face-container">
-                        <svg id="quiz-face" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
-                    </div>
-                    <div id="progress-bar-container">
-                        <div id="progress-bar"></div>
-                    </div>
-                    <div id="question-container">
-                        <div class="question-content">
-                            <span class="question-badge">Question <span id="current-q-number">1</span> / 12</span>
-                            <h2 id="question-text"></h2>
-                            <div class="pro-tip-box">
-                                <p id="question-pro-tip"></p>
-                            </div>
+                <div class="quiz-face-container">
+                    <svg id="quiz-face" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
+                <div id="progress-bar-container">
+                    <div id="progress-bar"></div>
+                </div>
+                <div id="question-container">
+                    <div class="question-content">
+                        <span class="question-badge">Question <span id="current-q-number">1</span> / 12</span>
+                        <h2 id="question-text"></h2>
+                        <div class="pro-tip-box">
+                            <p id="question-pro-tip"></p>
                         </div>
-                        <div id="options-container"></div>
-                        <div id="quiz-controls">
-                            <button id="back-btn" class="btn btn-secondary">Back</button>
-                            <button id="next-btn" class="btn btn-primary btn-game-next" disabled>Confirm & Next</button>
-                        </div>
+                    </div>
+                    <div id="options-container"></div>
+                    <div id="quiz-controls">
+                        <button id="back-btn" class="btn btn-secondary">Back</button>
+                        <button id="next-btn" class="btn btn-primary btn-game-next" disabled>Confirm & Next</button>
                     </div>
                 </div>
             </div>

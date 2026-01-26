@@ -249,9 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             questionContainer.classList.remove('slide-out');
             questionContainer.classList.add('slide-in');
-            
-            // Add Active Pulse to Card
-            document.querySelector('.game-quiz-card').classList.add('active-pulse');
         }, 300);
     };
 
@@ -281,11 +278,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleNext = () => {
         if (currentQuestionIndex < questions.length - 1) {
             // Snap Animation
-            const card = document.querySelector('.game-quiz-card');
-            card.classList.add('card-snap');
+            const container = document.getElementById('question-container');
+            container.classList.add('card-snap');
             
             setTimeout(() => {
-                card.classList.remove('card-snap');
+                container.classList.remove('card-snap');
                 currentQuestionIndex++;
                 displayQuestion(currentQuestionIndex);
             }, 200);

@@ -20,18 +20,9 @@
                     <input type="text" name="firstName" placeholder="First Name" required>
                     <input type="email" name="email" placeholder="Email Address" required>
                     <button type="submit" class="btn btn-primary">Get the FREE test</button>
-                    <a href="sellability-test.html" id="access-tool-btn" class="btn btn-primary" style="display: none; background-color: var(--accent-yellow); color: var(--text-main); border-color: var(--accent-yellow);">Start the Test Now</a>
                 </form>
                 <div class="hero-social-proof" style="justify-content: center; margin-top: 1.5rem;"> <div class="avatars"> <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> </div> <div class="social-text">Trusted by <span>100+</span> business owners</div> </div>
                 <div id="form-message" style="margin-top: 1rem; display: none; font-weight: 600;"></div>
-                <div id="whatsapp-prompt" style="display: none; margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: 16px; background-color: var(--bg-light); text-align: left;">
-                    <h4 class="text-center mb-1">Didn't receive the email?</h4>
-                    <p class="mb-1" style="font-size: 1rem;">Check our spam folder, or get the FREE test directly on WhatsApp.</p>
-                    <a href="https://wa.me/2347070989034?text=Hi%2C%20I%20didn%27t%20receive%20the%20FREE%20Product%20test%20email.%20Could%20you%20please%20send%20it%20to%20me%20here%3F" target="_blank" class="btn btn-whatsapp" style="width: 100%;">
-                        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>WhatsApp</title><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52s-.67-.165-.917-.325-.512-.198-.71-.198c-.198 0-.42.074-.665.371-.246.297-.967.925-.967 2.255 0 1.33.99 2.615 1.14 2.812.149.198 1.958 3.102 4.743 4.185.67.262 1.19.417 1.6.558.61.21 1.168.18 1.613.108.494-.074 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12.05 2.01C6.55 2.01 2.06 6.5 2.06 12.002c0 1.756.455 3.416 1.252 4.852L2.06 22l5.305-1.392c1.388.762 2.96 1.19 4.685 1.19 5.5 0 9.99-4.49 9.99-9.99s-4.49-9.99-9.99-9.99zM12.05 20.13c-1.58 0-3.07-.38-4.39-.99l-.32-.19-3.26 1.07.8-3.18-.21-.34c-.7-1.4-1.08-3-1.08-4.66 0-4.48 3.65-8.13 8.14-8.13 4.49 0 8.14 3.65 8.14 8.13s-3.65 8.14-8.14 8.14z"/></svg>
-                        <span>Message on WhatsApp</span>
-                    </a>
-                </div>
             </div>
         </section>
 
@@ -171,45 +162,56 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxNmyEzGRG_lKCNT3wZ7bzc7A9pnOD-RUJ_rlhBQd2oUCwEEBD9p242JOCQBc48hlmK/exec';
         const form = document.forms['submit-to-google-sheet'];
         const submitBtn = form.querySelector('button[type="submit"]');
-        const accessBtn = document.getElementById('access-tool-btn');
         const msg = document.getElementById('form-message');
-        const whatsappPrompt = document.getElementById('whatsapp-prompt');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const originalText = submitBtn.innerText;
             submitBtn.innerText = 'Submitting...';
             submitBtn.disabled = true;
-            msg.style.display = "none"; // Hide previous messages
+            msg.style.display = "none";
 
             try {
                 const response = await fetch(scriptURL, { method: 'POST', body: new FormData(form)});
                 const data = await response.json(); // Assumes the script returns JSON
 
                 if (data.result === 'success') {
-                    msg.innerHTML = "Success! You can now access the test.";
-                    msg.style.color = "var(--accent-blue)";
-                    submitBtn.style.display = 'none';
-                    accessBtn.style.display = 'inline-block';
-                    setTimeout(() => {
-                        whatsappPrompt.style.display = "block";
-                        whatsappPrompt.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 5000);
-                    // form.reset(); // Keep email in field for context
+                    const pingSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1628/1628-preview.mp3');
+                    pingSound.play().catch(e => console.log("Audio play failed:", e));
+
+                    // Hide form and social proof for a clean loading screen
+                    form.style.display = 'none';
+                    document.querySelector('.hero-social-proof').style.display = 'none';
+
+                    msg.innerHTML = "Success! The test is loading...";
+                    msg.style.color = "green";
+                    msg.style.display = "block";
+
+                    let countdown = 3;
+                    const countdownInterval = setInterval(() => {
+                        msg.innerHTML = `Success! The test is loading in <span style="font-weight: 800; font-size: 1.2em;">${countdown}</span>...`;
+                        countdown--;
+                        if (countdown < 0) {
+                            clearInterval(countdownInterval);
+                            window.location.href = 'sellability-test.html';
+                        }
+                    }, 1000);
                 } else {
-                    // Handles errors from the script, including duplicate emails
                     msg.innerHTML = data.message;
                     msg.style.color = "red";
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
                 }
             } catch (error) {
                 msg.innerHTML = "Error! An unexpected issue occurred. Please try again.";
                 msg.style.color = "red";
                 console.error('Error!', error.message);
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
             } finally {
-                msg.style.display = "block";
-                if (submitBtn.style.display !== 'none') {
-                    submitBtn.innerText = originalText;
-                    submitBtn.disabled = false;
+                // Only show message if the form is still visible (i.e., on error)
+                if (form.style.display !== 'none') {
+                    msg.style.display = "block";
                 }
             }
         });
