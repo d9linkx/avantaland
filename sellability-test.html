@@ -14,13 +14,18 @@
     <main class="test-main-container">
         <section id="entry-screen" class="test-screen active">
             <div class="container text-center">
-                <h1>FREE Product Sellability Test</h1>
-                <p>To begin the test, enter the email you submitted.</p>
-                <form id="email-check-form" class="signup-form form-narrow">
-                    <input type="email" id="test-email" placeholder="Your registered email" required>
-                    <button type="submit" class="btn btn-primary">Start Test</button>
-                </form>
-                <p id="email-error-msg" class="error-msg"></p>
+                <div class="game-lobby-card">
+                    <div class="game-intro-visual">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <h1>FREE Product Sellability Test</h1>
+                    <p>Enter the email you submitted earlier.</p>
+                    <form id="email-check-form" class="signup-form form-narrow">
+                        <input type="email" id="test-email" placeholder="Your registered email" required>
+                        <button type="submit" class="btn btn-primary btn-game-start">Start Test</button>
+                    </form>
+                    <p id="email-error-msg" class="error-msg"></p>
+                </div>
             </div>
         </section>
 
