@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctaButton = document.getElementById('cta-button');
 
     // --- App State ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwxzZ3rj0gBgAJJ3KDdLKLVhc2-rs4-aIfxn42-IqdzfMo8yMgMAdwtN2t2r1wuK7RF/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNmyEzGRG_lKCNT3wZ7bzc7A9pnOD-RUJ_rlhBQd2oUCwEEBD9p242JOCQBc48hlmK/exec';
     let currentQuestionIndex = 0;
     let userAnswers = [];
 
