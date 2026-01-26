@@ -56,7 +56,9 @@
                 if (data.result === 'success') {
                     msg.innerHTML = data.message;
                     msg.style.color = "var(--accent-blue)";
-                    whatsappPrompt.style.display = "block";
+                    setTimeout(() => {
+                        whatsappPrompt.style.display = "block";
+                    }, 5000);
                     form.reset();
                 } else {
                     // Handles errors from the script, including duplicate emails
