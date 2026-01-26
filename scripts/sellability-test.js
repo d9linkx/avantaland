@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const meaningText = document.getElementById('meaning-text');
     const ctaButton = document.getElementById('cta-button');
     const loadingText = document.getElementById('loading-text');
+    const quizFace = document.getElementById('quiz-face');
+    const resultsFace = document.getElementById('results-face');
 
     // --- App State ---
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNmyEzGRG_lKCNT3wZ7bzc7A9pnOD-RUJ_rlhBQd2oUCwEEBD9p242JOCQBc48hlmK/exec';
@@ -55,6 +57,93 @@ document.addEventListener('DOMContentLoaded', () => {
         { text: "I think so", score: 3 },
         { text: "100% Yes!", score: 4 },
     ];
+
+    // --- Faces SVG Data ---
+    const faces = {
+        neutral: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="35" cy="40" r="5" fill="#1D1D1F"/>
+            <circle cx="65" cy="40" r="5" fill="#1D1D1F"/>
+            <path d="M30 65 Q50 75 70 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        happy: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <path d="M30 40 Q35 35 40 40" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+            <path d="M60 40 Q65 35 70 40" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+            <path d="M30 60 Q50 80 70 60" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        shocked: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="35" cy="40" r="5" fill="#1D1D1F"/>
+            <circle cx="65" cy="40" r="5" fill="#1D1D1F"/>
+            <ellipse cx="50" cy="65" rx="10" ry="15" fill="#1D1D1F"/>
+        `,
+        // 12 Unique Expressions for Questions
+        q0: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="35" cy="40" r="5" fill="#1D1D1F"/><circle cx="65" cy="40" r="5" fill="#1D1D1F"/>
+            <path d="M35 65 Q50 70 65 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q1: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="40" cy="38" r="5" fill="#1D1D1F"/><circle cx="70" cy="38" r="5" fill="#1D1D1F"/>
+            <path d="M40 65 L60 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q2: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="35" cy="40" r="5" fill="#1D1D1F"/><circle cx="65" cy="40" r="5" fill="#1D1D1F"/>
+            <path d="M30 25 Q40 20 50 25" fill="none" stroke="#1D1D1F" stroke-width="2" stroke-linecap="round"/>
+            <path d="M35 65 Q50 60 65 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q3: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="35" cy="42" r="4" fill="#1D1D1F"/><circle cx="65" cy="38" r="6" fill="#1D1D1F"/>
+            <path d="M35 65 Q50 75 65 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q4: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="30" cy="40" r="5" fill="#1D1D1F"/><circle cx="60" cy="40" r="5" fill="#1D1D1F"/>
+            <path d="M35 65 Q45 60 55 65 Q65 70 75 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q5: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="35" cy="40" r="6" fill="#1D1D1F"/><circle cx="65" cy="40" r="6" fill="#1D1D1F"/>
+            <circle cx="50" cy="65" r="8" fill="#1D1D1F"/>
+        `,
+        q6: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="35" cy="35" r="5" fill="#1D1D1F"/><circle cx="65" cy="35" r="5" fill="#1D1D1F"/>
+            <path d="M40 60 Q50 55 60 60" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q7: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <path d="M30 40 L40 40" stroke="#1D1D1F" stroke-width="3"/><circle cx="65" cy="40" r="5" fill="#1D1D1F"/>
+            <path d="M35 65 L65 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q8: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="35" cy="40" r="7" fill="#1D1D1F"/><circle cx="65" cy="40" r="7" fill="#1D1D1F"/>
+            <path d="M45 65 L55 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q9: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <path d="M30 38 Q35 45 40 38" fill="none" stroke="#1D1D1F" stroke-width="2"/><path d="M60 38 Q65 45 70 38" fill="none" stroke="#1D1D1F" stroke-width="2"/>
+            <path d="M35 65 Q50 60 65 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q10: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <path d="M30 35 L45 40" stroke="#1D1D1F" stroke-width="2"/><path d="M70 35 L55 40" stroke="#1D1D1F" stroke-width="2"/>
+            <circle cx="35" cy="45" r="4" fill="#1D1D1F"/><circle cx="65" cy="45" r="4" fill="#1D1D1F"/>
+            <path d="M45 65 L55 65" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+        `,
+        q11: `
+            <circle cx="50" cy="50" r="45" fill="#FFD600" stroke="#E6C200" stroke-width="2"/>
+            <circle cx="35" cy="40" r="5" fill="#1D1D1F"/><circle cx="65" cy="40" r="5" fill="#1D1D1F"/>
+            <path d="M30 60 Q50 80 70 60" fill="none" stroke="#1D1D1F" stroke-width="3" stroke-linecap="round"/>
+            <path d="M25 50 Q30 45 35 50" fill="none" stroke="#1D1D1F" stroke-width="2" stroke-linecap="round"/>
+            <path d="M65 50 Q70 45 75 50" fill="none" stroke="#1D1D1F" stroke-width="2" stroke-linecap="round"/>
+        `
+    };
 
     // --- Functions ---
     const switchScreen = (screenName) => {
@@ -116,6 +205,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             currentQNumber.innerText = index + 1;
+            
+            // Update Face
+            quizFace.innerHTML = faces[`q${index}`];
+            quizFace.classList.remove('face-bounce');
+            void quizFace.offsetWidth; // Trigger reflow
+            quizFace.classList.add('face-bounce');
+
             typeWriter(question.question, questionText);
             questionProTip.innerText = question.proTip;
 
@@ -223,16 +319,19 @@ document.addEventListener('DOMContentLoaded', () => {
             statusText.innerText = "STATUS: THE EMERGENCY ZONE 📉";
             statusText.className = 'emergency';
             meaningText.innerText = "You have a hobby, not a business. You are losing money. Stop building and fix your foundation now.";
+            resultsFace.innerHTML = faces.shocked;
             ctaButton.innerText = "My Product is At Risk—Send me the 33 Brutal Truths to fix it ($6.99)";
         } else if (totalScore <= 39) {
             statusText.innerText = "STATUS: THE VULNERABLE ZONE ⚠️";
             statusText.className = 'vulnerable';
             meaningText.innerText = "You have a good start, but you are guessing too much. You are one bad month away from failing.";
+            resultsFace.innerHTML = faces.neutral;
             ctaButton.innerText = "Strengthen My Foundation with the 33 Brutal Truths ($6.99)";
         } else {
             statusText.innerText = "STATUS: THE ELITE ZONE 🏆";
             statusText.className = 'elite';
             meaningText.innerText = "You are a real builder. You have a plan. Now you need the 'Unfair Advantage' to stay ahead of your competitors.";
+            resultsFace.innerHTML = faces.happy;
             ctaButton.innerText = "Get the 'Unfair Advantage' with the 33 Brutal Truths ($6.99)";
         }
     };
