@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let userAnswers = [];
     let typeWriterTimeout;
     const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'); // Subtle click sound
-    const happyClickSound = new Audio('https://pixabay.com/sound-effects/musical-tada-fanfare-a-6313/'); // Happy/Exciting sound
+    const happyClickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'); // Happy/Exciting sound
     
     const emergencySound = new Audio('https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3'); // Low/Fail sound
     const vulnerableSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3'); // Neutral/Okay sound
