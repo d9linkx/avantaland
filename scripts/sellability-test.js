@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingText = document.getElementById('loading-text');
     const quizFace = document.getElementById('quiz-face');
     const resultsFace = document.getElementById('results-face');
+    const persuasionContent = document.getElementById('results-persuasion-content');
 
     // --- App State ---
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9YlOv53uK1Ij1KQUfy4ZsSXIkMuf1UqYLOC9PuHQDUdkbKES97urTZTs99MSLki_A/exec';
@@ -335,6 +336,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         scoreText.innerText = totalScore;
 
+        let persuasionHTML = '';
+
         if (totalScore <= 24) {
             statusText.innerText = "STATUS: THE EMERGENCY ZONE 📉";
             statusText.className = 'emergency';
@@ -343,6 +346,48 @@ document.addEventListener('DOMContentLoaded', () => {
             emergencySound.currentTime = 0;
             emergencySound.play().catch(e => console.log("Audio play failed:", e));
             ctaButton.innerText = "My Product is At Risk—Send me the 33 Brutal Truths to fix it ($6.99)";
+            persuasionHTML = `
+                <div class="persuasion-section">
+                    <h4>The Pain of Losing Everything</h4>
+                    <p>You are in a dangerous place. It feels bad to work hard and see no money. If you do not fix this now, your business will die, and your money will be gone forever.</p>
+                </div>
+                <div class="persuasion-section">
+                    <h4>Why You Are Failing</h4>
+                    <p>You are trying to build a big house on soft mud. It will fall down. Your score shows that your idea has big holes in it. You cannot succeed like this.</p>
+                </div>
+                <div class="persuasion-section">
+                    <h4>How to Fix It Fast</h4>
+                    <p>The '33 Brutal Truths' book is your repair kit. It is a simple list of things to fix. It tells you exactly what to do to stop losing money and start making money.</p>
+                </div>
+                <div class="persuasion-section">
+                    <h4>Change Your Future</h4>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Without The Book (Before)</th>
+                                <th>With The Book (After)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>❌ Confused and scared</td>
+                                <td>✅ Happy and sure</td>
+                            </tr>
+                            <tr>
+                                <td>❌ Losing money every day</td>
+                                <td>✅ Keeping your money</td>
+                            </tr>
+                            <tr>
+                                <td>❌ Business will fail</td>
+                                <td>✅ Business will grow</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="fomo-section">
+                    <p>Do not wait. Every day you wait is a day you lose more money. Smart people are already using this book to win. Do not be the one who fails.</p>
+                </div>
+            `;
         } else if (totalScore <= 39) {
             statusText.innerText = "STATUS: THE VULNERABLE ZONE ⚠️";
             statusText.className = 'vulnerable';
@@ -351,6 +396,48 @@ document.addEventListener('DOMContentLoaded', () => {
             vulnerableSound.currentTime = 0;
             vulnerableSound.play().catch(e => console.log("Audio play failed:", e));
             ctaButton.innerText = "Strengthen My Foundation with the 33 Brutal Truths ($6.99)";
+            persuasionHTML = `
+                <div class="persuasion-section">
+                    <h4>The Pain of Not Knowing</h4>
+                    <p>You are doing okay, but you are not safe. You are guessing too much. One bad day or one smart competitor can take everything away from you.</p>
+                </div>
+                <div class="persuasion-section">
+                    <h4>Why You Are Not Safe</h4>
+                    <p>Your business is like a chair with one broken leg. It stands up now, but if you sit on it wrong, it breaks. You need to fix that leg before you fall.</p>
+                </div>
+                <div class="persuasion-section">
+                    <h4>Make Your Business Strong</h4>
+                    <p>This book shows you how to make your business strong like a rock. It stops you from guessing. It gives you the answers so you can sleep well at night.</p>
+                </div>
+                <div class="persuasion-section">
+                    <h4>See The Difference</h4>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Without The Book (Before)</th>
+                                <th>With The Book (After)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>❌ Guessing and hoping</td>
+                                <td>✅ Knowing for sure</td>
+                            </tr>
+                            <tr>
+                                <td>❌ Easy to beat</td>
+                                <td>✅ Hard to beat</td>
+                            </tr>
+                            <tr>
+                                <td>❌ Slow money</td>
+                                <td>✅ Fast money</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="fomo-section">
+                    <p>Your competitors are watching you. If they learn these secrets before you, they will steal your customers. Get the book now and stay safe.</p>
+                </div>
+            `;
         } else {
             statusText.innerText = "STATUS: THE ELITE ZONE 🏆";
             statusText.className = 'elite';
@@ -359,7 +446,50 @@ document.addEventListener('DOMContentLoaded', () => {
             eliteSound.currentTime = 0;
             eliteSound.play().catch(e => console.log("Audio play failed:", e));
             ctaButton.innerText = "Get the 'Unfair Advantage' with the 33 Brutal Truths ($6.99)";
+            persuasionHTML = `
+                <div class="persuasion-section">
+                    <h4>The Pain of Being Copied</h4>
+                    <p>You are doing great. But when you are at the top, everyone wants to pull you down. People will try to copy your idea and steal your money.</p>
+                </div>
+                <div class="persuasion-section">
+                    <h4>Why You Must Be Careful</h4>
+                    <p>Winning once is easy. Winning forever is hard. If you stop learning now, someone hungrier and smarter will come and take your place.</p>
+                </div>
+                <div class="persuasion-section">
+                    <h4>Stay The King</h4>
+                    <p>This book teaches you how to build a wall around your business. It shows you how to keep your customers forever so nobody can steal them.</p>
+                </div>
+                <div class="persuasion-section">
+                    <h4>Stay At The Top</h4>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Without The Book (Before)</th>
+                                <th>With The Book (After)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>❌ Winner today, loser tomorrow</td>
+                                <td>✅ Winner forever</td>
+                            </tr>
+                            <tr>
+                                <td>❌ People copy you</td>
+                                <td>✅ People cannot touch you</td>
+                            </tr>
+                            <tr>
+                                <td>❌ Good business</td>
+                                <td>✅ Unbeatable business</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="fomo-section">
+                    <p>The other winners are reading this book to beat you. Do not let them get ahead. Read it now to keep your crown.</p>
+                </div>
+            `;
         }
+        persuasionContent.innerHTML = persuasionHTML;
     };
 
     // --- Event Listeners ---

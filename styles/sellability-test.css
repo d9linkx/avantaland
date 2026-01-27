@@ -435,6 +435,9 @@ footer {
         padding-top: 85px;
         padding-bottom: 40px;
     }
+    #entry-screen {
+        padding-top: 4rem;
+    }
     #options-container {
         grid-template-columns: 1fr 1fr;
         gap: 0.5rem;
@@ -486,4 +489,61 @@ footer {
     font-family: monospace;
     letter-spacing: 2px;
     color: var(--brand-blue);
+}
+
+/* Persuasion Content Styles */
+.persuasion-section {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: #FFFFFF;
+    border-radius: 12px;
+    border: 1px solid var(--lab-border);
+    box-shadow: var(--shadow-soft);
+}
+
+.persuasion-section h4 {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.persuasion-section p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.comparison-table th, .comparison-table td {
+    border: 1px solid var(--lab-border);
+    padding: 0.75rem;
+    text-align: left;
+    font-size: 0.9rem;
+    vertical-align: top;
+}
+
+.comparison-table th {
+    background-color: #F1F5F9;
+    font-weight: 700;
+}
+
+.fomo-section {
+    margin-top: 2rem;
+    padding: 1rem 1.5rem;
+    background: #FFFBE6;
+    border: 1px solid #FFE58F;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.fomo-section p {
+    color: #D46B08;
+    font-weight: 600;
+    margin: 0;
 }
