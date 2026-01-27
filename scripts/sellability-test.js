@@ -371,6 +371,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Auto-start if email is passed in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoEmail = urlParams.get('email');
+    if (autoEmail) {
+        testEmailInput.value = autoEmail;
+        checkEmail(autoEmail);
+    }
+
     nextBtn.addEventListener('click', handleNext);
     backBtn.addEventListener('click', handleBack);
 });

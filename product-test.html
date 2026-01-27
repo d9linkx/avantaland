@@ -193,7 +193,8 @@
                         countdown--;
                         if (countdown < 0) {
                             clearInterval(countdownInterval);
-                            window.location.href = 'sellability-test.html';
+                            const email = form.querySelector('input[name="email"]').value;
+                            window.location.href = `sellability-test.html?email=${encodeURIComponent(email)}`;
                         }
                     }, 1000);
                 } else {
