@@ -786,6 +786,8 @@ footer {
     h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
     p { font-size: 1rem; }
     
+    .section-padding { padding: 1rem 0; }
+    
     .hero-grid-layout, .contact-grid, .grid-testimonials { grid-template-columns: 1fr; gap: 2rem; }
     
     .hero { text-align: center; padding-top: 140px; padding-bottom: 40px; }
