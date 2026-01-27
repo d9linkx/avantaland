@@ -471,9 +471,22 @@ ul { list-style: none; }
     padding: 40px 0;
 }
 
-.stat-item { text-align: center; }
-.stat-item .number { display: block; font-size: 2.5rem; font-weight: 800; color: var(--accent-yellow); }
-.stat-item .label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+.stat-item {
+    text-align: center;
+    background-color: var(--accent-blue);
+    color: #fff;
+    padding: 2rem 1rem;
+    border-radius: 16px;
+    transition: var(--transition);
+}
+
+.stat-item:hover {
+    background-color: #000;
+    transform: translateY(-5px);
+}
+
+.stat-item .number { display: block; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; }
+.stat-item .label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
 
 /* --- CTA Section --- */
 .cta-section {
@@ -661,6 +674,11 @@ footer {
     .floating-card { left: 50%; transform: translateX(-50%); bottom: -20px; width: 90%; animation: none; }
     
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    
+    .stats-bar .grid-4 {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
     
     .signup-form input { width: 100%; }
     .signup-form { flex-direction: column; }
