@@ -80,6 +80,93 @@ footer {
     max-width: 600px;
 }
 
+/* --- Intro Screen Premium Design --- */
+.intro-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.intro-card {
+    background: #FFFFFF;
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--lab-border);
+    text-align: left;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.intro-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.intro-header h2 {
+    font-size: clamp(1.8rem, 4vw, 2.2rem);
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.intro-header p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.intro-card label {
+    display: block;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+}
+
+.intro-card input[type="text"],
+.intro-card textarea {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid var(--lab-border);
+    border-radius: 16px;
+    font-size: 1rem;
+    background: #F8FAFC;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.intro-card input[type="text"]:focus,
+.intro-card textarea:focus {
+    background: #FFFFFF;
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 4px rgba(41, 121, 255, 0.1);
+    outline: none;
+}
+
+.intro-card textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.intro-card .helper-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.75rem;
+    margin-bottom: 0;
+}
+
+.intro-card #start-quiz-btn {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+/* ----------------------------------- */
+
 #quiz-screen .container {
     max-width: 800px;
     position: relative;
@@ -434,6 +521,14 @@ footer {
     .test-main-container {
         padding-top: 85px;
         padding-bottom: 40px;
+    }
+    .intro-card {
+        padding: 1.5rem;
+        border-radius: 20px;
+    }
+    .intro-header h2 {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
     }
     #entry-screen {
         padding-top: 4rem;

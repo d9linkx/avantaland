@@ -49,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { question: "Is the customer problem you're trying to solve a 'Top 3' problem?", proTip: "Is your customer so stressed by this problem that they would pay some money to fix it today?" },
         { question: "Can a 10-year-old understand you?", proTip: "If you explain your business idea or model to a 10-year-old child, can they explain it back to you correctly without being confused?" },
         { question: "Do you know who NOT to sell to?", proTip: "Can you list 3 types of people you will refuse to offer your products to so you can stay focused on your real customers?" },
-        { question: "Can you launch the product or business in 30 days?", proTip: "Is it possible to start selling a simple version of that product or service that solves just ONE main problem, in less than a month?" },
-        { question: "Have you talked to 10 total strangers about your product?", proTip: "Do you have a list of 10 people who don’t know you but will give you honest, brutal feedback on what they don't like about your product/service?" },
+        { question: "Is that product, solution, or business something you can launch in 30 days?", proTip: "Is it possible to start selling a simple version of that product or service that solves just ONE main problem, in less than a month, and still make sales?" },
+        { question: "Have you talked to 10 total strangers about your business or product idea?", proTip: "Do you have a list of 10 people who don’t know you but will give you honest, brutal feedback on what they don't like about your product/service?" },
         { question: "Is your product up to 50% better than what they already use?", proTip: "Is your solution much better than what they  use right now, or are you just 'slightly cheaper' than the others?" },
         { question: "Has anyone paid you for your product before launch?", proTip: "Have you asked a customer to pay (or sign a letter of near-future payment) before the product is even ready?" },
         { question: "Do you know where your customers 'live'?", proTip: "Can you name the exact physical or online location where you will find your first 50 paying customers?" },
@@ -171,8 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.found) {
-                switchScreen('quiz');
-                initQuiz(result.firstName); // Pass first name
+                initQuiz(result.firstName);
             } else {
                 emailErrorMsg.innerHTML = "Email not registered. Please register on <a href='product-test.html' style='text-decoration: underline;'>this page</a> first.";
             }
@@ -186,35 +185,49 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const initQuiz = (firstName) => {
-        userFirstName = firstName;
+        userFirstName = firstName || ''; // Prevent 'undefined' if name is missing
         // Display the intro message before starting the quiz
-        displayIntro(firstName);
+        displayIntro(userFirstName);
     };
 
     const displayIntro = (firstName) => {
         const introScreen = document.createElement('div');
+        introScreen.id = 'intro-screen'; // This is the new screen
+        introScreen.className = 'test-screen'; // It's a screen
 
-        introScreen.id = 'intro-screen';
+        const greeting = firstName ? `Dear ${firstName},` : 'Hello,';
+
         introScreen.innerHTML = `
-            <div class="intro-content">
-                <h2>Dear ${firstName},</h2>
-                <p>As you answer the following questions, please keep your business or product in mind.</p>
-                <label for="product-name" style="margin-top: 1.5rem; display: block;">What is the name of the product or service we are testing today?</label>
-                <input type="text" id="product-name" name="product-name" placeholder="e.g., 'Premium Scented Candles' or 'Yourhelpa App'">
-                <p class="helper-text" style="font-size: 0.9rem; margin-top: 0.5rem;">This helps us tailor the results to your specific solution.</p>
-                <div id="product-description-section" style="display:none; margin-top: 1.5rem;">
-                    <label for="product-description">Briefly explain what it does or aims to solve:</label>
-                    <textarea id="product-description" name="product-description" placeholder="e.g., 'A mobile app that connects language learners with native speakers.'"></textarea>
+            <div class="container intro-container">
+                <div class="intro-card">
+                    <div class="intro-header">
+                        <h2>${greeting}</h2>
+                        <p>As you answer the following questions, please keep your business or product in mind.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-name">What is the name of the product or service we are testing today?</label>
+                        <input type="text" id="product-name" name="product-name" placeholder="e.g., 'Premium Scented Candles' or 'Yourhelpa App'" autocomplete="off">
+                        <p class="helper-text">This helps us tailor the results to your specific solution.</p>
+                    </div>
+                    <div id="product-description-section" class="form-group" style="display:none;">
+                        <label for="product-description">Briefly explain what it does or aims to solve:</label>
+                        <textarea id="product-description" name="product-description" placeholder="e.g., 'A mobile app that connects language learners with native speakers.'"></textarea>
+                    </div>
+                    <button id="start-quiz-btn" class="btn-game-start">Start Diagnostic</button>
                 </div>
-                <button id="start-quiz-btn" class="btn-game-start" style="margin-top: 1.5rem;">Start Diagnostic</button>
             </div>
         `;
-        screens.quiz.before(introScreen); // Insert intro screen before quiz screen
-        switchScreen('quiz'); // Show the intro screen which is technically part of the quiz screen
+        // Add the new screen to the DOM, right after the entry screen
+        screens.entry.after(introScreen);
+        
+        // Add it to our screen manager
+        screens.intro = introScreen;
+
+        // Switch to the new intro screen
+        switchScreen('intro');
 
         const productNameInput = introScreen.querySelector('#product-name');
         const productDescSection = introScreen.querySelector('#product-description-section');
-
         productNameInput.addEventListener('input', () => {
             if (productNameInput.value.trim() !== '') {
                 productDescSection.style.display = 'block';
@@ -223,18 +236,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        document.getElementById('start-quiz-btn').addEventListener('click', () => {
+        introScreen.querySelector('#start-quiz-btn').addEventListener('click', () => {
             userProductName = productNameInput.value.trim() || "Your Project";
             const auditingTag = document.createElement('div');
             auditingTag.id = 'auditing-tag';
             auditingTag.innerText = `AUDITING: ${userProductName}`;
             document.getElementById('quiz-screen').prepend(auditingTag);
-            document.getElementById('intro-screen').remove(); // Remove intro screen after button click            
             startQuiz(userProductName); // Start the actual quiz
         });
     };
 
     const startQuiz = (productName) => {
+        switchScreen('quiz');
         userAnswers = new Array(questions.length).fill(null);
         currentQuestionIndex = 0;
         displayQuestion(currentQuestionIndex, productName);
@@ -412,24 +425,26 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreText.innerText = totalScore;
 
         let status, meaning, face, sound, gaugeClass;
+        
+        const nameAddress = userFirstName ? userFirstName : 'there';
 
         if (totalScore <= 29) {
             status = "⚠️ Hobby, Not Business";
-            meaning = `<p>Hi ${userFirstName}, the data shows that <strong>${userProductName}</strong> is currently a high-risk project. Right now, it’s acting more like an expensive hobby than a profitable business. There are major 'Blind Spots' in your plan that will cost you a lot of money if you launch today.</p><p><strong>The Solution:</strong> You don't need a better logo; you need a better foundation. You must stop building and fix these structural failures before you spend another dollar.</p>`;
+            meaning = `<p>Hi ${nameAddress}, the data shows that <strong>${userProductName}</strong> is currently a high-risk project. Right now, it’s acting more like an expensive hobby than a profitable business. There are major 'Blind Spots' in your plan that will cost you a lot of money if you launch today.</p><p><strong>The Solution:</strong> You don't need a better logo; you need a better foundation. You must stop building and fix these structural failures before you spend another dollar.</p>`;
             face = faces.shocked;
             sound = emergencySound;
             gaugeClass = 'danger';
             statusText.className = 'emergency';
         } else if (totalScore <= 49) {
             status = "🏗️ Solid Start, High Risk";
-            meaning = `<p>Good work, ${userFirstName}. <strong>${userProductName}</strong> has a real spark, but you are currently 'guessing' on the big things—like how to find customers or manage your cash. You are one bad month away from a collapse because you don't have a system yet.</p><p><strong>The Next Move:</strong> You’ve come too far to let a blind spot take it all away. It’s time to move from 'Founder with an idea' to 'CEO with a company' by removing the guesses.</p>`;
+            meaning = `<p>Good work, ${nameAddress}. <strong>${userProductName}</strong> has a real spark, but you are currently 'guessing' on the big things—like how to find customers or manage your cash. You are one bad month away from a collapse because you don't have a system yet.</p><p><strong>The Next Move:</strong> You’ve come too far to let a blind spot take it all away. It’s time to move from 'Founder with an idea' to 'CEO with a company' by removing the guesses.</p>`;
             face = faces.neutral;
             sound = vulnerableSound;
             gaugeClass = 'warning';
             statusText.className = 'vulnerable';
         } else {
             status = "🏆 Market Ready / Top 1%";
-            meaning = `<p>Impressive, ${userFirstName}. <strong>${userProductName}</strong> is in the top 1% of audited ideas. You have the discipline and the proof. However, at this level, mistakes are much more expensive. A small 5% error won't cost you hundreds; it could cost you thousands.</p><p><strong>The Advice:</strong> Don't get comfortable. You need an 'Unfair Advantage' to protect your lead and scale without losing your mind or your money.</p>`;
+            meaning = `<p>Impressive, ${nameAddress}. <strong>${userProductName}</strong> is in the top 1% of audited ideas. You have the discipline and the proof. However, at this level, mistakes are much more expensive. A small 5% error won't cost you hundreds; it could cost you thousands.</p><p><strong>The Advice:</strong> Don't get comfortable. You need an 'Unfair Advantage' to protect your lead and scale without losing your mind or your money.</p>`;
             face = faces.happy;
             sound = eliteSound;
             gaugeClass = 'elite';
