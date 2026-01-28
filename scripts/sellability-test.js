@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const persuasionContent = document.getElementById('results-persuasion-content');
 
     // --- App State ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9YlOv53uK1Ij1KQUfy4ZsSXIkMuf1UqYLOC9PuHQDUdkbKES97urTZTs99MSLki_A/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYztWPZRaAxSA2uGlseKKIn8BOLA7VTfqQ3plhmSxQwdWUt_qKaLNtN_xqm-5v0N5e/exec';
     let currentQuestionIndex = 0;
     let userAnswers = [];
     let userFirstName = '';
