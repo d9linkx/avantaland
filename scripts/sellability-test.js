@@ -205,16 +205,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="intro-card">
                     <div class="intro-header">
                         <h2>${greeting}</h2>
-                        <p>Think about the solution or business idea you are evaluating.</p>
+                        <p>Think about the solution or business idea you're considering starting or already started.</p>
                     </div>
                     <div class="form-group">
-                        <label for="product-name">What is the name of the product or service we are testing today?</label>
-                        <input type="text" id="product-name" name="product-name" placeholder="e.g., 'Premium Scented Candles' or 'Yourhelpa App'" autocomplete="off">
+                        <label for="product-name">What's the name of the business or product you're considering?</label>
+                        <input type="text" id="product-name" name="product-name" placeholder="e.g., 'Scented-Bola' or 'Sanvor'" autocomplete="off">
                         <p class="helper-text">This helps us tailor the results to your specific solution.</p>
                     </div>
                     <div id="product-description-section" class="form-group" style="display:none;">
                         <label for="product-description">Briefly explain what it does or aims to solve:</label>
-                        <textarea id="product-description" name="product-description" placeholder="e.g., 'A mobile app that connects language learners with native speakers.'"></textarea>
+                        <textarea id="product-description" name="product-description" placeholder="e.g., 'Selling premium scented candles.'"></textarea>
                     </div>
                     <button id="start-quiz-btn" class="btn-game-start">Start Diagnostic</button>
                 </div>
