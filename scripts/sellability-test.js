@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (result.found) {
                 switchScreen('quiz');
-                initQuiz();
+                initQuiz(result.firstName);
             } else {
                 emailErrorMsg.innerHTML = "Email not registered. Please register on <a href='product-test.html' style='text-decoration: underline;'>this page</a> first.";
             }
@@ -183,10 +183,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const initQuiz = () => {
+    const initQuiz = (firstName) => {
+        // Display the intro message before starting the quiz
+        displayIntro(firstName);
+    };
+
+    const displayIntro = (firstName) => {
+        const introScreen = document.createElement('div');
+        introScreen.id = 'intro-screen';
+        introScreen.innerHTML = `
+            <div class="intro-content">
+                <h2>Dear ${firstName},</h2>
+                <p>As you answer the following questions, please keep your business or product in mind.</p>
+                <p>Think about the core problem you're solving and how well you know your customers.</p>
+                <label for="product-description">Briefly describe your business or product idea:</label>
+                <input type="text" id="product-description" name="product-description" placeholder="e.g., 'A mobile app for language learning'"><br><br>
+                <button id="start-quiz-btn">Start Quiz</button>
+            </div>
+        `;
+        screens.quiz.before(introScreen); // Insert intro screen before quiz screen
+        switchScreen('quiz'); // Show the intro screen which is technically part of the quiz screen
+        document.getElementById('start-quiz-btn').addEventListener('click', () => {
+            const productDescription = document.getElementById('product-description').value;
+            console.log("Product Description:", productDescription);  //temporary console log for now
+            document.getElementById('intro-screen').remove(); // Remove intro screen after button click            
+            startQuiz(); // Start the actual quiz
+            }
+        } catch (error) {
+            emailErrorMsg.innerText = "An error occurred. Please try again.";
+            console.error("Email check failed:", error);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Start Test';
+        }
+    };
+
+    const startQuiz = () => {
         userAnswers = new Array(questions.length).fill(null);
         currentQuestionIndex = 0;
         displayQuestion(currentQuestionIndex);
+
     };
 
     const typeWriter = (text, element, speed = 20) => {
@@ -512,3 +548,20 @@ document.addEventListener('DOMContentLoaded', () => {
     nextBtn.addEventListener('click', handleNext);
     backBtn.addEventListener('click', handleBack);
 });
+
+// Add CSS for the auditing tag
+const style = document.createElement('style');
+style.innerHTML = `
+#auditing-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 123, 255, 0.2); /* Semi-transparent blue */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    z-index: 1000; /* Ensure it's on top of everything */
+}
+`;
+document.head.appendChild(style);
