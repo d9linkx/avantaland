@@ -169,9 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`${SCRIPT_URL}?action=checkEmail&email=${encodeURIComponent(email)}`);
             const result = await response.json();
+            console.log("Google Script Response:", result); // Debugging: Check console to see what is returned
 
             if (result.found) {
-                initQuiz(result.firstName);
+                // Check for common variations of the name property
+                const firstName = result.firstName || result.firstname || result.name || result.FirstName;
+                initQuiz(firstName);
             } else {
                 emailErrorMsg.innerHTML = "Email not registered. Please register on <a href='product-test.html' style='text-decoration: underline;'>this page</a> first.";
             }
