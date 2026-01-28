@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="intro-card">
                     <div class="intro-header">
                         <h2>${greeting}</h2>
-                        <p>As you answer the following questions, please keep your business or product in mind.</p>
+                        <p>Think about the solution or business idea you are evaluating.</p>
                     </div>
                     <div class="form-group">
                         <label for="product-name">What is the name of the product or service we are testing today?</label>
