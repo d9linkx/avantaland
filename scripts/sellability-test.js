@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9YlOv53uK1Ij1KQUfy4ZsSXIkMuf1UqYLOC9PuHQDUdkbKES97urTZTs99MSLki_A/exec';
     let currentQuestionIndex = 0;
     let userAnswers = [];
+    let userFirstName = '';
+    let userProductName = '';
     let typeWriterTimeout;
     const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'); // Subtle click sound
     const happyClickSound = new Audio('happy.mp3'); // Happy/Exciting sound
@@ -62,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { text: "NO", score: 1 },
         { text: "Not sure", score: 2 },
         { text: "I think so", score: 3 },
-        { text: "100% Yes!", score: 4 },
+        { text: "100% Yes!", score: 5 },
     ];
 
     // --- Faces SVG Data ---
@@ -170,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (result.found) {
                 switchScreen('quiz');
-                initQuiz(result.firstName);
+                initQuiz(result.firstName); // Pass first name
             } else {
                 emailErrorMsg.innerHTML = "Email not registered. Please register on <a href='product-test.html' style='text-decoration: underline;'>this page</a> first.";
             }
@@ -184,45 +186,58 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const initQuiz = (firstName) => {
+        userFirstName = firstName;
         // Display the intro message before starting the quiz
         displayIntro(firstName);
     };
 
     const displayIntro = (firstName) => {
         const introScreen = document.createElement('div');
+
         introScreen.id = 'intro-screen';
         introScreen.innerHTML = `
             <div class="intro-content">
                 <h2>Dear ${firstName},</h2>
                 <p>As you answer the following questions, please keep your business or product in mind.</p>
-                <p>Think about the core problem you're solving and how well you know your customers.</p>
-                <label for="product-description">Briefly describe your business or product idea:</label>
-                <input type="text" id="product-description" name="product-description" placeholder="e.g., 'A mobile app for language learning'"><br><br>
-                <button id="start-quiz-btn">Start Quiz</button>
+                <label for="product-name" style="margin-top: 1.5rem; display: block;">What is the name of the product or service we are testing today?</label>
+                <input type="text" id="product-name" name="product-name" placeholder="e.g., 'Premium Scented Candles' or 'Yourhelpa App'">
+                <p class="helper-text" style="font-size: 0.9rem; margin-top: 0.5rem;">This helps us tailor the results to your specific solution.</p>
+                <div id="product-description-section" style="display:none; margin-top: 1.5rem;">
+                    <label for="product-description">Briefly explain what it does or aims to solve:</label>
+                    <textarea id="product-description" name="product-description" placeholder="e.g., 'A mobile app that connects language learners with native speakers.'"></textarea>
+                </div>
+                <button id="start-quiz-btn" class="btn-game-start" style="margin-top: 1.5rem;">Start Diagnostic</button>
             </div>
         `;
         screens.quiz.before(introScreen); // Insert intro screen before quiz screen
         switchScreen('quiz'); // Show the intro screen which is technically part of the quiz screen
-        document.getElementById('start-quiz-btn').addEventListener('click', () => {
-            const productDescription = document.getElementById('product-description').value;
-            console.log("Product Description:", productDescription);  //temporary console log for now
-            document.getElementById('intro-screen').remove(); // Remove intro screen after button click            
-            startQuiz(); // Start the actual quiz
+
+        const productNameInput = introScreen.querySelector('#product-name');
+        const productDescSection = introScreen.querySelector('#product-description-section');
+
+        productNameInput.addEventListener('input', () => {
+            if (productNameInput.value.trim() !== '') {
+                productDescSection.style.display = 'block';
+            } else {
+                productDescSection.style.display = 'none';
             }
-        } catch (error) {
-            emailErrorMsg.innerText = "An error occurred. Please try again.";
-            console.error("Email check failed:", error);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = 'Start Test';
-        }
+        });
+
+        document.getElementById('start-quiz-btn').addEventListener('click', () => {
+            userProductName = productNameInput.value.trim() || "Your Project";
+            const auditingTag = document.createElement('div');
+            auditingTag.id = 'auditing-tag';
+            auditingTag.innerText = `AUDITING: ${userProductName}`;
+            document.getElementById('quiz-screen').prepend(auditingTag);
+            document.getElementById('intro-screen').remove(); // Remove intro screen after button click            
+            startQuiz(userProductName); // Start the actual quiz
+        });
     };
 
-    const startQuiz = () => {
+    const startQuiz = (productName) => {
         userAnswers = new Array(questions.length).fill(null);
         currentQuestionIndex = 0;
-        displayQuestion(currentQuestionIndex);
-
+        displayQuestion(currentQuestionIndex, productName);
     };
 
     const typeWriter = (text, element, speed = 20) => {
@@ -239,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         type();
     };
 
-    const displayQuestion = (index) => {
+    const displayQuestion = (index, productName) => {
         const question = questions[index];
         const questionContainer = document.getElementById('question-container');
 
@@ -255,7 +270,12 @@ document.addEventListener('DOMContentLoaded', () => {
             void quizFace.offsetWidth; // Trigger reflow
             quizFace.classList.add('face-bounce');
 
-            typeWriter(question.question, questionText);
+            let questionTextToDisplay = question.question;
+            if (productName) {
+                questionTextToDisplay = questionTextToDisplay.replace(/your product/gi, `<strong>${productName}</strong>`);
+                questionTextToDisplay = questionTextToDisplay.replace(/the product/gi, `<strong>${productName}</strong>`);
+            }
+            typeWriter(questionTextToDisplay, questionText);
             questionProTip.innerText = question.proTip;
 
             optionsContainer.innerHTML = '';
@@ -321,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 container.classList.remove('card-snap');
                 currentQuestionIndex++;
-                displayQuestion(currentQuestionIndex);
+                displayQuestion(currentQuestionIndex, userProductName);
             }, 200);
         } else {
             runLoadingSequence();
@@ -331,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleBack = () => {
         if (currentQuestionIndex > 0) {
             currentQuestionIndex--;
-            displayQuestion(currentQuestionIndex);
+            displayQuestion(currentQuestionIndex, userProductName);
         }
     };
 
@@ -358,174 +378,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showResults = () => {
         const totalScore = userAnswers.reduce((sum, score) => sum + (score || 0), 0);
-        
-        const maxScore = questions.length * 4;
+        const maxScore = questions.length * 5; // Max score is now 60
         const scorePercentage = (totalScore / maxScore);
         const gaugeRotation = scorePercentage * 0.5; // 0.5 turn for 180 degrees
         
         switchScreen('results');
 
+        // --- Clear previous results content ---
+        persuasionContent.innerHTML = '';
+        const oldHeader = document.getElementById('results-audit-header');
+        if (oldHeader) oldHeader.remove();
+        const oldHook = document.querySelector('.cta-hook');
+        if (oldHook) oldHook.remove();
+
+        // --- Add new dynamic header ---
+        const auditHeader = document.createElement('div');
+        auditHeader.id = 'results-audit-header';
+        auditHeader.innerHTML = `
+            <p class="audit-complete-tag">AUDIT COMPLETE FOR: ${userProductName}</p>
+            <h3>Your Sellability Score: ${totalScore}/${maxScore}</h3>
+        `;
+        const scoreGaugeContainer = document.getElementById('score-gauge-container');
+        if (scoreGaugeContainer) {
+            scoreGaugeContainer.before(auditHeader);
+        }
+
         // Delay gauge animation to ensure it's visible
         setTimeout(() => {
-            scoreGaugeFill.style.transform = `rotate(${gaugeRotation}turn)`;
+            scoreGaugeFill.style.setProperty('--rotation', `${gaugeRotation}turn`);
+            scoreGaugeFill.style.transform = `rotate(var(--rotation))`;
         }, 100);
 
         scoreText.innerText = totalScore;
 
-        let persuasionHTML = '';
+        let status, meaning, face, sound, gaugeClass;
 
-        if (totalScore <= 24) {
-            statusText.innerText = "STATUS: THE EMERGENCY ZONE 📉";
+        if (totalScore <= 29) {
+            status = "⚠️ Hobby, Not Business";
+            meaning = `<p>Hi ${userFirstName}, the data shows that <strong>${userProductName}</strong> is currently a high-risk project. Right now, it’s acting more like an expensive hobby than a profitable business. There are major 'Blind Spots' in your plan that will cost you a lot of money if you launch today.</p><p><strong>The Solution:</strong> You don't need a better logo; you need a better foundation. You must stop building and fix these structural failures before you spend another dollar.</p>`;
+            face = faces.shocked;
+            sound = emergencySound;
+            gaugeClass = 'danger';
             statusText.className = 'emergency';
-            meaningText.innerText = "You have a hobby, not a business. You are losing money. Stop building and fix your foundation now.";
-            resultsFace.innerHTML = faces.shocked;
-            emergencySound.currentTime = 0;
-            emergencySound.play().catch(e => console.log("Audio play failed:", e));
-            ctaButton.innerText = "My Product is At Risk—Send me the 33 Brutal Truths to fix it ($6.99)";
-            persuasionHTML = `
-                <div class="persuasion-section">
-                    <h4>The Pain of Losing Everything</h4>
-                    <p>You are in a dangerous place. It feels bad to work hard and see no money. If you do not fix this now, your business will die, and your money will be gone forever.</p>
-                </div>
-                <div class="persuasion-section">
-                    <h4>Why You Are Failing</h4>
-                    <p>You are trying to build a big house on soft mud. It will fall down. Your score shows that your idea has big holes in it. You cannot succeed like this.</p>
-                </div>
-                <div class="persuasion-section">
-                    <h4>How to Fix It Fast</h4>
-                    <p>The '33 Brutal Truths' book is your repair kit. It is a simple list of things to fix. It tells you exactly what to do to stop losing money and start making money.</p>
-                </div>
-                <div class="persuasion-section">
-                    <h4>Change Your Future</h4>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Without The Book (Before)</th>
-                                <th>With The Book (After)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>❌ Confused and scared</td>
-                                <td>✅ Happy and sure</td>
-                            </tr>
-                            <tr>
-                                <td>❌ Losing money every day</td>
-                                <td>✅ Keeping your money</td>
-                            </tr>
-                            <tr>
-                                <td>❌ Business will fail</td>
-                                <td>✅ Business will grow</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="fomo-section">
-                    <p>Do not wait. Every day you wait is a day you lose more money. Smart people are already using this book to win. Do not be the one who fails.</p>
-                </div>
-            `;
-        } else if (totalScore <= 39) {
-            statusText.innerText = "STATUS: THE VULNERABLE ZONE ⚠️";
+        } else if (totalScore <= 49) {
+            status = "🏗️ Solid Start, High Risk";
+            meaning = `<p>Good work, ${userFirstName}. <strong>${userProductName}</strong> has a real spark, but you are currently 'guessing' on the big things—like how to find customers or manage your cash. You are one bad month away from a collapse because you don't have a system yet.</p><p><strong>The Next Move:</strong> You’ve come too far to let a blind spot take it all away. It’s time to move from 'Founder with an idea' to 'CEO with a company' by removing the guesses.</p>`;
+            face = faces.neutral;
+            sound = vulnerableSound;
+            gaugeClass = 'warning';
             statusText.className = 'vulnerable';
-            meaningText.innerText = "You have a good start, but you are guessing too much. You are one bad month away from failing.";
-            resultsFace.innerHTML = faces.neutral;
-            vulnerableSound.currentTime = 0;
-            vulnerableSound.play().catch(e => console.log("Audio play failed:", e));
-            ctaButton.innerText = "Strengthen My Foundation with the 33 Brutal Truths ($6.99)";
-            persuasionHTML = `
-                <div class="persuasion-section">
-                    <h4>The Pain of Not Knowing</h4>
-                    <p>You are doing okay, but you are not safe. You are guessing too much. One bad day or one smart competitor can take everything away from you.</p>
-                </div>
-                <div class="persuasion-section">
-                    <h4>Why You Are Not Safe</h4>
-                    <p>Your business is like a chair with one broken leg. It stands up now, but if you sit on it wrong, it breaks. You need to fix that leg before you fall.</p>
-                </div>
-                <div class="persuasion-section">
-                    <h4>Make Your Business Strong</h4>
-                    <p>This book shows you how to make your business strong like a rock. It stops you from guessing. It gives you the answers so you can sleep well at night.</p>
-                </div>
-                <div class="persuasion-section">
-                    <h4>See The Difference</h4>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Without The Book (Before)</th>
-                                <th>With The Book (After)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>❌ Guessing and hoping</td>
-                                <td>✅ Knowing for sure</td>
-                            </tr>
-                            <tr>
-                                <td>❌ Easy to beat</td>
-                                <td>✅ Hard to beat</td>
-                            </tr>
-                            <tr>
-                                <td>❌ Slow money</td>
-                                <td>✅ Fast money</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="fomo-section">
-                    <p>Your competitors are watching you. If they learn these secrets before you, they will steal your customers. Get the book now and stay safe.</p>
-                </div>
-            `;
         } else {
-            statusText.innerText = "STATUS: THE ELITE ZONE 🏆";
+            status = "🏆 Market Ready / Top 1%";
+            meaning = `<p>Impressive, ${userFirstName}. <strong>${userProductName}</strong> is in the top 1% of audited ideas. You have the discipline and the proof. However, at this level, mistakes are much more expensive. A small 5% error won't cost you hundreds; it could cost you thousands.</p><p><strong>The Advice:</strong> Don't get comfortable. You need an 'Unfair Advantage' to protect your lead and scale without losing your mind or your money.</p>`;
+            face = faces.happy;
+            sound = eliteSound;
+            gaugeClass = 'elite';
             statusText.className = 'elite';
-            meaningText.innerText = "You are a real builder. You have a plan. Now you need the 'Unfair Advantage' to stay ahead of your competitors.";
-            resultsFace.innerHTML = faces.happy;
-            eliteSound.currentTime = 0;
-            eliteSound.play().catch(e => console.log("Audio play failed:", e));
-            ctaButton.innerText = "Get the 'Unfair Advantage' with the 33 Brutal Truths ($6.99)";
-            persuasionHTML = `
-                <div class="persuasion-section">
-                    <h4>The Pain of Being Copied</h4>
-                    <p>You are doing great. But when you are at the top, everyone wants to pull you down. People will try to copy your idea and steal your money.</p>
-                </div>
-                <div class="persuasion-section">
-                    <h4>Why You Must Be Careful</h4>
-                    <p>Winning once is easy. Winning forever is hard. If you stop learning now, someone hungrier and smarter will come and take your place.</p>
-                </div>
-                <div class="persuasion-section">
-                    <h4>Stay The King</h4>
-                    <p>This book teaches you how to build a wall around your business. It shows you how to keep your customers forever so nobody can steal them.</p>
-                </div>
-                <div class="persuasion-section">
-                    <h4>Stay At The Top</h4>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Without The Book (Before)</th>
-                                <th>With The Book (After)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>❌ Winner today, loser tomorrow</td>
-                                <td>✅ Winner forever</td>
-                            </tr>
-                            <tr>
-                                <td>❌ People copy you</td>
-                                <td>✅ People cannot touch you</td>
-                            </tr>
-                            <tr>
-                                <td>❌ Good business</td>
-                                <td>✅ Unbeatable business</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="fomo-section">
-                    <p>The other winners are reading this book to beat you. Do not let them get ahead. Read it now to keep your crown.</p>
-                </div>
-            `;
         }
-        persuasionContent.innerHTML = persuasionHTML;
+
+        statusText.innerHTML = status;
+        meaningText.innerHTML = meaning;
+        resultsFace.innerHTML = face;
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Audio play failed:", e));
+
+        scoreGaugeFill.className = 'gauge-fill'; // Reset classes
+        scoreGaugeFill.classList.add(gaugeClass);
+
+        // --- Add CTA Hook & Update Button ---
+        const ctaHook = document.createElement('p');
+        ctaHook.className = 'cta-hook';
+        ctaHook.innerHTML = `I’ve identified the exact 'Brutal Truths' that kill projects like <strong>${userProductName}</strong>. Don't wait to find them out the hard way.`;
+        ctaButton.before(ctaHook);
+
+        ctaButton.innerHTML = `&gt; [ Fix My Blind Spots &amp; Get the 33 Truths ($6.99) ]`;
     };
 
     // --- Event Listeners ---
@@ -562,6 +488,60 @@ style.innerHTML = `
     border-radius: 5px;
     font-size: 0.8em;
     z-index: 1000; /* Ensure it's on top of everything */
+}
+
+/* New Results Screen Styles */
+#results-audit-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+.audit-complete-tag {
+    font-weight: 700;
+    color: var(--brand-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+#results-audit-header h3 {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    margin-bottom: 0;
+    color: var(--text-primary);
+}
+.cta-hook {
+    max-width: 550px;
+    margin: 2rem auto 1rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Gauge Animations & Colors */
+.gauge-fill { --rotation: rotate(0turn); } /* CSS variable for rotation */
+.gauge-fill.danger {
+    background: #f5222d;
+    animation: shake 0.8s ease-in-out infinite;
+    transform: var(--rotation);
+}
+.gauge-fill.warning {
+    background: #fa8c16;
+    animation: pulse 2s ease-in-out infinite;
+}
+.gauge-fill.elite {
+    background: var(--brand-blue);
+    box-shadow: 0 0 15px var(--brand-blue), 0 0 30px var(--brand-blue);
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0) var(--rotation); }
+  20%, 80% { transform: translate3d(2px, 0, 0) var(--rotation); }
+  30%, 50%, 70% { transform: translate3d(-3px, 0, 0) var(--rotation); }
+  40%, 60% { transform: translate3d(3px, 0, 0) var(--rotation); }
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(250, 140, 22, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(250, 140, 22, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(250, 140, 22, 0); }
 }
 `;
 document.head.appendChild(style);
