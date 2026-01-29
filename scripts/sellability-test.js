@@ -41,6 +41,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'); // Subtle click sound
     const happyClickSound = new Audio('happy.mp3'); // Happy/Exciting sound
     
+    // Background Music
+    const bgMusic = new Audio('bacmusic.mp3');
+    bgMusic.loop = true;
+    bgMusic.volume = 0.2; // Low volume for background ambience
+
+    // Attempt to play on load; fallback to user interaction if blocked by browser
+    bgMusic.play().catch(() => {
+        const startMusic = () => {
+            bgMusic.play();
+            document.removeEventListener('click', startMusic);
+            document.removeEventListener('keydown', startMusic);
+        };
+        document.addEventListener('click', startMusic);
+        document.addEventListener('keydown', startMusic);
+    });
+
     const emergencySound = new Audio('https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3'); // Low/Fail sound
     const vulnerableSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3'); // Neutral/Okay sound
     const eliteSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3'); // Success/Win sound
