@@ -262,10 +262,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         introScreen.querySelector('#start-quiz-btn').addEventListener('click', () => {
             userProductName = productNameInput.value.trim() || "Your Project";
+            
+            const existingTag = document.getElementById('auditing-tag');
+            if (existingTag) existingTag.remove();
+
             const auditingTag = document.createElement('div');
             auditingTag.id = 'auditing-tag';
             auditingTag.innerText = `AUDITING: ${userProductName}`;
-            document.getElementById('quiz-screen').prepend(auditingTag);
+            
+            const navContainer = document.querySelector('.nav-container');
+            const logo = document.querySelector('.logo');
+
+            if (navContainer && logo) {
+                logo.after(auditingTag);
+            } else {
+                document.getElementById('quiz-screen').prepend(auditingTag);
+            }
+            
             startQuiz(userProductName); // Start the actual quiz
         });
     };
@@ -559,15 +572,28 @@ document.addEventListener('DOMContentLoaded', () => {
 const style = document.createElement('style');
 style.innerHTML = `
 #auditing-tag {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: rgba(0, 123, 255, 0.2); /* Semi-transparent blue */
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.8em;
-    z-index: 1000; /* Ensure it's on top of everything */
+    background-color: #EFF6FF;
+    color: var(--brand-blue, #2979FF);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid #DBEAFE;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    #auditing-tag {
+        font-size: 0.65rem;
+        padding: 4px 10px;
+        max-width: 120px;
+    }
 }
 
 /* New Results Screen Styles */
