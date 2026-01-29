@@ -252,27 +252,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const productNameInput = introScreen.querySelector('#product-name');
         const productDescSection = introScreen.querySelector('#product-description-section');
-        productNameInput.addEventListener('input', () => {
-            if (productNameInput.value.trim() !== '') {
+        const productDescInput = introScreen.querySelector('#product-description');
+        const startBtn = introScreen.querySelector('#start-quiz-btn');
+
+        // Initially disable the button
+        startBtn.disabled = true;
+
+        const validateInputs = () => {
+            const hasName = productNameInput.value.trim() !== '';
+            const hasDesc = productDescInput.value.trim() !== '';
+
+            if (hasName) {
                 productDescSection.style.display = 'block';
             } else {
                 productDescSection.style.display = 'none';
             }
-        });
 
-        introScreen.querySelector('#start-quiz-btn').addEventListener('click', () => {
+            startBtn.disabled = !(hasName && hasDesc);
+        };
+
+        productNameInput.addEventListener('input', validateInputs);
+        productDescInput.addEventListener('input', validateInputs);
+
+        startBtn.addEventListener('click', () => {
             userProductName = productNameInput.value.trim() || "Your Project";
-
-            // Remove previous tag if it exists (for retakes)
-            const existingTag = document.getElementById('auditing-tag');
-            if (existingTag) {
-                existingTag.remove();
-            }
-
             const auditingTag = document.createElement('div');
-            auditingTag.id = 'auditing-tag';
-            auditingTag.innerText = `AUDITING: ${userProductName}`;
-            document.querySelector('#quiz-screen .container').prepend(auditingTag);
+            document.getElementById('quiz-screen').prepend(auditingTag);
             startQuiz(userProductName); // Start the actual quiz
         });
     };
@@ -567,28 +572,14 @@ const style = document.createElement('style');
 style.innerHTML = `
 #auditing-tag {
     position: absolute;
-    top: 22px; /* Vertically align with smiley */
-    right: 75px; /* Smiley is 60px wide + 15px gap */
-    color: var(--text-secondary);
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-    max-width: 150px; /* Prevent long names from breaking layout */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: right;
-    z-index: 11; /* Above smiley container */
-}
-
-@media (max-width: 480px) {
-    #auditing-tag {
-        max-width: 100px;
-        font-size: 0.6rem;
-        top: 24px;
-        right: 65px; /* Adjust gap for smaller screens */
-    }
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 123, 255, 0.2); /* Semi-transparent blue */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    z-index: 1000; /* Ensure it's on top of everything */
 }
 
 /* New Results Screen Styles */

@@ -236,6 +236,14 @@ footer {
     background: #1E60CC;
 }
 
+.btn-game-start:disabled {
+    background: #E2E8F0;
+    color: #94A3B8;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+}
+
 /* Snap Animation Class */
 .card-snap {
     transform: scale(0.98);
