@@ -210,6 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const displayIntro = (firstName) => {
+        // If an old intro screen exists, remove it to avoid duplicates
+        if (screens.intro) {
+            screens.intro.remove();
+        }
+
         const introScreen = document.createElement('div');
         introScreen.id = 'intro-screen'; // This is the new screen
         introScreen.className = 'test-screen'; // It's a screen
@@ -224,12 +229,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p>Think about the solution or business idea you're considering starting or already started.</p>
                     </div>
                     <div class="form-group">
-                        <label for="product-name">What's the name of the business or product you're considering?</label>
+                        <label for="product-name">What's the name of the business or product you're evaluating?</label>
                         <input type="text" id="product-name" name="product-name" placeholder="e.g., 'Scented-Bola' or 'Sanvor'" autocomplete="off">
                         <p class="helper-text">This helps us tailor the results to your specific solution.</p>
                     </div>
                     <div id="product-description-section" class="form-group" style="display:none;">
-                        <label for="product-description">Briefly explain what it does or aims to solve:</label>
+                        <label for="product-description">Briefly explain what it's about, what it does, or aims to solve:</label>
                         <textarea id="product-description" name="product-description" placeholder="e.g., 'Selling premium scented candles.'"></textarea>
                     </div>
                     <button id="start-quiz-btn" class="btn-game-start">Start Diagnostic</button>
@@ -303,12 +308,31 @@ document.addEventListener('DOMContentLoaded', () => {
             quizFace.classList.add('face-bounce');
 
             let questionTextToDisplay = question.question;
+            let proTipTextToDisplay = question.proTip;
+
             if (productName) {
-                questionTextToDisplay = questionTextToDisplay.replace(/your product/gi, `<strong>${productName}</strong>`);
-                questionTextToDisplay = questionTextToDisplay.replace(/the product/gi, `<strong>${productName}</strong>`);
+                const nameHtml = `<strong>${productName}</strong>`;
+                const applyReplacements = (text) => {
+                    let newText = text;
+                    // Specific phrases first to avoid partial matches
+                    newText = newText.replace(/your business or product idea/gi, nameHtml);
+                    newText = newText.replace(/that product, solution, or business/gi, nameHtml);
+                    newText = newText.replace(/your business idea/gi, nameHtml);
+                    newText = newText.replace(/your product idea/gi, nameHtml);
+                    newText = newText.replace(/your product's/gi, `${nameHtml}'s`);
+                    newText = newText.replace(/your business/gi, nameHtml);
+                    newText = newText.replace(/your product/gi, nameHtml);
+                    newText = newText.replace(/the product/gi, nameHtml);
+                    newText = newText.replace(/your solution/gi, nameHtml);
+                    newText = newText.replace(/product\/service/gi, nameHtml);
+                    return newText;
+                };
+
+                questionTextToDisplay = applyReplacements(questionTextToDisplay);
+                proTipTextToDisplay = applyReplacements(proTipTextToDisplay);
             }
             typeWriter(questionTextToDisplay, questionText);
-            questionProTip.innerText = question.proTip;
+            questionProTip.innerHTML = proTipTextToDisplay;
 
             optionsContainer.innerHTML = '';
             options.forEach(opt => {
@@ -486,6 +510,27 @@ document.addEventListener('DOMContentLoaded', () => {
         ctaButton.before(ctaHook);
 
         ctaButton.innerHTML = `&gt; [ Fix My Blind Spots &amp; Get the 33 Truths ($6.99) ]`;
+
+        // --- Add Retake Link ---
+        const oldRetakeLink = document.getElementById('retake-test-link');
+        if (oldRetakeLink) oldRetakeLink.remove();
+
+        const retakeLink = document.createElement('a');
+        retakeLink.id = 'retake-test-link';
+        retakeLink.href = '#';
+        retakeLink.innerText = 'Not satisfied? Retake the test';
+        retakeLink.style.display = 'block';
+        retakeLink.style.marginTop = '1.5rem';
+        retakeLink.style.textAlign = 'center';
+        retakeLink.style.color = 'var(--text-secondary)';
+        retakeLink.style.textDecoration = 'underline';
+        retakeLink.style.cursor = 'pointer';
+
+        retakeLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            displayIntro(userFirstName);
+        });
+        ctaButton.after(retakeLink);
     };
 
     // --- Event Listeners ---
