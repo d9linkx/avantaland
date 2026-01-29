@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const eliteSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3'); // Success/Win sound
 
     const questions = [
-        { question: "Is the customer problem you're trying to solve a 'Top 3' problem?", proTip: "Is your potential current customer so stressed by this problem that they would pay some money to fix it today?" },
+        { question: "Is the customer problem you're trying to solve a 'Top 3' problem for them?", proTip: "Is your potential current customer so stressed by this problem that they would pay some money to fix it today?" },
         { question: "Can a 10-year-old understand you?", proTip: "If you explain your business idea to a 10-year-old child, can they explain it back to you correctly without being confused?" },
         { question: "Do you know who NOT to sell to?", proTip: "Can you list 3 types of people you will refuse to offer this product/service to so you can stay focused on your real target audience?" },
         { question: "Can that product, solution, or business launch in 30 days?", proTip: "Is it possible to start selling the simplest version of that product that solves just ONE main problem, in less than a month, and still make sales?" },
