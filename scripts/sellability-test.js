@@ -262,23 +262,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         introScreen.querySelector('#start-quiz-btn').addEventListener('click', () => {
             userProductName = productNameInput.value.trim() || "Your Project";
-            
+
+            // Remove previous tag if it exists (for retakes)
             const existingTag = document.getElementById('auditing-tag');
-            if (existingTag) existingTag.remove();
+            if (existingTag) {
+                existingTag.remove();
+            }
 
             const auditingTag = document.createElement('div');
             auditingTag.id = 'auditing-tag';
             auditingTag.innerText = `AUDITING: ${userProductName}`;
-            
-            const navContainer = document.querySelector('.nav-container');
-            const logo = document.querySelector('.logo');
-
-            if (navContainer && logo) {
-                logo.after(auditingTag);
-            } else {
-                document.getElementById('quiz-screen').prepend(auditingTag);
-            }
-            
+            document.querySelector('#quiz-screen .container').prepend(auditingTag);
             startQuiz(userProductName); // Start the actual quiz
         });
     };
@@ -572,27 +566,28 @@ document.addEventListener('DOMContentLoaded', () => {
 const style = document.createElement('style');
 style.innerHTML = `
 #auditing-tag {
-    background-color: #EFF6FF;
-    color: var(--brand-blue, #2979FF);
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
+    position: absolute;
+    top: 22px; /* Vertically align with smiley */
+    right: 75px; /* Smiley is 60px wide + 15px gap */
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    border: 1px solid #DBEAFE;
+    letter-spacing: 0.5px;
     white-space: nowrap;
+    max-width: 150px; /* Prevent long names from breaking layout */
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 250px;
-    margin: 0 auto;
+    text-align: right;
+    z-index: 11; /* Above smiley container */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     #auditing-tag {
-        font-size: 0.65rem;
-        padding: 4px 10px;
-        max-width: 120px;
+        max-width: 100px;
+        font-size: 0.6rem;
+        top: 24px;
+        right: 65px; /* Adjust gap for smaller screens */
     }
 }
 
