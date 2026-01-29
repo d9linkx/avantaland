@@ -62,14 +62,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const eliteSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3'); // Success/Win sound
 
     const questions = [
-        { question: "Is the customer problem you're trying to solve a 'Top 3' problem?", proTip: "Is your customer so stressed by this problem that they would pay some money to fix it today?" },
-        { question: "Can a 10-year-old understand you?", proTip: "If you explain your business idea or model to a 10-year-old child, can they explain it back to you correctly without being confused?" },
-        { question: "Do you know who NOT to sell to?", proTip: "Can you list 3 types of people you will refuse to offer your products to so you can stay focused on your real customers?" },
-        { question: "Is that product, solution, or business something you can launch in 30 days?", proTip: "Is it possible to start selling a simple version of that product or service that solves just ONE main problem, in less than a month, and still make sales?" },
-        { question: "Have you talked to 10 total strangers about your business or product idea?", proTip: "Do you have a list of 10 people who don’t know you but will give you honest, brutal feedback on what they don't like about your product/service?" },
-        { question: "Is your product up to 50% better than what they already use?", proTip: "Is your solution much better than what they  use right now, or are you just 'slightly cheaper' than the others?" },
-        { question: "Has anyone paid you for your product before launch?", proTip: "Have you asked a customer to pay (or sign a letter of near-future payment) before the product is even ready?" },
-        { question: "Do you know where your customers 'live'?", proTip: "Can you name the exact physical or online location where you will find your first 50 paying customers?" },
+        { question: "Is the customer problem you're trying to solve a 'Top 3' problem?", proTip: "Is your potential current customer so stressed by this problem that they would pay some money to fix it today?" },
+        { question: "Can a 10-year-old understand you?", proTip: "If you explain your business idea to a 10-year-old child, can they explain it back to you correctly without being confused?" },
+        { question: "Do you know who NOT to sell to?", proTip: "Can you list 3 types of people you will refuse to offer this product/service to so you can stay focused on your real target audience?" },
+        { question: "Can that product, solution, or business launch in 30 days?", proTip: "Is it possible to start selling the simplest version of that product that solves just ONE main problem, in less than a month, and still make sales?" },
+        { question: "Have you talked to 10 total strangers about your business or product idea?", proTip: "Do you have a list of 10 people who don’t know you but will give you honest, brutal feedback on what they don't like about what your product is selling or the method you're using?" },
+        { question: "Is your product up to 50% better than what your target audience already uses?", proTip: "Can they see at least 5 out of 10 clear reasons why they should patronize and stop using what they already used before you came into the picture?" },
+        { question: "Has anyone paid you for your product before launch?", proTip: "Have you asked for or received a customer payment for what your product sells (or signed a letter of near-future payment) before the product is even ready to use?" },
+        { question: "Do you know where your potential or current customers 'live'?", proTip: "Can you name the exact physical or online location where you will find your first 50 paying customers?" },
         { question: "Do you know your product's 'Death Date'?", proTip: "If you make $0 after sales, do you know exactly what date your business runs out of cash and dies?" },
         { question: "Are your agreements 'legalised'?", proTip: "If you have a partner or collaborate with someone or another business, do you have a signed document that says who does what and what happens if someone does quits, dies, commits crimes, or works with a competitor?" },
         { question: "Are you ready to fire your family member or friend?", proTip: "Are you willing to fire a friend or family member if they are working poorly or hurting the business?" },
@@ -311,25 +311,26 @@ document.addEventListener('DOMContentLoaded', () => {
             let proTipTextToDisplay = question.proTip;
 
             if (productName) {
-                const nameHtml = `<strong>${productName}</strong>`;
-                const applyReplacements = (text) => {
+                const applyReplacements = (text, replacement) => {
                     let newText = text;
                     // Specific phrases first to avoid partial matches
-                    newText = newText.replace(/your business or product idea/gi, nameHtml);
-                    newText = newText.replace(/that product, solution, or business/gi, nameHtml);
-                    newText = newText.replace(/your business idea/gi, nameHtml);
-                    newText = newText.replace(/your product idea/gi, nameHtml);
-                    newText = newText.replace(/your product's/gi, `${nameHtml}'s`);
-                    newText = newText.replace(/your business/gi, nameHtml);
-                    newText = newText.replace(/your product/gi, nameHtml);
-                    newText = newText.replace(/the product/gi, nameHtml);
-                    newText = newText.replace(/your solution/gi, nameHtml);
-                    newText = newText.replace(/product\/service/gi, nameHtml);
+                    newText = newText.replace(/your business or product idea/gi, replacement);
+                    newText = newText.replace(/that product, solution, or business/gi, replacement);
+                    newText = newText.replace(/your business idea/gi, replacement);
+                    newText = newText.replace(/your product idea/gi, replacement);
+                    newText = newText.replace(/your product's/gi, `${replacement}'s`);
+                    newText = newText.replace(/your business/gi, replacement);
+                    newText = newText.replace(/your product/gi, replacement);
+                    newText = newText.replace(/the product/gi, replacement);
+                    newText = newText.replace(/your solution/gi, replacement);
+                    newText = newText.replace(/product\/service/gi, replacement);
                     return newText;
                 };
 
-                questionTextToDisplay = applyReplacements(questionTextToDisplay);
-                proTipTextToDisplay = applyReplacements(proTipTextToDisplay);
+                // Use plain text for the question to avoid breaking the typewriter effect
+                questionTextToDisplay = applyReplacements(questionTextToDisplay, productName);
+                // Use HTML for the pro tip since it's rendered directly (not typed)
+                proTipTextToDisplay = applyReplacements(proTipTextToDisplay, `<strong>${productName}</strong>`);
             }
             typeWriter(questionTextToDisplay, questionText);
             questionProTip.innerHTML = proTipTextToDisplay;
