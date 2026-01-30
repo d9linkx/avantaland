@@ -246,6 +246,9 @@ ul { list-style: none; }
 .desktop-nav {
     flex: 0 1 auto;
     margin-left: auto;
+    flex: 1;
+    display: flex;
+    justify-content: center;
 }
 
 .desktop-nav ul { display: flex; gap: 32px; }
