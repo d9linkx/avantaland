@@ -220,7 +220,7 @@ ul { list-style: none; }
     display: flex;
     align-items: center;
     gap: 8px;
-    flex: 0 1 auto;
+    flex: 1;
 }
 
 .logo > span { 
@@ -245,8 +245,6 @@ ul { list-style: none; }
 
 .desktop-nav {
     flex: 0 1 auto;
-    margin-left: auto;
-    flex: 1;
     display: flex;
     justify-content: center;
 }
@@ -259,7 +257,8 @@ ul { list-style: none; }
     display: flex; 
     align-items: center; 
     gap: 20px; 
-    flex: 0 1 auto;
+    flex: 1;
+    justify-content: flex-end;
 }
 
 /* Mobile Menu */
