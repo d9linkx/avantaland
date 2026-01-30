@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             1.  **Role**: Act as a senior partner at a venture capital firm who is also a master researcher. You are direct, insightful, and focused on execution.
             2.  **Context First**: Base your answer primarily on the "FULL STRATEGY CONTENT" provided above. If the user asks about the specific truth, quote or paraphrase the strategy.
             3.  **Expand with Expertise**: Use your research capabilities and universal business knowledge to provide high-level, accurate answers for any industry or business model mentioned.
-            4.  **Tone**: Use a "tough love" coaching tone. Be encouraging but brutal about the reality of business.
+            4.  **Tone**: Use a "tough love" coaching tone. **Start with empathy**—acknowledge how hard this specific challenge is for founders—then pivot to the brutal reality and the solution.
             5.  **Format**: Use bolding (e.g., **key point**) for emphasis. Keep paragraphs short.
             6.  **Conciseness**: Keep your response under 150 words unless the user asks for a detailed explanation.
         `;
@@ -121,29 +121,72 @@ document.addEventListener('DOMContentLoaded', () => {
             // ID is 1-based in the new sheet structure
             const response = await fetch(`${SCRIPT_URL}?action=getTruth&id=${index + 1}`);
             const data = await response.json();
-            
-            if (data) {
+
+            // Normalize possible response shapes:
+            // - { result: 'success', data: {...} }
+            // - { Title: ..., Deep_Dive_HTML: ... }
+            // - [ { Title: ..., Deep_Dive_HTML: ... } ]
+            let payload = null;
+            if (!data) payload = null;
+            else if (data.result && data.data) payload = data.data;
+            else if (Array.isArray(data) && data.length) payload = data[0];
+            else payload = data;
+
+            if (payload) {
+                // Debug: log the payload shape so devs can see what the API returned
+                console.debug('[Lab] getTruth payload keys:', Object.keys(payload));
                 // Fetch content specifically from Column C (Deep_Dive_HTML)
                 // Check multiple casing variations to be safe
-                let rawContent = data.Deep_Dive_HTML || data.deep_dive_html || data.DeepDiveHTML || "";
+                let rawContent = payload.Deep_Dive_HTML || payload.deep_dive_html || payload.DeepDiveHTML || payload.deepDive || payload.hook || "";
 
+                // If not found yet, try to discover any key that mentions 'deep' or 'dive' (covers odd column names)
                 if (!rawContent) {
-                    // Fallback: If the backend is sending the old structure where 'hook' might contain the HTML
-                    rawContent = data.deepDive || (data.hook && data.hook.length > 100 ? data.hook : "") || "";
+                    for (const k of Object.keys(payload)) {
+                        const kl = k.toLowerCase();
+                        if (kl.includes('deep') || kl.includes('dive')) {
+                            const val = payload[k];
+                            if (typeof val === 'string' && val.trim()) {
+                                rawContent = val;
+                                break;
+                            }
+                            // If nested object, try to find an html/text field inside it
+                            if (val && typeof val === 'object') {
+                                for (const k2 of Object.keys(val)) {
+                                    const kl2 = k2.toLowerCase();
+                                    if (kl2.includes('html') || kl2.includes('text') || kl2.includes('content')) {
+                                        const vv = val[k2];
+                                        if (typeof vv === 'string' && vv.trim()) {
+                                            rawContent = vv;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (rawContent) break;
+                            }
+                        }
+                    }
                 }
-                
+
+                // If the field contains an object (sometimes Apps Script returns structured rows), try common paths
+                if (!rawContent && payload.fields && typeof payload.fields === 'object') {
+                    rawContent = payload.fields.Deep_Dive_HTML || payload.fields.deep_dive_html || '';
+                }
+
                 // Format content: Convert newlines to HTML paragraphs if not already HTML
-                let formattedContent = rawContent;
-                if (rawContent && !rawContent.includes('<p>')) {
-                    formattedContent = rawContent.split('\n').map(para => {
+                let formattedContent = rawContent || '';
+                if (formattedContent && !formattedContent.includes('<p>')) {
+                    formattedContent = formattedContent.split('\n').map(para => {
                         const trimmed = para.trim();
                         return trimmed ? `<p>${trimmed}</p>` : '';
                     }).join('');
                 }
 
-                // Extract Hook from content (First Paragraph)
-                let hookText = "Unlock the strategy to learn more.";
-                if (formattedContent) {
+                // Debug: show what was found for rawContent/formattedContent
+                console.debug('[Lab] rawContent length:', (rawContent || '').length, 'formattedContent length:', (formattedContent || '').length);
+
+                // Extract Hook from content (First Paragraph) but prefer explicit Hook field if present
+                let hookText = payload.hook || payload.Hook || "Unlock the strategy to learn more.";
+                if ((!hookText || hookText === '') && formattedContent) {
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = formattedContent;
                     const firstPara = tempDiv.querySelector('p');
@@ -154,11 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const adaptedData = {
-                    title: data.Title || data.title || truthTitles[index],
+                    title: payload.Title || payload.title || truthTitles[index],
                     hook: hookText,
-                    fix: "See the full strategy below.",
+                    fix: payload.fix || "See the full strategy below.",
                     deepDive: formattedContent || "Content is being uploaded.",
-                    action: "Complete the steps in the strategy."
+                    action: payload.action || "Complete the steps in the strategy."
                 };
 
                 truthsCache[index] = adaptedData;
