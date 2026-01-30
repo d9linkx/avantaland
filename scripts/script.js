@@ -2,6 +2,41 @@ function initializeSiteFunctionality() {
     // --- Mobile Menu Toggle ---
     const menuBtn = document.querySelector('.mobile-menu-btn');
     const mobileNav = document.querySelector('.mobile-nav');
+
+    // --- Inject Blog Link ---
+    const addBlogLink = () => {
+        // Desktop Header
+        const desktopNavUl = document.querySelector('.desktop-nav ul');
+        if (desktopNavUl && !desktopNavUl.querySelector('a[href="blog.html"]')) {
+            const li = document.createElement('li');
+            li.innerHTML = '<a href="blog.html">Blog</a>';
+            desktopNavUl.appendChild(li);
+        }
+
+        // Mobile Menu
+        if (mobileNav && !mobileNav.querySelector('a[href="blog.html"]')) {
+            const blogLink = document.createElement('a');
+            blogLink.href = 'blog.html';
+            blogLink.textContent = 'Blog';
+            const firstBtn = mobileNav.querySelector('.btn');
+            if (firstBtn) mobileNav.insertBefore(blogLink, firstBtn);
+            else mobileNav.appendChild(blogLink);
+        }
+
+        // Footer (Target 2nd column)
+        const footerCols = document.querySelectorAll('.footer-col');
+        if (footerCols.length > 1) {
+            const targetCol = footerCols[1];
+            if (targetCol && !targetCol.querySelector('a[href="blog.html"]')) {
+                const blogLink = document.createElement('a');
+                blogLink.href = 'blog.html';
+                blogLink.textContent = 'Blog';
+                targetCol.appendChild(blogLink);
+            }
+        }
+    };
+    addBlogLink();
+
     const mobileLinks = document.querySelectorAll('.mobile-nav a');
 
     // --- Header CTA Customization ---
