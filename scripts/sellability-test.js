@@ -32,8 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const persuasionContent = document.getElementById('results-persuasion-content');
 
     // --- App State ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYztWPZRaAxSA2uGlseKKIn8BOLA7VTfqQ3plhmSxQwdWUt_qKaLNtN_xqm-5v0N5e/exec';
-    let currentQuestionIndex = 0;
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz
     let userAnswers = [];
     let userFirstName = '';
     let userProductName = '';

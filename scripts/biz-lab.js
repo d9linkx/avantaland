@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Only run on the lab page
     if (!document.querySelector('.lab-main')) return;
 
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYztWPZRaAxSA2uGlseKKIn8BOLA7VTfqQ3plhmSxQwdWUt_qKaLNtN_xqm-5v0N5e/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzc15roxFieyBuiRS5X7bUhe-zCDI6VRQTimFZFp8zwL5cKFG3lCdUNheF6R_B2a0co/exec';
     
     // DOM Elements
     const projectNameEl = document.getElementById('lab-project-name');
@@ -60,11 +60,46 @@ document.addEventListener('DOMContentLoaded', () => {
         if (truthsCache[index]) return truthsCache[index];
 
         try {
-            const response = await fetch(`${SCRIPT_URL}?action=getTruth&id=${index}`);
+            // ID is 1-based in the new sheet structure
+            const response = await fetch(`${SCRIPT_URL}?action=getTruth&id=${index + 1}`);
             const data = await response.json();
-            if (data && data.title) {
-                truthsCache[index] = data;
-                return data;
+            
+            if (data) {
+                // Adapt new 3-column structure (ID, Title, Deep_Dive_HTML) to UI
+                // Handle potential key variations from doGet
+                let rawContent = data.Deep_Dive_HTML || data.deepDive || (data.hook && data.hook.length > 100 ? data.hook : "") || "";
+                
+                // Format content: Convert newlines to HTML paragraphs if not already HTML
+                let formattedContent = rawContent;
+                if (rawContent && !rawContent.includes('<p>')) {
+                    formattedContent = rawContent.split('\n').map(para => {
+                        const trimmed = para.trim();
+                        return trimmed ? `<p>${trimmed}</p>` : '';
+                    }).join('');
+                }
+
+                // Extract Hook from content (First Paragraph)
+                let hookText = "Unlock the strategy to learn more.";
+                if (formattedContent) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = formattedContent;
+                    const firstPara = tempDiv.querySelector('p');
+                    if (firstPara) {
+                        hookText = firstPara.innerText;
+                        if (hookText.length > 200) hookText = hookText.substring(0, 200) + "...";
+                    }
+                }
+
+                const adaptedData = {
+                    title: data.Title || data.title || truthTitles[index],
+                    hook: hookText,
+                    fix: "See the full strategy below.",
+                    deepDive: formattedContent || "Content is being uploaded.",
+                    action: "Complete the steps in the strategy."
+                };
+
+                truthsCache[index] = adaptedData;
+                return adaptedData;
             }
         } catch (e) {
             console.error("Fetch error", e);
