@@ -7,6 +7,50 @@
     min-height: 100vh;
 }
 
+.lab-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+}
+
+.lab-content {
+    min-width: 0; /* Prevent grid blowout */
+}
+
+/* --- Sidebar --- */
+.lab-sidebar {
+    background: white;
+    border-radius: 24px;
+    padding: 1.5rem;
+    border: 1px solid #E2E8F0;
+    height: fit-content;
+    position: sticky;
+    top: 140px;
+}
+
+.lab-sidebar h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.community-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.feed-item {
+    font-size: 0.9rem;
+    color: #64748B;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed #E2E8F0;
+}
+
+.feed-item strong { color: #1E293B; }
+.feed-item span { color: var(--accent-blue); font-weight: 600; }
+
 /* --- HUD Section --- */
 .lab-hud {
     background: #FFFFFF;
@@ -37,6 +81,12 @@
     color: #1E293B;
 }
 
+.hud-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 .rank-badge {
     display: inline-block;
     padding: 6px 16px;
@@ -46,6 +96,12 @@
     font-weight: 700;
     font-size: 0.9rem;
     border: 1px solid #DBEAFE;
+}
+
+.status-badge {
+    font-size: 0.9rem;
+    color: #64748B;
+    font-weight: 600;
 }
 
 /* Progress Ring */
@@ -101,6 +157,38 @@
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
 }
 
+/* --- Filter Controls --- */
+.lab-controls {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: white;
+    border: 1px solid #E2E8F0;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748B;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background: #1E293B;
+    color: white;
+    border-color: #1E293B;
+}
+
+/* Priority Fix Highlight */
+.truth-card.priority {
+    border: 2px solid var(--accent-yellow);
+    box-shadow: 0 0 15px rgba(255, 214, 0, 0.15);
+}
+
 .truth-number {
     font-size: 0.8rem;
     font-weight: 700;
@@ -145,6 +233,11 @@
 .truth-card.completed .truth-status-icon {
     background: #FFFFFF;
     color: var(--accent-blue);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.truth-card.completed.priority {
+    border-color: var(--accent-blue);
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
 }
 
@@ -257,6 +350,35 @@
 .panel-section { margin-bottom: 2rem; }
 .panel-section h4 { font-size: 0.9rem; text-transform: uppercase; color: #94A3B8; letter-spacing: 1px; margin-bottom: 0.5rem; }
 .panel-section p { color: #334155; font-size: 1.05rem; line-height: 1.7; }
+.panel-section .hook-text { font-weight: 700; color: #1E293B; font-size: 1.2rem; }
+
+.action-box {
+    background: #F8FAFC;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid var(--accent-blue);
+}
+
+.btn-unlock {
+    width: 100%;
+    padding: 12px;
+    background: #F1F5F9;
+    border: 1px dashed #94A3B8;
+    color: #64748B;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    margin-bottom: 1rem;
+}
+
+.btn-unlock:hover {
+    background: #E2E8F0;
+    color: #1E293B;
+    border-style: solid;
+}
+
+.deep-dive-content { animation: fadeIn 0.5s ease; }
 
 .btn-fix {
     width: 100%;
@@ -272,7 +394,30 @@
 }
 .btn-fix:hover { background: #1E60CC; }
 
+/* --- Advanced Lab --- */
+.advanced-lab {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: #1D1D1F;
+    border-radius: 16px;
+    color: white;
+    text-align: center;
+}
+.advanced-lab h3 { color: white; margin-bottom: 0.5rem; }
+.advanced-lab p { color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; }
+.btn-upgrade {
+    background: var(--accent-yellow);
+    color: black;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+}
+
 @media (max-width: 768px) {
+    .lab-layout { grid-template-columns: 1fr; }
+    .lab-sidebar { display: none; } /* Hide sidebar on mobile or move to bottom */
     .lab-hud {
         flex-direction: column;
         text-align: center;

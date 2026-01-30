@@ -7,36 +7,60 @@
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/biz-lab.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <!-- Header Placeholder -->
     <div id="header-placeholder"></div>
 
     <main class="lab-main">
-        <div class="container">
-            <!-- Mission Control HUD -->
-            <section class="lab-hud fade-in">
-                <div class="hud-identity">
-                    <div class="hud-label">AUDITING PROJECT</div>
-                    <h1 id="lab-project-name">Loading Project...</h1>
-                    <div id="lab-rank" class="rank-badge">Initializing...</div>
-                </div>
-                
-                <div class="hud-progress">
-                    <div class="progress-ring-wrapper">
-                        <svg class="progress-ring" width="120" height="120">
-                            <circle class="progress-ring__circle--bg" stroke="#E2E8F0" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-                            <circle class="progress-ring__circle" stroke="var(--accent-blue)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-                        </svg>
-                        <div class="progress-value"><span id="lab-score">0</span>%</div>
+        <div class="container lab-layout">
+            <div class="lab-content">
+                <!-- Mission Control HUD -->
+                <section class="lab-hud fade-in">
+                    <div class="hud-identity">
+                        <div class="hud-label">AUDITING PROJECT</div>
+                        <h1 id="lab-project-name">Loading Project...</h1>
+                        <div class="hud-meta">
+                            <div id="lab-rank" class="rank-badge">Initializing...</div>
+                            <div id="lab-status" class="status-badge">Status: Checking...</div>
+                        </div>
                     </div>
-                </div>
-            </section>
+                    
+                    <div class="hud-progress">
+                        <div class="progress-ring-wrapper">
+                            <svg class="progress-ring" width="120" height="120">
+                                <circle class="progress-ring__circle--bg" stroke="#E2E8F0" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                                <circle class="progress-ring__circle" stroke="var(--accent-blue)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                            </svg>
+                            <div class="progress-value"><span id="lab-score">0</span>%</div>
+                        </div>
+                    </div>
+                </section>
 
-            <!-- Truth Grid -->
-            <section id="truth-grid" class="truth-grid fade-in">
-                <!-- Cards will be injected by JS -->
-            </section>
+                <!-- Filter Controls -->
+                <div class="lab-controls fade-in">
+                    <button class="filter-btn active" data-filter="all">All Missions</button>
+                    <button class="filter-btn" data-filter="priority">Priority Fixes</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+
+                <!-- Truth Grid -->
+                <section id="truth-grid" class="truth-grid fade-in">
+                    <!-- Cards will be injected by JS -->
+                </section>
+
+                <!-- Advanced Lab (Locked) -->
+                <section id="advanced-lab" class="advanced-lab fade-in" style="display:none;">
+                    <!-- Injected by JS -->
+                </section>
+            </div>
+
+            <!-- Community Bridge Sidebar -->
+            <aside class="lab-sidebar fade-in">
+                <h3>Live Lab Activity</h3>
+                <div id="community-feed" class="community-feed"></div>
+            </aside>
         </div>
     </main>
 
