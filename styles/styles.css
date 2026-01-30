@@ -137,6 +137,25 @@ ul { list-style: none; }
     transform: translateY(-2px);
 }
 
+.btn-header-cta {
+    background-color: #1D1D1F;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 28px;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    margin-right: -26px;
+}
+
+.btn-header-cta:hover {
+    background-color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
 .btn-secondary {
     background-color: transparent;
     color: var(--text-main);
@@ -200,10 +219,9 @@ ul { list-style: none; }
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 20px;
-    padding: 15px 20px;
+    padding: 15px;
     box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1);
     transition: var(--transition);
-    padding-left: 10px;
 }
 
 .nav-container {
@@ -221,6 +239,7 @@ ul { list-style: none; }
     align-items: center;
     gap: 8px;
     flex: 1;
+    margin-left: -20px;
 }
 
 .logo > span { 

@@ -4,11 +4,19 @@ function initializeSiteFunctionality() {
     const mobileNav = document.querySelector('.mobile-nav');
     const mobileLinks = document.querySelectorAll('.mobile-nav a');
 
+    // --- Header CTA Customization ---
+    // Give the header CTA a unique class for styling
+    const headerCta = document.querySelector('#main-header .nav-actions .btn');
+    if (headerCta) {
+        headerCta.classList.add('btn-header-cta');
+        headerCta.classList.remove('btn-primary');
+    }
+
     // Handle dynamic "Start Learning" button link
     // On the homepage, it links to #join. On other pages, it links to courses.html.
     const isHomePage = window.location.pathname === '/' || window.location.pathname.endsWith('index.html');
     if (!isHomePage) {
-        const startLearningBtn = document.querySelector('.nav-actions a.btn-primary');
+        const startLearningBtn = document.querySelector('.nav-actions .btn');
         const mobileStartLearningLink = Array.from(mobileLinks).find(link => link.href.endsWith('#join'));
         
         if (startLearningBtn && startLearningBtn.href.endsWith('#join')) {
