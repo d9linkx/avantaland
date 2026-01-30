@@ -191,7 +191,7 @@ ul { list-style: none; }
     top: 20px;
     left: 0;
     right: 0;
-    width: 98%;
+    width: 88%;
     max-width: 1800px;
     margin: 0 auto;
     z-index: 1000;
@@ -199,7 +199,7 @@ ul { list-style: none; }
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 50px;
+    border-radius: 20px;
     padding: 15px 24px;
     box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1);
     transition: var(--transition);
