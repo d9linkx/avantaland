@@ -41,7 +41,6 @@ body {
 
 .mobile-nav {
     background-color: var(--lab-surface);
-    border-bottom: 1px solid var(--border-color);
 }
 
 footer {
