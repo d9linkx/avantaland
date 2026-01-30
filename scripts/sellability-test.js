@@ -522,7 +522,16 @@ document.addEventListener('DOMContentLoaded', () => {
         ctaHook.innerHTML = `I’ve identified the exact 'Brutal Truths' that kill projects like <strong>${userProductName}</strong>. Don't wait to find them out the hard way.`;
         ctaButton.before(ctaHook);
 
-        ctaButton.innerHTML = `&gt; [ Fix My Blind Spots &amp; Get the 33 Truths ($6.99) ]`;
+        ctaButton.innerHTML = `&gt; [ Unlock the Lab + 33 Truths ($6.99) ]`;
+        ctaButton.removeAttribute('target'); // Remove _blank if it was there
+        ctaButton.href = '#'; // Prevent default navigation initially
+        
+        ctaButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Redirect to Biz Lab with email
+            const email = testEmailInput.value.trim();
+            window.location.href = `biz-lab.html?email=${encodeURIComponent(email)}`;
+        });
 
         // --- Add Retake Link ---
         const oldRetakeLink = document.getElementById('retake-test-link');

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementation Lab | Avantaland Academy</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/biz-lab.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <main class="lab-main">
+        <div class="container">
+            <!-- Mission Control HUD -->
+            <section class="lab-hud fade-in">
+                <div class="hud-identity">
+                    <div class="hud-label">AUDITING PROJECT</div>
+                    <h1 id="lab-project-name">Loading Project...</h1>
+                    <div id="lab-rank" class="rank-badge">Initializing...</div>
+                </div>
+                
+                <div class="hud-progress">
+                    <div class="progress-ring-wrapper">
+                        <svg class="progress-ring" width="120" height="120">
+                            <circle class="progress-ring__circle--bg" stroke="#E2E8F0" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                            <circle class="progress-ring__circle" stroke="var(--accent-blue)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                        </svg>
+                        <div class="progress-value"><span id="lab-score">0</span>%</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Truth Grid -->
+            <section id="truth-grid" class="truth-grid fade-in">
+                <!-- Cards will be injected by JS -->
+            </section>
+        </div>
+    </main>
+
+    <!-- Onboarding Modal -->
+    <div id="onboarding-modal" class="lab-modal-overlay">
+        <div class="lab-modal">
+            <div class="modal-header">
+                <h2>Create Your Lab Account</h2>
+                <p>Initialize your project dashboard to start tracking progress.</p>
+            </div>
+            <form id="onboarding-form">
+                <div class="form-group">
+                    <label for="lab-email">Email Address</label>
+                    <input type="email" id="lab-email" required placeholder="Enter the email you used for payment">
+                </div>
+                <div class="form-group">
+                    <label for="lab-project">Project Name</label>
+                    <input type="text" id="lab-project" required placeholder="e.g. Project Alpha">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Initialize Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Truth Detail Side Panel -->
+    <div id="truth-panel-overlay" class="panel-overlay"></div>
+    <div id="truth-side-panel" class="side-panel">
+        <button id="close-panel-btn" class="close-btn">&times;</button>
+        <div class="panel-content">
+            <div id="panel-header" class="panel-header">
+                <span id="panel-truth-number" class="truth-badge">Truth #01</span>
+                <h2 id="panel-truth-title">The Problem Solved</h2>
+            </div>
+            <div id="panel-body"></div>
+        </div>
+    </div>
+
+    <script src="scripts/script.js"></script>
+    <script src="scripts/biz-lab.js"></script>
+</body>
+</html>
