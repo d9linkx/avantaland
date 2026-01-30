@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
 
     // --- GEMINI AI CONFIGURATION ---
-    const GEMINI_API_KEY = 'AIzaSyBKCxjvX_TX9ERHwjaZaWyg0Jh1Hc8vOzc';
+    const GEMINI_API_KEY = 'AIzaSyBKCxjvX_TX9ERHwjaZaWyg0Jh1Hc8vOzc'; // Ensure this key is active and has quota
     
     const askGemini = async (question, context) => {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // ID is 1-based in the new sheet structure
-            const response = await fetch(`${SCRIPT_URL}?action=getTruth&id=${index + 1}`);
+            const response = await fetch(`${SCRIPT_URL}?action=getTruth&id=${index + 1}`, { method: 'GET' });
             const data = await response.json();
 
             // Normalize possible response shapes:
@@ -172,10 +172,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     rawContent = payload.fields.Deep_Dive_HTML || payload.fields.deep_dive_html || '';
                 }
 
+                // Normalize escaped sequences and HTML entities that may come from Apps Script
+                if (typeof rawContent === 'string') {
+                    // Convert literal backslash-n sequences to actual newlines
+                    rawContent = rawContent.replace(/\\n/g, '\n');
+                    // Remove stray carriage returns
+                    rawContent = rawContent.replace(/\r/g, '');
+                    // Unescape simple HTML entities if present (e.g. &lt;p&gt;)
+                    if (rawContent.includes('&lt;') || rawContent.includes('&gt;') || rawContent.includes('&amp;')) {
+                        rawContent = rawContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                    }
+                } else if (Array.isArray(rawContent)) {
+                    rawContent = rawContent.join('\n\n');
+                } else if (rawContent && typeof rawContent === 'object') {
+                    // If the sheet returned a structured object, try to pull a text field
+                    for (const k of Object.keys(rawContent)) {
+                        if (typeof rawContent[k] === 'string') {
+                            rawContent = rawContent[k];
+                            break;
+                        }
+                    }
+                }
+
                 // Format content: Convert newlines to HTML paragraphs if not already HTML
                 let formattedContent = rawContent || '';
                 if (formattedContent && !formattedContent.includes('<p>')) {
-                    formattedContent = formattedContent.split('\n').map(para => {
+                    formattedContent = formattedContent.split(/\r?\n/).map(para => {
                         const trimmed = para.trim();
                         return trimmed ? `<p>${trimmed}</p>` : '';
                     }).join('');
@@ -199,9 +221,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const adaptedData = {
                     title: payload.Title || payload.title || truthTitles[index],
                     hook: hookText,
-                    fix: payload.fix || "See the full strategy below.",
+                    fix: payload.fix || "Read the full strategy below for the fix.",
                     deepDive: formattedContent || "Content is being uploaded.",
-                    action: payload.action || "Complete the steps in the strategy."
+                    action: payload.action || "Execute the steps in the strategy."
                 };
 
                 truthsCache[index] = adaptedData;
