@@ -399,6 +399,81 @@
 }
 .btn-fix:hover { background: #1E60CC; }
 
+/* --- AI Chat Interface --- */
+.lab-chat-section {
+    margin-top: 3rem;
+    border-top: 1px solid #E2E8F0;
+    padding-top: 2rem;
+}
+
+.btn-chat-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    color: #64748B;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-chat-toggle:hover {
+    background: #F8FAFC;
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+.chat-interface {
+    margin-top: 1.5rem;
+    background: #F8FAFC;
+    border-radius: 16px;
+    padding: 1rem;
+    border: 1px solid #E2E8F0;
+}
+
+.chat-history {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.chat-message { display: flex; }
+.chat-message.ai { justify-content: flex-start; }
+.chat-message.user { justify-content: flex-end; }
+
+.chat-bubble {
+    max-width: 85%;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.chat-message.ai .chat-bubble {
+    background: white;
+    border-radius: 12px 12px 12px 0;
+    border: 1px solid #E2E8F0;
+    color: #334155;
+}
+
+.chat-message.user .chat-bubble {
+    background: var(--accent-blue);
+    color: white;
+    border-radius: 12px 12px 0 12px;
+}
+
+.chat-input-area { display: flex; gap: 8px; }
+.chat-input-area input { flex: 1; padding: 10px 15px; border-radius: 50px; border: 1px solid #CBD5E1; outline: none; }
+.chat-input-area button { background: var(--accent-blue); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+.chat-input-area button:hover { transform: scale(1.05); }
+
 /* --- Advanced Lab --- */
 .advanced-lab {
     margin-top: 3rem;

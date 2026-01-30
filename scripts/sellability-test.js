@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const persuasionContent = document.getElementById('results-persuasion-content');
 
     // --- App State ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzc15roxFieyBuiRS5X7bUhe-zCDI6VRQTimFZFp8zwL5cKFG3lCdUNheF6R_B2a0co/exec';
     let userAnswers = [];
     let userFirstName = '';
     let userProductName = '';

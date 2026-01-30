@@ -15,6 +15,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const sidePanel = document.getElementById('truth-side-panel');
     const panelOverlay = document.getElementById('truth-panel-overlay');
 
+    // Audio Assets
+    const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+    const messageSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
+
+    // --- GEMINI AI CONFIGURATION ---
+    const GEMINI_API_KEY = 'AIzaSyBKCxjvX_TX9ERHwjaZaWyg0Jh1Hc8vOzc';
+    
+    const askGemini = async (question, context) => {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        
+        // Safety check for context
+        const title = context.title || "Business Strategy";
+        const summary = context.hook || "No summary available.";
+        const rawDeepDive = context.deepDive || "";
+        // Strip HTML tags from context for cleaner prompt
+        const cleanContent = rawDeepDive.replace(/<[^>]*>/g, ' ').substring(0, 15000); // Increase limit for better context
+        
+        const prompt = `
+            You are "The Lab AI", an elite business consultant and world-class researcher for Avantaland Academy.
+            
+            **YOUR PERSONA & CAPABILITIES:**
+            1.  **World-Class Researcher**: You play the role of the best researcher with capabilities to search the internet for trends, updates, happenings, live updates, knowledge, and expert statements.
+            2.  **Universal Business Expert**: You are knowledgeable in ALL types of businesses (big or small, online or physical), all types of products or services, and all industries.
+            3.  **Brutal Truth Analyst**: You are analyzing a specific business principle called a "Brutal Truth" from the Avantaland manuscript.
+            
+            CONTEXT (The "Brutal Truth" the user is currently studying):
+            ---------------------------------------------------
+            TITLE: ${title}
+            SUMMARY/HOOK: ${summary}
+            FULL STRATEGY CONTENT: ${cleanContent}
+            ---------------------------------------------------
+            
+            USER QUESTION: "${question}"
+            
+            INSTRUCTIONS:
+            1.  **Role**: Act as a senior partner at a venture capital firm who is also a master researcher. You are direct, insightful, and focused on execution.
+            2.  **Context First**: Base your answer primarily on the "FULL STRATEGY CONTENT" provided above. If the user asks about the specific truth, quote or paraphrase the strategy.
+            3.  **Expand with Expertise**: Use your research capabilities and universal business knowledge to provide high-level, accurate answers for any industry or business model mentioned.
+            4.  **Tone**: Use a "tough love" coaching tone. Be encouraging but brutal about the reality of business.
+            5.  **Format**: Use bolding (e.g., **key point**) for emphasis. Keep paragraphs short.
+            6.  **Conciseness**: Keep your response under 150 words unless the user asks for a detailed explanation.
+        `;
+
+        try {
+            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+            if (!response.ok) throw new Error(`API Error: ${response.status}`);
+            const data = await response.json();
+            if (data.candidates && data.candidates[0].content) {
+                return data.candidates[0].content.parts[0].text;
+            } else {
+                return "I couldn't process that. Please try rephrasing.";
+            }
+        } catch (e) {
+            console.error("Gemini Error:", e);
+            return "I'm having trouble connecting to the neural network right now. Please check your internet connection or try again in a moment.";
+        }
+    };
+
     // 33 Truths Data Structure (Titles)
     const truthTitles = [
         "You are unqualified; no amount of prep survives first contact",
@@ -65,9 +123,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             
             if (data) {
-                // Adapt new 3-column structure (ID, Title, Deep_Dive_HTML) to UI
-                // Handle potential key variations from doGet
-                let rawContent = data.Deep_Dive_HTML || data.deepDive || (data.hook && data.hook.length > 100 ? data.hook : "") || "";
+                // Fetch content specifically from Column C (Deep_Dive_HTML)
+                // Check multiple casing variations to be safe
+                let rawContent = data.Deep_Dive_HTML || data.deep_dive_html || data.DeepDiveHTML || "";
+
+                if (!rawContent) {
+                    // Fallback: If the backend is sending the old structure where 'hook' might contain the HTML
+                    rawContent = data.deepDive || (data.hook && data.hook.length > 100 ? data.hook : "") || "";
+                }
                 
                 // Format content: Convert newlines to HTML paragraphs if not already HTML
                 let formattedContent = rawContent;
@@ -138,33 +201,128 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Helper: Open Side Panel
-    const openPanel = (index, title, isCompleted, updateCallback) => {
-        const content = getTruthContent(index);
+    const openPanel = async (index, title, isCompleted, updateCallback) => {
+        clickSound.play().catch(() => {}); // Play click sound
         const panelBody = document.getElementById('panel-body');
         
+        // Loading State
+        panelBody.innerHTML = `
+            <div style="text-align:center; padding: 2rem; color: #64748B;">
+                <p>Accessing Vault...</p>
+            </div>
+        `;
+        sidePanel.classList.add('open');
+        panelOverlay.classList.add('active');
+
         document.getElementById('panel-truth-number').innerText = `Truth #${String(index + 1).padStart(2, '0')}`;
         document.getElementById('panel-truth-title').innerText = title;
 
+        // Fetch Content
+        const content = await fetchTruthContent(index);
+
         panelBody.innerHTML = `
             <div class="panel-section">
-                <h4>The Hook</h4>
-                <p>${content.hook}</p>
+                <h4>Summary</h4>
+                <p class="hook-text">${content.hook}</p>
             </div>
             <div class="panel-section">
-                <h4>The 5-Min Fix</h4>
+                <h4>Quick Fix</h4>
                 <p>${content.fix}</p>
             </div>
             <div class="panel-section">
-                <h4>Deep Dive Strategy</h4>
-                <p>${content.deepDive}</p>
+                <button id="read-full-truth-btn" class="btn-unlock">
+                    <span>Read the full truth</span>
+                </button>
+                <div id="deep-dive-content" class="deep-dive-content" style="display:none;">
+                    ${content.deepDive}
+                </div>
             </div>
-            <div style="margin-top: 3rem;">
+            <div style="margin-top: 2rem;">
                 ${isCompleted 
-                    ? `<button class="btn-fix" style="background:#10B981; cursor:default;">✓ Verified Fixed</button>`
-                    : `<button id="mark-fixed-btn" class="btn-fix">I Have Fixed This</button>`
+                    ? `<button class="btn-fix" style="background:#10B981; cursor:default;">✓ Fix Completed</button>`
+                    : `<button id="mark-fixed-btn" class="btn-fix">Mark completed fixes</button>`
                 }
             </div>
+
+            <!-- AI Chat Interface -->
+            <div class="lab-chat-section">
+                <button id="toggle-chat-btn" class="btn-chat-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Have a question? Ask the Lab AI
+                </button>
+                
+                <div id="lab-chat-interface" class="chat-interface" style="display: none;">
+                    <div id="chat-history" class="chat-history">
+                        <div class="chat-message ai">
+                            <div class="chat-bubble">
+                                I've analyzed <strong>"${title}"</strong>. What specific question do you have about applying this to your business?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Ask a question..." autocomplete="off">
+                        <button id="send-chat-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
         `;
+
+        // Unlock Handler
+        const unlockBtn = document.getElementById('read-full-truth-btn');
+        const deepDiveContent = document.getElementById('deep-dive-content');
+        if (unlockBtn) {
+            unlockBtn.addEventListener('click', () => {
+                unlockBtn.style.display = 'none';
+                deepDiveContent.style.display = 'block';
+            });
+        }
+
+        // Chat Handlers
+        const toggleChatBtn = document.getElementById('toggle-chat-btn');
+        const chatInterface = document.getElementById('lab-chat-interface');
+        const chatInput = document.getElementById('chat-input');
+        const sendChatBtn = document.getElementById('send-chat-btn');
+        const chatHistory = document.getElementById('chat-history');
+
+        toggleChatBtn.addEventListener('click', () => {
+            const isHidden = chatInterface.style.display === 'none';
+            chatInterface.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                setTimeout(() => chatInput.focus(), 100);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+        });
+
+        const handleSendMessage = async () => {
+            const question = chatInput.value.trim();
+            if (!question) return;
+
+            // Add User Message
+            chatHistory.innerHTML += `<div class="chat-message user"><div class="chat-bubble">${question}</div></div>`;
+            chatInput.value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Add Loading Indicator
+            const loadingId = 'loading-' + Date.now();
+            chatHistory.innerHTML += `<div class="chat-message ai" id="${loadingId}"><div class="chat-bubble typing">...</div></div>`;
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Call Gemini
+            const answer = await askGemini(question, content);
+            
+            // Remove Loading and Add AI Response
+            document.getElementById(loadingId).remove();
+            chatHistory.innerHTML += `<div class="chat-message ai"><div class="chat-bubble">${answer.replace(/\n/g, '<br>')}</div></div>`;
+            messageSound.play().catch(() => {});
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        };
+
+        sendChatBtn.addEventListener('click', handleSendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSendMessage();
+        });
 
         if (!isCompleted) {
             document.getElementById('mark-fixed-btn').addEventListener('click', () => {
@@ -172,9 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 closePanel();
             });
         }
-
-        sidePanel.classList.add('open');
-        panelOverlay.classList.add('active');
     };
 
     const closePanel = () => {
