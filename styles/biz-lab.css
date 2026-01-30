@@ -379,6 +379,11 @@
 }
 
 .deep-dive-content { animation: fadeIn 0.5s ease; }
+.deep-dive-content p { margin-bottom: 1rem; }
+.deep-dive-content ul, .deep-dive-content ol { margin-bottom: 1rem; padding-left: 1.5rem; color: #334155; }
+.deep-dive-content li { margin-bottom: 0.5rem; }
+.deep-dive-content strong { color: #1E293B; font-weight: 700; }
+.deep-dive-content h5 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #1E293B; }
 
 .btn-fix {
     width: 100%;
