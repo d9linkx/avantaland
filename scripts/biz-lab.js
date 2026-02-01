@@ -200,128 +200,41 @@ document.addEventListener('DOMContentLoaded', () => {
         if (truthsCache[index]) return truthsCache[index];
 
         try {
-            // ID is 1-based in the new sheet structure
-            const response = await fetch(`${SCRIPT_URL}?action=getTruth&id=${index + 1}`, { method: 'GET' });
-            const data = await response.json();
+            const response = await fetch(`truths/truth${index + 1}.html`);
+            if (!response.ok) throw new Error(`Truth file not found: truth${index + 1}.html`);
+            
+            const htmlContent = await response.text();
 
-            // Normalize possible response shapes:
-            // - { result: 'success', data: {...} }
-            // - { Title: ..., Deep_Dive_HTML: ... }
-            // - [ { Title: ..., Deep_Dive_HTML: ... } ]
-            let payload = null;
-            if (!data) payload = null;
-            else if (data.result && data.data) payload = data.data;
-            else if (Array.isArray(data) && data.length) payload = data[0];
-            else payload = data;
-
-            if (payload) {
-                // Debug: log the payload shape so devs can see what the API returned
-                console.debug('[Lab] getTruth payload keys:', Object.keys(payload));
-                // Fetch content specifically from Column C (Deep_Dive_HTML)
-                // Check multiple casing variations to be safe
-                let rawContent = payload.Deep_Dive_HTML || payload.deep_dive_html || payload.DeepDiveHTML || payload.deepDive || payload.hook || "";
-
-                // If not found yet, try to discover any key that mentions 'deep' or 'dive' (covers odd column names)
-                if (!rawContent) {
-                    for (const k of Object.keys(payload)) {
-                        const kl = k.toLowerCase();
-                        if (kl.includes('deep') || kl.includes('dive')) {
-                            const val = payload[k];
-                            if (typeof val === 'string' && val.trim()) {
-                                rawContent = val;
-                                break;
-                            }
-                            // If nested object, try to find an html/text field inside it
-                            if (val && typeof val === 'object') {
-                                for (const k2 of Object.keys(val)) {
-                                    const kl2 = k2.toLowerCase();
-                                    if (kl2.includes('html') || kl2.includes('text') || kl2.includes('content')) {
-                                        const vv = val[k2];
-                                        if (typeof vv === 'string' && vv.trim()) {
-                                            rawContent = vv;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (rawContent) break;
-                            }
-                        }
-                    }
-                }
-
-                // If the field contains an object (sometimes Apps Script returns structured rows), try common paths
-                if (!rawContent && payload.fields && typeof payload.fields === 'object') {
-                    rawContent = payload.fields.Deep_Dive_HTML || payload.fields.deep_dive_html || '';
-                }
-
-                // Normalize escaped sequences and HTML entities that may come from Apps Script
-                if (typeof rawContent === 'string') {
-                    // Convert literal backslash-n sequences to actual newlines
-                    rawContent = rawContent.replace(/\\n/g, '\n');
-                    // Remove stray carriage returns
-                    rawContent = rawContent.replace(/\r/g, '');
-                    // Unescape simple HTML entities if present (e.g. &lt;p&gt;)
-                    if (rawContent.includes('&lt;') || rawContent.includes('&gt;') || rawContent.includes('&amp;')) {
-                        rawContent = rawContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-                    }
-                } else if (Array.isArray(rawContent)) {
-                    rawContent = rawContent.join('\n\n');
-                } else if (rawContent && typeof rawContent === 'object') {
-                    // If the sheet returned a structured object, try to pull a text field
-                    for (const k of Object.keys(rawContent)) {
-                        if (typeof rawContent[k] === 'string') {
-                            rawContent = rawContent[k];
-                            break;
-                        }
-                    }
-                }
-
-                // Format content: Convert newlines to HTML paragraphs if not already HTML
-                let formattedContent = rawContent || '';
-                if (formattedContent && !formattedContent.includes('<p>')) {
-                    formattedContent = formattedContent.split(/\r?\n/).map(para => {
-                        const trimmed = para.trim();
-                        return trimmed ? `<p>${trimmed}</p>` : '';
-                    }).join('');
-                }
-
-                // Debug: show what was found for rawContent/formattedContent
-                console.debug('[Lab] rawContent length:', (rawContent || '').length, 'formattedContent length:', (formattedContent || '').length);
-
-                // Extract Hook from content (First Paragraph) but prefer explicit Hook field if present
-                let hookText = payload.hook || payload.Hook || "Unlock the strategy to learn more.";
-                if ((!hookText || hookText === '') && formattedContent) {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = formattedContent;
-                    const firstPara = tempDiv.querySelector('p');
-                    if (firstPara) {
-                        hookText = firstPara.innerText;
-                        if (hookText.length > 200) hookText = hookText.substring(0, 200) + "...";
-                    }
-                }
-
-                const adaptedData = {
-                    title: payload.Title || payload.title || truthTitles[index],
-                    hook: hookText,
-                    fix: payload.fix || "Read the full strategy below for the fix.",
-                    deepDive: formattedContent || "Content is being uploaded.",
-                    action: payload.action || "Execute the steps in the strategy."
-                };
-
-                truthsCache[index] = adaptedData;
-                return adaptedData;
+            // Extract Hook from content (First Paragraph)
+            let hookText = "Unlock the strategy to learn more.";
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+            const firstPara = tempDiv.querySelector('p');
+            if (firstPara) {
+                hookText = firstPara.innerText;
+                if (hookText.length > 200) hookText = hookText.substring(0, 200) + "...";
             }
+
+            const adaptedData = {
+                title: truthTitles[index],
+                hook: hookText,
+                fix: "Read the full strategy below for the fix.",
+                deepDive: htmlContent,
+                action: "Execute the steps in the strategy."
+            };
+
+            truthsCache[index] = adaptedData;
+            return adaptedData;
         } catch (e) {
             console.error("Fetch error", e);
+            return {
+                title: truthTitles[index],
+                hook: "Content loading...",
+                fix: "Please check your connection.",
+                deepDive: "<p>Content is being uploaded or file is missing.</p>",
+                action: "Retry"
+            };
         }
-        
-        // Fallback
-        return {
-            hook: "Content loading...",
-            fix: "Please check your connection.",
-            deepDive: "If this persists, the content might not be in the database yet.",
-            action: "Retry"
-        };
     };
 
     // Helper: Get Email from URL
@@ -542,12 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Fetch Data from Google Sheet
         try {
-            // In production:
-            // const response = await fetch(`${SCRIPT_URL}?action=getLabProgress&email=${encodeURIComponent(email)}`);
-            // const data = await response.json();
-
             // SIMULATED STATE
             let mockData = {
                 project_name: "Project Alpha",
