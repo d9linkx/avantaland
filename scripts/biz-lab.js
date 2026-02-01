@@ -1,226 +1,185 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Only run on the lab page
-    if (!document.querySelector('.lab-main')) return;
-
-    const SCRIPT_URL = CONFIG.GOOGLE_SCRIPT_URL_APP;
-    
-    // DOM Elements
-    const projectNameEl = document.getElementById('lab-project-name');
-    const rankEl = document.getElementById('lab-rank');
-    const scoreEl = document.getElementById('lab-score');
-    const progressCircle = document.querySelector('.progress-ring__circle');
-    const gridEl = document.getElementById('truth-grid');
-    const onboardingModal = document.getElementById('onboarding-modal');
-    const onboardingForm = document.getElementById('onboarding-form');
-
-    // Audio Assets
-    const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
-    const messageSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
-
-    // --- CHAT SYSTEM ENGINE ---
-    const ChatSystem = {
-        history: [],
-        context: {
-            name: "Founder",
-            project: "Your Project",
-            businessType: "Business"
-        },
-        
-        loadContext: async (email) => {
-            try {
-                const response = await fetch(`${SCRIPT_URL}?action=getUserData&email=${encodeURIComponent(email)}`);
-                const data = await response.json();
-                if (data && data.result !== 'error') {
-                    ChatSystem.context.name = data.name || data.firstName || "Founder";
-                    ChatSystem.context.businessType = data.business || data.project_name || "Business";
-                    ChatSystem.context.project = data.project_name || "Your Project";
-                    
-                    const contextDisplay = document.getElementById('user-context-display');
-                    if(contextDisplay) contextDisplay.innerText = `${ChatSystem.context.businessType} Consultant`;
-                }
-            } catch (e) {
-                console.warn("Could not load user context", e);
-            }
-        },
-
-        callAPI: async (messages) => {
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || `API Error`);
-                return data.choices[0].message.content;
-            } catch (error) {
-                console.error("Chat API Error:", error);
-                throw error;
-            }
-        },
-
-        askConsultant: async (userMessage) => {
-            const systemPrompt = `You are "The Lab Consultant". Context: ${ChatSystem.context.name}, ${ChatSystem.context.businessType}. Tone: Professional, intense, billionaire mentor. End with a specific next step.`;
-            ChatSystem.history.push({ role: "user", content: userMessage });
-            const messages = [{ role: "system", content: systemPrompt }, ...ChatSystem.history.slice(-10)];
-            try {
-                const aiResponse = await ChatSystem.callAPI(messages);
-                ChatSystem.history.push({ role: "assistant", content: aiResponse });
-                ChatSystem.saveChat(userMessage, aiResponse);
-                return aiResponse;
-            } catch (e) {
-                ChatSystem.history.pop(); 
-                return "Connection error. Check API key.";
-            }
-        },
-
-        saveChat: (userMsg, aiMsg) => {
-            const email = getEmailFromUrl();
-            if (!email) return;
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'saveChat', email, userMsg, aiMsg })
-            }).catch(e => console.log("Save failed", e));
-        },
-
-        askResearcher: async (question, truthContext) => {
-            const cleanContent = (truthContext.deepDive || "").replace(/<[^>]*>/g, ' ').substring(0, 5000);
-            const systemPrompt = `Analyze "${truthContext.title}" for ${ChatSystem.context.name}. Content: ${cleanContent}`;
-            try { return await ChatSystem.callAPI([{ role: "system", content: systemPrompt }, { role: "user", content: question }]); } 
-            catch (e) { return "Analysis failed."; }
-        }
-    };
-
-    const truthTitles = [
-        "You are unqualified; no amount of prep survives first contact",
-        "Passion is a poverty trap; the market doesn't care how much you \"love\" your idea",
-        "If you can’t eat \"No\" for breakfast, you'll starve",
-        "You will want to burn your own company to the ground at least 10 times",
-        "Confidence is learned through small wins, not pep talks",
-        "Expect chaos; it’s the default state of early businesses",
-        "Your first plan is almost always wrong; accept it",
-        "Most people want to see you fail so they feel better about staying safe.",
-        "Your idea isn’t unique; someone else is already thinking it",
-        "Validation kills ego. When people will tell you it sucks, listen.",
-        "Building something for yourself is tempting but dangerous",
-        "A small, obsessed niche > a large lukewarm market",
-        "Talking to users before coding is mandatory",
-        "Surveys lie; prototypes don’t",
-        "Solve the bleeding wound today, not the itch they might have next year",
-        "If you aren’t embarrassed by the first version of your MVP, you shipped too late.",
-        "Features are distractions. Focus on outcomes",
-        "You'll iterate more than you plan. Accept it",
-        "Documentation isn’t sexy but will save you weeks",
-        "Your first codebase will suck; refactor later",
-        "UX is the silent growth engine. Ignore at your peril",
-        "A \"good\" product shipped today beats a \"perfect\" one that never exists",
-        "Your friends are liars; they love you, so they’ll let you go bankrupt with a smile.",
-        "Early adopters are gold; casual users are noise",
-        "People don’t buy products. They buy what solves their problem",
-        "Marketing starts before product; awareness is traction",
-        "Feedback is a weapon; use it like a boss, or your competitors will.",
-        "You can't \"growth hack\" a product that nobody wants.",
-        "You can’t do everything, but trying teaches boundaries",
-        "Your network is your early advantage; don’t build in isolation",
-        "Hiring before revenue is a gamble; hire slow, fire fast",
-        "If your mentor only tells you what you want to hear, fire them",
-        "Money won't fix a broken engine; it just makes the crash more spectacular"
+    // --- Data: The 33 Truths ---
+    const truths = [
+        { id: 1, title: "No Prep Survives Contact", category: "foundation" },
+        { id: 2, title: "Passion Is A Trap", category: "foundation" },
+        { id: 3, title: "Eat Rejection For Breakfast", category: "foundation" },
+        { id: 4, title: "Expect To Despair", category: "foundation" },
+        { id: 5, title: "Confidence Comes From Wins", category: "foundation" },
+        { id: 6, title: "Chaos Is Default", category: "foundation" },
+        { id: 7, title: "Your Plan Is Wrong", category: "foundation" },
+        { id: 8, title: "Ignore The Skeptics", category: "foundation" },
+        { id: 9, title: "Idea Is Not Unique", category: "foundation" },
+        { id: 10, title: "Validation Kills Ego", category: "foundation" },
+        { id: 11, title: "Don't Build For You", category: "foundation" },
+        { id: 12, title: "Niche Down Or Die", category: "foundation" },
+        { id: 13, title: "Talk Before You Code", category: "foundation" },
+        { id: 14, title: "Surveys Lie, Prototypes Don't", category: "foundation" },
+        { id: 15, title: "Solve Bleeding Wounds", category: "foundation" },
+        { id: 16, title: "Ship While Embarrassed", category: "foundation" },
+        { id: 17, title: "Features Are Distractions", category: "scaling" },
+        { id: 18, title: "Iterate Over Plan", category: "scaling" },
+        { id: 19, title: "Document Or Die", category: "defense" },
+        { id: 20, title: "Codebase Will Suck", category: "scaling" },
+        { id: 21, title: "UX Is Growth Engine", category: "scaling" },
+        { id: 22, title: "Good Beats Perfect", category: "scaling" },
+        { id: 23, title: "Friends Are Liars", category: "foundation" },
+        { id: 24, title: "Early Adopters Are Gold", category: "scaling" },
+        { id: 25, title: "Sell Solutions Not Products", category: "scaling" },
+        { id: 26, title: "Market Before Product", category: "scaling" },
+        { id: 27, title: "Feedback Is A Weapon", category: "scaling" },
+        { id: 28, title: "No Growth Hacking Junk", category: "scaling" },
+        { id: 29, title: "You Can't Do All", category: "defense" },
+        { id: 30, title: "Network Is Leverage", category: "defense" },
+        { id: 31, title: "Hire Slow Fire Fast", category: "defense" },
+        { id: 32, title: "Fire Comfort Mentors", category: "defense" },
+        { id: 33, title: "Money Won't Fix It", category: "defense" }
     ];
 
-    const getEmailFromUrl = () => new URLSearchParams(window.location.search).get('email');
-    const getRank = (score) => {
-        const count = Math.round((score / 100) * 33);
-        return count <= 10 ? "Apprentice" : count <= 22 ? "Strategist" : "Master Architect";
-    };
+    // --- DOM Elements ---
+    const gridContainer = document.getElementById('truth-matrix');
+    const scoreEl = document.getElementById('integrity-score');
+    const rankEl = document.getElementById('architect-rank');
+    const progressRing = document.querySelector('.progress-ring__circle');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const auditBtn = document.getElementById('btn-audit');
 
-    const setProgress = (percent) => {
-        const radius = progressCircle.r.baseVal.value;
+    // --- State ---
+    let progress = {};
+    try {
+        progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+    } catch (e) {
+        console.error('Error parsing progress:', e);
+    }
+
+    // --- Functions ---
+
+    const calculateStats = () => {
+        const total = truths.length;
+        const completed = Object.keys(progress).filter(k => progress[k]).length;
+        const percentage = Math.round((completed / total) * 100);
+        
+        // Update Score
+        scoreEl.innerText = percentage;
+        
+        // Update Ring
+        const radius = progressRing.r.baseVal.value;
         const circumference = radius * 2 * Math.PI;
-        progressCircle.style.strokeDashoffset = circumference - (percent / 100) * circumference;
-        scoreEl.innerText = Math.round(percent);
+        const offset = circumference - (percentage / 100) * circumference;
+        progressRing.style.strokeDashoffset = offset;
+
+        // Update Rank
+        let rank = "Novice";
+        if (percentage > 20) rank = "Builder";
+        if (percentage > 50) rank = "Operator";
+        if (percentage > 80) rank = "Architect";
+        if (percentage === 100) rank = "Master";
+        rankEl.innerText = rank;
     };
 
-    const renderGrid = (truthsData) => {
-        gridEl.innerHTML = '';
-        truthTitles.forEach((title, index) => {
-            const isCompleted = truthsData[index] === 1;
+    const renderGrid = () => {
+        gridContainer.innerHTML = '';
+        
+        truths.forEach((truth, index) => {
+            // Note: truth.id is 1-based, index is 0-based. 
+            // LocalStorage uses 0-based index.
+            const isCompleted = progress[index]; 
+            
             const card = document.createElement('a');
-            card.href = `truths/truth${index + 1}.html`;
+            card.href = `truth${truth.id}.html`;
             card.target = "_blank";
-            card.className = `truth-card ${isCompleted ? 'completed' : ''}`;
-            // Ensure anchor behaves like a card
-            card.style.textDecoration = 'none';
-            card.style.color = 'inherit';
-            card.style.display = 'flex';
-            card.style.justifyContent = 'space-between';
-            card.innerHTML = `<div><div class="truth-number">Truth #${String(index+1).padStart(2, '0')}</div><div class="truth-title">${title}</div></div><div class="status-icon">${isCompleted ? '✓' : '+'}</div>`;
-            gridEl.appendChild(card);
+            card.className = `truth-card ${isCompleted ? 'verified' : ''}`;
+            card.dataset.category = truth.category;
+            card.dataset.id = index;
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="truth-number">Truth #${truth.id}</span>
+                    <div class="status-indicator"></div>
+                </div>
+                <h3 class="truth-title">${truth.title}</h3>
+            `;
+
+            gridContainer.appendChild(card);
         });
     };
 
-    const initLab = async (emailOverride = null) => {
-        let email = emailOverride || getEmailFromUrl();
-        if (!email) { onboardingModal.classList.add('active'); return; }
-        
-        // Load progress from localStorage
-        const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
-        const truthsArray = Array(33).fill(0).map((_, i) => savedProgress[i] ? 1 : 0);
-        const completedCount = truthsArray.filter(t => t === 1).length;
-        const score = (completedCount / 33) * 100;
-
-        let mockData = { 
-            project_name: "Project Alpha", 
-            master_score: score, 
-            truths: truthsArray 
-        };
-        
-        projectNameEl.innerText = mockData.project_name;
-        setProgress(mockData.master_score);
-        rankEl.innerText = getRank(mockData.master_score);
-        await ChatSystem.loadContext(email);
-        renderGrid(mockData.truths);
+    const handleFilter = (category) => {
+        const cards = document.querySelectorAll('.truth-card');
+        cards.forEach(card => {
+            if (category === 'all' || card.dataset.category === category) {
+                card.classList.remove('dimmed');
+            } else {
+                card.classList.add('dimmed');
+            }
+        });
     };
 
-    // --- MOBILE/GLOBAL CHAT ---
-    const chatInputGlobal = document.getElementById('chat-input');
-    const mobileTrigger = document.getElementById('mobile-chat-trigger');
-    const consultantWrapper = document.getElementById('consultant-wrapper');
+    const generateAudit = () => {
+        const completedCount = Object.keys(progress).filter(k => progress[k]).length;
+        const score = Math.round((completedCount / truths.length) * 100);
+        const date = new Date().toLocaleDateString();
 
-    if (mobileTrigger) {
-        mobileTrigger.onclick = () => {
-            consultantWrapper.classList.add('active');
-            chatInputGlobal.focus();
-        };
-        document.getElementById('close-chat-mobile').onclick = () => consultantWrapper.classList.remove('active');
-    }
+        let report = `EXECUTIVE AUDIT REPORT\n`;
+        report += `Date: ${date}\n`;
+        report += `Integrity Score: ${score}%\n\n`;
+        report += `CRITICAL GAPS DETECTED:\n`;
+        report += `-----------------------\n`;
 
-    const handleGlobalChat = async () => {
-        const txt = chatInputGlobal.value.trim();
-        if (!txt) return;
-        chatInputGlobal.value = '';
-        addChatMessage('user', txt);
-        const ans = await ChatSystem.askConsultant(txt);
-        addChatMessage('ai', ans);
+        let gapsFound = false;
+        truths.forEach((truth, index) => {
+            if (!progress[index]) {
+                report += `[ ] Truth #${truth.id}: ${truth.title} (${truth.category.toUpperCase()})\n`;
+                gapsFound = true;
+            }
+        });
+
+        if (!gapsFound) {
+            report += "No gaps detected. System integrity is 100%.\n";
+        }
+
+        report += `\n-----------------------\n`;
+        report += `RECOMMENDATION: Focus on closing 'Foundation' gaps first to ensure stability.`;
+
+        // Create download
+        const blob = new Blob([report], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Avantaland_Audit_${date.replace(/\//g, '-')}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
     };
 
-    const addChatMessage = (sender, text) => {
-        const el = document.getElementById('chat-messages');
-        const div = document.createElement('div');
-        div.className = sender === 'user' ? 'user-msg' : 'ai-msg';
-        div.innerHTML = text.replace(/\n/g, '<br>');
-        el.appendChild(div);
-        el.scrollTop = el.scrollHeight;
-    };
+    // --- Event Listeners ---
 
-    document.getElementById('send-chat-btn').onclick = handleGlobalChat;
-    chatInputGlobal.onkeypress = (e) => { if(e.key==='Enter') handleGlobalChat(); };
+    // Filters
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // UI Toggle
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Logic
+            handleFilter(btn.dataset.filter);
+        });
+    });
 
-    onboardingForm.onsubmit = async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('lab-email').value.trim();
-        onboardingModal.classList.remove('active');
-        await initLab(email);
-    };
+    // Audit
+    auditBtn.addEventListener('click', generateAudit);
 
-    initLab();
+    // Sync-Back Engine (Listen for changes in other tabs)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'bizLabProgress') {
+            progress = JSON.parse(e.newValue) || {};
+            renderGrid();
+            calculateStats();
+        }
+    });
+
+    // --- Init ---
+    renderGrid();
+    calculateStats();
 });

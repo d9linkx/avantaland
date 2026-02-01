@@ -3,118 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Implementation Lab | Avantaland Academy</title>
+    <title>Command Center | Avantaland Academy</title>
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/biz-lab.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <!-- Header Placeholder -->
     <div id="header-placeholder"></div>
 
     <main class="lab-main">
-        <div class="container lab-layout">
-            <div class="lab-content">
-                <!-- Mission Control HUD -->
-                <section class="lab-hud fade-in">
-                    <div class="hud-identity">
-                        <div class="hud-label">AUDITING PROJECT</div>
-                        <h1 id="lab-project-name">Loading Project...</h1>
-                        <div class="hud-meta">
-                            <div id="lab-rank" class="rank-badge">Initializing...</div>
-                            <div id="lab-status" class="status-badge">Status: Checking...</div>
+        <div class="container">
+            <!-- 1. Status Header & North Star -->
+            <div class="command-header fade-in">
+                <div class="header-info">
+                    <h1 class="lab-title">Command Center</h1>
+                    <div class="rank-display">
+                        <span class="label">Architect Rank:</span>
+                        <span id="architect-rank" class="value">Novice</span>
+                    </div>
+                </div>
+                
+                <div class="north-star-container">
+                    <div class="progress-ring" data-percentage="0">
+                        <svg class="progress-ring__svg" viewBox="0 0 120 120">
+                            <circle class="progress-ring__bg" cx="60" cy="60" r="54"></circle>
+                            <circle class="progress-ring__circle" cx="60" cy="60" r="54"></circle>
+                        </svg>
+                        <div class="progress-ring__text">
+                            <span id="integrity-score">0</span>%
                         </div>
                     </div>
-                    
-                    <div class="hud-progress">
-                        <div class="progress-ring-wrapper">
-                            <svg class="progress-ring" width="120" height="120">
-                                <circle class="progress-ring__circle--bg" stroke="#E2E8F0" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-                                <circle class="progress-ring__circle" stroke="var(--accent-blue)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-                            </svg>
-                            <div class="progress-value"><span id="lab-score">0</span>%</div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Filter Controls -->
-                <div class="lab-controls fade-in">
-                    <button class="filter-btn active" data-filter="all">All Missions</button>
-                    <button class="filter-btn" data-filter="priority">Priority Fixes</button>
-                    <button class="filter-btn" data-filter="completed">Completed</button>
+                    <span class="ring-label">Integrity Score</span>
                 </div>
 
-                <!-- Truth Grid -->
-                <section id="truth-grid" class="truth-grid fade-in">
-                    <!-- Cards will be injected by JS -->
-                </section>
-
-                <!-- Advanced Lab (Locked) -->
-                <section id="advanced-lab" class="advanced-lab fade-in" style="display:none;">
-                    <!-- Injected by JS -->
-                </section>
+                <div class="header-actions">
+                    <button id="btn-audit" class="btn-audit">Generate Audit</button>
+                </div>
             </div>
 
-            <!-- Community Bridge Sidebar -->
-            <div class="lab-sidebar-wrapper">
-                <aside class="lab-sidebar fade-in">
-                    <h3>Live Lab Activity</h3>
-                    <div id="community-feed" class="community-feed"></div>
-                </aside>
-
-                <!-- Consultant Pod (Desktop Sidebar / Mobile Bottom Sheet) -->
-                <div id="consultant-wrapper" class="consultant-container">
-                    <div class="chat-header">
-                        <div class="consultant-avatar">AI</div>
-                        <div class="consultant-info">
-                            <span class="status-dot"></span>
-                            <strong>Lab Consultant</strong>
-                            <p id="user-context-display">Initializing...</p>
-                        </div>
-                        <button id="close-chat-mobile" class="mobile-only">&times;</button>
-                    </div>
-
-                    <div id="chat-messages" class="chat-messages">
-                        <!-- Messages injected by JS -->
-                    </div>
-
-                    <div class="chat-input-area">
-                        <input type="text" id="chat-input" placeholder="Ask your consultant..." autocomplete="off">
-                        <button id="send-chat-btn">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-                        </button>
-                    </div>
+            <!-- 2. Gap Analysis Filters -->
+            <div class="controls-bar fade-in">
+                <span class="filter-label">Gap Analysis:</span>
+                <div class="filter-group">
+                    <button class="filter-btn active" data-filter="all">All Systems</button>
+                    <button class="filter-btn" data-filter="foundation">Foundation</button>
+                    <button class="filter-btn" data-filter="scaling">Scaling</button>
+                    <button class="filter-btn" data-filter="defense">Defense</button>
                 </div>
+            </div>
+
+            <!-- 3. The Truth Matrix -->
+            <div id="truth-matrix" class="truth-grid fade-in">
+                <!-- Cards injected via JS -->
             </div>
         </div>
     </main>
-
-    <!-- Onboarding Modal -->
-    <div id="onboarding-modal" class="lab-modal-overlay">
-        <div class="lab-modal">
-            <div class="modal-header">
-                <h2>Create Your Lab Account</h2>
-                <p>Initialize your project dashboard to start tracking progress.</p>
-            </div>
-            <form id="onboarding-form">
-                <div class="form-group">
-                    <label for="lab-email">Email Address</label>
-                    <input type="email" id="lab-email" required placeholder="Enter the email you used for payment">
-                </div>
-                <div class="form-group">
-                    <label for="lab-project">Project Name</label>
-                    <input type="text" id="lab-project" required placeholder="e.g. Project Alpha">
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Initialize Dashboard</button>
-                <div id="onboarding-error" style="color: #ef4444; margin-top: 1rem; display: none; font-size: 0.9rem; text-align: center;"></div>
-            </form>
-        </div>
-    </div>
-
-    <button id="mobile-chat-trigger" class="mobile-chat-trigger">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    </button>
 
     <script src="scripts/script.js"></script>
     <script src="scripts/config.js"></script>
