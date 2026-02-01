@@ -105,3 +105,107 @@ body {
     margin-top: 0.5rem;
     font-weight: 800;
 }
+
+/* --- New Features Styling --- */
+
+/* Controls Bar */
+.dashboard-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    gap: 0.5rem;
+    background: #FFFFFF;
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid var(--dash-border);
+}
+
+.filter-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748B;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover { color: var(--dash-text); }
+.filter-btn.active { background: var(--dash-text); color: white; }
+
+.action-group { display: flex; gap: 1rem; align-items: center; }
+
+.action-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748B;
+    transition: all 0.2s;
+}
+
+.action-btn.outline {
+    border: 1px solid var(--dash-border);
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: white;
+}
+
+.action-btn:hover { color: var(--dash-accent); border-color: var(--dash-accent); }
+.action-btn.text-only:hover { color: #EF4444; }
+
+/* Up Next Card */
+.up-next-wrapper {
+    margin-bottom: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.up-next-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748B;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.up-next-card {
+    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);
+    transition: transform 0.2s;
+}
+
+.up-next-card:hover { transform: translateY(-4px); }
+.up-next-number { display: block; font-size: 0.85rem; opacity: 0.7; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 1px; }
+.up-next-content h3 { margin: 0; font-size: 1.5rem; color: white; }
+.up-next-arrow { font-weight: 700; color: var(--dash-accent); background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 50px; }
+
+/* Filter Dimming */
+.truth-card.dimmed { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
+
+@media (max-width: 768px) {
+    .dashboard-controls { flex-direction: column; align-items: stretch; }
+    .filter-group { justify-content: center; flex-wrap: wrap; }
+    .action-group { justify-content: center; }
+    .up-next-card { flex-direction: column; text-align: center; gap: 1rem; }
+}

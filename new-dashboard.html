@@ -14,45 +14,72 @@
         <div class="container">
             <h1 class="lab-title" style="margin-bottom: 2rem;">Truth Dashboard</h1>
             
+            <!-- Feature 1: Rank & Progress -->
             <div class="progress-container">
-                <span class="progress-label">0 of 33 Truths Mastered (0%)</span>
+                <span class="progress-label">Rank: <span id="rank-display">Novice</span> • 0 of 33 Truths Mastered (0%)</span>
                 <div class="progress-track"><div class="progress-fill"></div></div>
             </div>
 
+            <!-- Feature 2: Next Critical Action -->
+            <div id="up-next-container" class="up-next-wrapper fade-in" style="display: none;">
+                <div class="up-next-label">Next Critical Action</div>
+                <a href="#" id="up-next-link" class="up-next-card">
+                    <div class="up-next-content">
+                        <span class="up-next-number">Truth #<span id="up-next-num"></span></span>
+                        <h3 id="up-next-title"></h3>
+                    </div>
+                    <div class="up-next-arrow">Start Fix &rarr;</div>
+                </a>
+            </div>
+
+            <!-- Feature 3: Category Filters & Actions -->
+            <div class="dashboard-controls fade-in">
+                <div class="filter-group">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="foundation">Foundation</button>
+                    <button class="filter-btn" data-filter="scaling">Scaling</button>
+                    <button class="filter-btn" data-filter="defense">Defense</button>
+                </div>
+                <div class="action-group">
+                    <button id="btn-export" class="action-btn outline">Export Audit</button>
+                    <button id="btn-reset" class="action-btn text-only">Reset</button>
+                </div>
+            </div>
+
             <div class="truth-grid">
-                <a href="truth1.html" class="truth-card"><h3 class="truth-title">Truth 1</h3></a>
-                <a href="truth2.html" class="truth-card"><h3 class="truth-title">Truth 2</h3></a>
-                <a href="truth3.html" class="truth-card"><h3 class="truth-title">Truth 3</h3></a>
-                <a href="truth4.html" class="truth-card"><h3 class="truth-title">Truth 4</h3></a>
-                <a href="truth5.html" class="truth-card"><h3 class="truth-title">Truth 5</h3></a>
-                <a href="truth6.html" class="truth-card"><h3 class="truth-title">Truth 6</h3></a>
-                <a href="truth7.html" class="truth-card"><h3 class="truth-title">Truth 7</h3></a>
-                <a href="truth8.html" class="truth-card"><h3 class="truth-title">Truth 8</h3></a>
-                <a href="truth9.html" class="truth-card"><h3 class="truth-title">Truth 9</h3></a>
-                <a href="truth10.html" class="truth-card"><h3 class="truth-title">Truth 10</h3></a>
-                <a href="truth11.html" class="truth-card"><h3 class="truth-title">Truth 11</h3></a>
-                <a href="truth12.html" class="truth-card"><h3 class="truth-title">Truth 12</h3></a>
-                <a href="truth13.html" class="truth-card"><h3 class="truth-title">Truth 13</h3></a>
-                <a href="truth14.html" class="truth-card"><h3 class="truth-title">Truth 14</h3></a>
-                <a href="truth15.html" class="truth-card"><h3 class="truth-title">Truth 15</h3></a>
-                <a href="truth16.html" class="truth-card"><h3 class="truth-title">Truth 16</h3></a>
-                <a href="truth17.html" class="truth-card"><h3 class="truth-title">Truth 17</h3></a>
-                <a href="truth18.html" class="truth-card"><h3 class="truth-title">Truth 18</h3></a>
-                <a href="truth19.html" class="truth-card"><h3 class="truth-title">Truth 19</h3></a>
-                <a href="truth20.html" class="truth-card"><h3 class="truth-title">Truth 20</h3></a>
-                <a href="truth21.html" class="truth-card"><h3 class="truth-title">Truth 21</h3></a>
-                <a href="truth22.html" class="truth-card"><h3 class="truth-title">Truth 22</h3></a>
-                <a href="truth23.html" class="truth-card"><h3 class="truth-title">Truth 23</h3></a>
-                <a href="truth24.html" class="truth-card"><h3 class="truth-title">Truth 24</h3></a>
-                <a href="truth25.html" class="truth-card"><h3 class="truth-title">Truth 25</h3></a>
-                <a href="truth26.html" class="truth-card"><h3 class="truth-title">Truth 26</h3></a>
-                <a href="truth27.html" class="truth-card"><h3 class="truth-title">Truth 27</h3></a>
-                <a href="truth28.html" class="truth-card"><h3 class="truth-title">Truth 28</h3></a>
-                <a href="truth29.html" class="truth-card"><h3 class="truth-title">Truth 29</h3></a>
-                <a href="truth30.html" class="truth-card"><h3 class="truth-title">Truth 30</h3></a>
-                <a href="truth31.html" class="truth-card"><h3 class="truth-title">Truth 31</h3></a>
-                <a href="truth32.html" class="truth-card"><h3 class="truth-title">Truth 32</h3></a>
-                <a href="truth33.html" class="truth-card"><h3 class="truth-title">Truth 33</h3></a>
+                <a href="truth1.html" class="truth-card" data-category="foundation" data-id="0"><h3 class="truth-title">Truth 1</h3></a>
+                <a href="truth2.html" class="truth-card" data-category="foundation" data-id="1"><h3 class="truth-title">Truth 2</h3></a>
+                <a href="truth3.html" class="truth-card" data-category="foundation" data-id="2"><h3 class="truth-title">Truth 3</h3></a>
+                <a href="truth4.html" class="truth-card" data-category="foundation" data-id="3"><h3 class="truth-title">Truth 4</h3></a>
+                <a href="truth5.html" class="truth-card" data-category="foundation" data-id="4"><h3 class="truth-title">Truth 5</h3></a>
+                <a href="truth6.html" class="truth-card" data-category="foundation" data-id="5"><h3 class="truth-title">Truth 6</h3></a>
+                <a href="truth7.html" class="truth-card" data-category="foundation" data-id="6"><h3 class="truth-title">Truth 7</h3></a>
+                <a href="truth8.html" class="truth-card" data-category="foundation" data-id="7"><h3 class="truth-title">Truth 8</h3></a>
+                <a href="truth9.html" class="truth-card" data-category="foundation" data-id="8"><h3 class="truth-title">Truth 9</h3></a>
+                <a href="truth10.html" class="truth-card" data-category="foundation" data-id="9"><h3 class="truth-title">Truth 10</h3></a>
+                <a href="truth11.html" class="truth-card" data-category="foundation" data-id="10"><h3 class="truth-title">Truth 11</h3></a>
+                <a href="truth12.html" class="truth-card" data-category="foundation" data-id="11"><h3 class="truth-title">Truth 12</h3></a>
+                <a href="truth13.html" class="truth-card" data-category="foundation" data-id="12"><h3 class="truth-title">Truth 13</h3></a>
+                <a href="truth14.html" class="truth-card" data-category="foundation" data-id="13"><h3 class="truth-title">Truth 14</h3></a>
+                <a href="truth15.html" class="truth-card" data-category="foundation" data-id="14"><h3 class="truth-title">Truth 15</h3></a>
+                <a href="truth16.html" class="truth-card" data-category="foundation" data-id="15"><h3 class="truth-title">Truth 16</h3></a>
+                <a href="truth17.html" class="truth-card" data-category="scaling" data-id="16"><h3 class="truth-title">Truth 17</h3></a>
+                <a href="truth18.html" class="truth-card" data-category="scaling" data-id="17"><h3 class="truth-title">Truth 18</h3></a>
+                <a href="truth19.html" class="truth-card" data-category="defense" data-id="18"><h3 class="truth-title">Truth 19</h3></a>
+                <a href="truth20.html" class="truth-card" data-category="scaling" data-id="19"><h3 class="truth-title">Truth 20</h3></a>
+                <a href="truth21.html" class="truth-card" data-category="scaling" data-id="20"><h3 class="truth-title">Truth 21</h3></a>
+                <a href="truth22.html" class="truth-card" data-category="scaling" data-id="21"><h3 class="truth-title">Truth 22</h3></a>
+                <a href="truth23.html" class="truth-card" data-category="foundation" data-id="22"><h3 class="truth-title">Truth 23</h3></a>
+                <a href="truth24.html" class="truth-card" data-category="scaling" data-id="23"><h3 class="truth-title">Truth 24</h3></a>
+                <a href="truth25.html" class="truth-card" data-category="scaling" data-id="24"><h3 class="truth-title">Truth 25</h3></a>
+                <a href="truth26.html" class="truth-card" data-category="scaling" data-id="25"><h3 class="truth-title">Truth 26</h3></a>
+                <a href="truth27.html" class="truth-card" data-category="scaling" data-id="26"><h3 class="truth-title">Truth 27</h3></a>
+                <a href="truth28.html" class="truth-card" data-category="scaling" data-id="27"><h3 class="truth-title">Truth 28</h3></a>
+                <a href="truth29.html" class="truth-card" data-category="defense" data-id="28"><h3 class="truth-title">Truth 29</h3></a>
+                <a href="truth30.html" class="truth-card" data-category="defense" data-id="29"><h3 class="truth-title">Truth 30</h3></a>
+                <a href="truth31.html" class="truth-card" data-category="defense" data-id="30"><h3 class="truth-title">Truth 31</h3></a>
+                <a href="truth32.html" class="truth-card" data-category="defense" data-id="31"><h3 class="truth-title">Truth 32</h3></a>
+                <a href="truth33.html" class="truth-card" data-category="defense" data-id="32"><h3 class="truth-title">Truth 33</h3></a>
             </div>
         </div>
     </main>
