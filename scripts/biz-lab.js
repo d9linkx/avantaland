@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(data.error || `Server Error (${response.status})`);
+                    console.error("Server Error Details:", data);
+                    throw new Error(data.error || `API Error (${response.status})`);
                 }
                 
                 return data.choices[0].message.content;
@@ -95,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Prepare full message chain
             const messages = [
                 { role: "system", content: systemPrompt },
-                ...ChatSystem.history
+                ...ChatSystem.history.slice(-10) // Keep only last 10 messages to prevent token errors
             ];
 
             try {
@@ -105,8 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return aiResponse;
             } catch (e) {
                 // Don't save failed messages to history to avoid context pollution
+                console.error("Consultant Chat Error:", e);
                 ChatSystem.history.pop(); 
-                return "I'm having trouble connecting to the server. Please try again in a moment.";
+                return "I'm having trouble connecting. Please check your API Key or internet connection.";
             }
         },
 
