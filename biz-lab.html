@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="styles/biz-lab.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>.side-panel { z-index: 9999 !important; } .panel-overlay { z-index: 9998 !important; }</style>
 </head>
 <body>
     <!-- Header Placeholder -->
@@ -110,19 +109,6 @@
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Initialize Dashboard</button>
                 <div id="onboarding-error" style="color: #ef4444; margin-top: 1rem; display: none; font-size: 0.9rem; text-align: center;"></div>
             </form>
-        </div>
-    </div>
-
-    <!-- Truth Detail Side Panel -->
-    <div id="truth-panel-overlay" class="panel-overlay"></div>
-    <div id="truth-side-panel" class="side-panel">
-        <button id="close-panel-btn" class="close-btn">&times;</button>
-        <div class="panel-content">
-            <div id="panel-header" class="panel-header">
-                <span id="panel-truth-number" class="truth-badge">Truth #01</span>
-                <h2 id="panel-truth-title">The Problem Solved</h2>
-            </div>
-            <div id="panel-body"></div>
         </div>
     </div>
 
