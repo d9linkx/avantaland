@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- Unified AI Fetcher (Server + Fallback) ---
     const fetchAIResponse = async (messages) => {
-        // 1. Try Serverless Function (Secure / Vercel)
         try {
             const response = await fetch('/api/chat', { 
                 method: 'POST', 
@@ -40,31 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 return data.choices[0].message.content;
             }
-            // If server fails (e.g. 500 or 404), throw to trigger fallback
-            throw new Error(`Server Error: ${response.status}`);
-        } catch (serverError) {
-            console.warn("Serverless API unavailable, switching to client-side fallback.", serverError);
-            
-            // 2. Fallback: Direct Client-Side Call (Localhost / Backup)
-            try {
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${CONFIG.OPENAI_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-4o",
-                        messages: messages
-                    })
-                });
-                const data = await response.json();
-                if (data.error) throw new Error(data.error.message);
-                return data.choices[0].message.content;
-            } catch (clientError) {
-                console.error("AI Error:", clientError);
-                return "I'm having trouble connecting. Please check your internet connection.";
-            }
+            // Attempt to read specific error message from server response
+            const err = await response.json().catch(() => ({}));
+            throw new Error(err.error || `Server Error: ${response.status}`);
+        } catch (error) {
+            console.error("AI Error:", error);
+            return "I'm having trouble connecting. Please check your internet connection.";
         }
     };
 
