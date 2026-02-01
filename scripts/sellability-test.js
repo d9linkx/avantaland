@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const persuasionContent = document.getElementById('results-persuasion-content');
 
     // --- App State ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzc15roxFieyBuiRS5X7bUhe-zCDI6VRQTimFZFp8zwL5cKFG3lCdUNheF6R_B2a0co/exec';
+    const SCRIPT_URL = CONFIG.GOOGLE_SCRIPT_URL_APP;
     let userAnswers = [];
     let userFirstName = '';
     let userProductName = '';

@@ -158,8 +158,9 @@
     <div id="footer-placeholder"></div>
 
     <script src="scripts/script.js"></script>
+    <script src="scripts/config.js"></script>
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx9YlOv53uK1Ij1KQUfy4ZsSXIkMuf1UqYLOC9PuHQDUdkbKES97urTZTs99MSLki_A/exec';
+        const scriptURL = CONFIG.GOOGLE_SCRIPT_URL_LEAD_MAGNET;
         const form = document.forms['submit-to-google-sheet'];
         const submitBtn = form.querySelector('button[type="submit"]');
         const msg = document.getElementById('form-message');

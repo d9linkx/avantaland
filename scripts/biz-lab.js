@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Only run on the lab page
     if (!document.querySelector('.lab-main')) return;
 
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzc15roxFieyBuiRS5X7bUhe-zCDI6VRQTimFZFp8zwL5cKFG3lCdUNheF6R_B2a0co/exec';
+    const SCRIPT_URL = CONFIG.GOOGLE_SCRIPT_URL_APP;
     
     // DOM Elements
     const projectNameEl = document.getElementById('lab-project-name');
@@ -19,11 +19,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
     const messageSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
 
-    // --- GEMINI AI CONFIGURATION ---
-    const GEMINI_API_KEY = 'AIzaSyBKCxjvX_TX9ERHwjaZaWyg0Jh1Hc8vOzc'; // Ensure this key is active and has quota
+    // --- Global Chat State ---
+    let globalChatHistory = [];
+    let userContext = {
+        name: "Founder",
+        project: "Your Project"
+    };
     
-    const askGemini = async (question, context) => {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    // --- Unified AI Fetcher (Server + Fallback) ---
+    const fetchAIResponse = async (messages) => {
+        // 1. Try Serverless Function (Secure / Vercel)
+        try {
+            const response = await fetch('/api/chat', { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ messages: messages }) 
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                return data.choices[0].message.content;
+            }
+            // If server fails (e.g. 500 or 404), throw to trigger fallback
+            throw new Error(`Server Error: ${response.status}`);
+        } catch (serverError) {
+            console.warn("Serverless API unavailable, switching to client-side fallback.", serverError);
+            
+            // 2. Fallback: Direct Client-Side Call (Localhost / Backup)
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CONFIG.OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4o",
+                        messages: messages
+                    })
+                });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+                return data.choices[0].message.content;
+            } catch (clientError) {
+                console.error("AI Error:", clientError);
+                return "I'm having trouble connecting. Please check your internet connection.";
+            }
+        }
+    };
+
+    const askOpenAI = async (question, context) => {
         
         // Safety check for context
         const title = context.title || "Business Strategy";
@@ -32,22 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Strip HTML tags from context for cleaner prompt
         const cleanContent = rawDeepDive.replace(/<[^>]*>/g, ' ').substring(0, 15000); // Increase limit for better context
         
-        const prompt = `
+        const systemPrompt = `
             You are "The Lab AI", an elite business consultant and world-class researcher for Avantaland Academy.
             
             **YOUR PERSONA & CAPABILITIES:**
             1.  **World-Class Researcher**: You play the role of the best researcher with capabilities to search the internet for trends, updates, happenings, live updates, knowledge, and expert statements.
             2.  **Universal Business Expert**: You are knowledgeable in ALL types of businesses (big or small, online or physical), all types of products or services, and all industries.
             3.  **Brutal Truth Analyst**: You are analyzing a specific business principle called a "Brutal Truth" from the Avantaland manuscript.
-            
-            CONTEXT (The "Brutal Truth" the user is currently studying):
-            ---------------------------------------------------
-            TITLE: ${title}
-            SUMMARY/HOOK: ${summary}
-            FULL STRATEGY CONTENT: ${cleanContent}
-            ---------------------------------------------------
-            
-            USER QUESTION: "${question}"
             
             INSTRUCTIONS:
             1.  **Role**: Act as a senior partner at a venture capital firm who is also a master researcher. You are direct, insightful, and focused on execution.
@@ -58,19 +94,61 @@ document.addEventListener('DOMContentLoaded', () => {
             6.  **Conciseness**: Keep your response under 150 words unless the user asks for a detailed explanation.
         `;
 
-        try {
-            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
-            if (!response.ok) throw new Error(`API Error: ${response.status}`);
-            const data = await response.json();
-            if (data.candidates && data.candidates[0].content) {
-                return data.candidates[0].content.parts[0].text;
-            } else {
-                return "I couldn't process that. Please try rephrasing.";
-            }
-        } catch (e) {
-            console.error("Gemini Error:", e);
-            return "I'm having trouble connecting to the neural network right now. Please check your internet connection or try again in a moment.";
-        }
+        const userPrompt = `
+            CONTEXT (The "Brutal Truth" the user is currently studying):
+            ---------------------------------------------------
+            TITLE: ${title}
+            SUMMARY/HOOK: ${summary}
+            FULL STRATEGY CONTENT: ${cleanContent}
+            ---------------------------------------------------
+            
+            USER QUESTION: "${question}"
+        `;
+
+        const messages = [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+        ];
+
+        return await fetchAIResponse(messages);
+    };
+
+    const askConsultantAI = async (history) => {
+        
+        const systemPrompt = `
+            You are "The Lab Consultant", the elite AI architect of Avantaland Academy. You are not a generic assistant; you are a high-stakes business strategist.
+            
+            **YOUR CORE IDENTITY:**
+            - You are the "Brutal Truth" analyst. You value profit over passion, data over feelings, and execution over ideas.
+            - You are speaking to ${userContext.name}, the founder of ${userContext.project}.
+            - Your goal is to help them turn ${userContext.project} into a market-dominating asset, or kill it quickly if it's a failure.
+            
+            **YOUR KNOWLEDGE BASE:**
+            - **Strategy:** Blue Ocean, Lean Startup, 33 Brutal Truths.
+            - **Finance:** Cash flow management, unit economics, burn rate, profit margins.
+            - **Marketing:** Direct response, copywriting, funnel psychology, viral mechanics.
+            - **Sales:** High-ticket closing, objection handling, value ladders.
+            - **Operations:** Systems, automation, delegation, hiring/firing.
+            
+            **GUIDELINES FOR INTERACTION:**
+            1.  **No Fluff:** Do not use filler words like "That's a great question." Dive straight into the answer.
+            2.  **Structure:** Use bullet points, bold text (<b>text</b>), and short paragraphs.
+            3.  **Challenge the User:** If their idea sounds weak, challenge it. Ask "How will this make money on Day 1?"
+            4.  **Action-Oriented:** Every response must end with a specific "Next Step" or a probing question to force a decision.
+            5.  **Context:** Remember previous messages. If they mentioned a problem before, reference it.
+
+            **TONE:**
+            - Professional but intense.
+            - Like a billionaire mentor who doesn't have time to waste.
+            - Encouraging only when progress is real.
+        `;
+
+        const messages = [
+            { role: "system", content: systemPrompt },
+            ...history
+        ];
+
+        return await fetchAIResponse(messages);
     };
 
     // 33 Truths Data Structure (Titles)
@@ -374,8 +452,8 @@ document.addEventListener('DOMContentLoaded', () => {
             chatHistory.innerHTML += `<div class="chat-message ai" id="${loadingId}"><div class="chat-bubble typing">...</div></div>`;
             chatHistory.scrollTop = chatHistory.scrollHeight;
 
-            // Call Gemini
-            const answer = await askGemini(question, content);
+            // Call OpenAI
+            const answer = await askOpenAI(question, content);
             
             // Remove Loading and Add AI Response
             document.getElementById(loadingId).remove();
@@ -451,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Main Logic
-    const initLab = async (emailOverride = null) => {
+    const initLab = async (emailOverride = null, projectNameOverride = null) => {
         let email = emailOverride || getEmailFromUrl();
         
         if (!email) {
@@ -492,10 +570,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.result === 'success') {
                 const { project_name, master_score, truths } = data.data;
                 
-                projectNameEl.innerText = project_name || "Untitled Project";
+                projectNameEl.innerText = projectNameOverride || project_name || "Untitled Project";
                 rankEl.innerText = getRank(master_score);
+                
+                // Update Context for AI
+                userContext.project = projectNameEl.innerText;
                 setProgress(master_score);
                 renderGrid(truths, updateTruth);
+                
+                // Initialize Chat Welcome Message
+                addChatMessage('ai', `Hello ${userContext.name}! I'm ready to help you build <strong>${userContext.project}</strong>. What's on your mind?`);
             } else {
                 projectNameEl.innerText = "Project Not Found";
             }
@@ -506,17 +590,126 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Handle Onboarding Form Submit
-    onboardingForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('lab-email').value;
-        const project = document.getElementById('lab-project').value;
+    // --- Global Chat UI Logic ---
+    const mainChatHistoryEl = document.getElementById('main-chat-history');
+    const mobileChatHistoryEl = document.getElementById('mobile-chat-history');
+    const mainChatInput = document.getElementById('main-chat-input');
+    const mobileChatInput = document.getElementById('mobile-chat-input');
+    const mainChatSend = document.getElementById('main-chat-send');
+    const mobileChatSend = document.getElementById('mobile-chat-send');
+    
+    // Mobile Toggle Logic
+    const mobileFab = document.getElementById('mobile-chat-fab');
+    const mobileInterface = document.getElementById('mobile-chat-interface');
+    const closeMobileChat = document.getElementById('close-mobile-chat');
+
+    if (mobileFab) {
+        mobileFab.addEventListener('click', () => {
+            mobileInterface.classList.add('active');
+            mobileChatInput.focus();
+        });
+        closeMobileChat.addEventListener('click', () => {
+            mobileInterface.classList.remove('active');
+        });
+    }
+
+    const addChatMessage = (sender, text) => {
+        const bubbleClass = sender === 'user' ? 'user' : 'ai';
+        const html = `<div class="chat-message ${bubbleClass}"><div class="chat-bubble">${text}</div></div>`;
         
-        onboardingModal.classList.remove('active');
-        // In a real app, we would POST this data to create the user row
-        // For now, we just init the view with the email
-        initLab(email);
-        projectNameEl.innerText = project; // Optimistic update
+        // Append to both views
+        if (mainChatHistoryEl) {
+            mainChatHistoryEl.insertAdjacentHTML('beforeend', html);
+            mainChatHistoryEl.scrollTop = mainChatHistoryEl.scrollHeight;
+        }
+        if (mobileChatHistoryEl) {
+            mobileChatHistoryEl.insertAdjacentHTML('beforeend', html);
+            mobileChatHistoryEl.scrollTop = mobileChatHistoryEl.scrollHeight;
+        }
+    };
+
+    const handleGlobalChatSubmit = async (inputEl) => {
+        const text = inputEl.value.trim();
+        if (!text) return;
+
+        // Clear inputs
+        if (mainChatInput) mainChatInput.value = '';
+        if (mobileChatInput) mobileChatInput.value = '';
+
+        // Add User Message
+        addChatMessage('user', text);
+        globalChatHistory.push({ role: "user", content: text });
+
+        // Loading State
+        const loadingId = 'global-loading-' + Date.now();
+        const loadingHtml = `<div class="chat-message ai" id="${loadingId}"><div class="chat-bubble typing">...</div></div>`;
+        if (mainChatHistoryEl) mainChatHistoryEl.insertAdjacentHTML('beforeend', loadingHtml);
+        if (mobileChatHistoryEl) mobileChatHistoryEl.insertAdjacentHTML('beforeend', loadingHtml);
+
+        // AI Call
+        const response = await askConsultantAI(globalChatHistory);
+        
+        // Remove Loading
+        document.querySelectorAll(`#${loadingId}`).forEach(el => el.remove());
+
+        // Add AI Message
+        addChatMessage('ai', response.replace(/\n/g, '<br>'));
+        globalChatHistory.push({ role: "assistant", content: response });
+        messageSound.play().catch(() => {});
+    };
+
+    if (mainChatSend) mainChatSend.addEventListener('click', () => handleGlobalChatSubmit(mainChatInput));
+    if (mobileChatSend) mobileChatSend.addEventListener('click', () => handleGlobalChatSubmit(mobileChatInput));
+    
+    // Enter key support
+    const handleEnter = (e, input) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGlobalChatSubmit(input); } };
+    if (mainChatInput) mainChatInput.addEventListener('keypress', (e) => handleEnter(e, mainChatInput));
+    if (mobileChatInput) mobileChatInput.addEventListener('keypress', (e) => handleEnter(e, mobileChatInput));
+
+    // Handle Onboarding Form Submit
+    onboardingForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById('lab-email');
+        const projectInput = document.getElementById('lab-project');
+        const submitBtn = onboardingForm.querySelector('button[type="submit"]');
+        const errorMsg = document.getElementById('onboarding-error');
+
+        const email = emailInput.value.trim();
+        const project = projectInput.value.trim();
+        
+        // UI Loading State
+        const originalBtnText = submitBtn.innerText;
+        submitBtn.innerText = 'Verifying Access...';
+        submitBtn.disabled = true;
+        if (errorMsg) errorMsg.style.display = 'none';
+
+        try {
+            // Check email against database
+            const response = await fetch(`${SCRIPT_URL}?action=checkEmail&email=${encodeURIComponent(email)}`);
+            const data = await response.json();
+
+            if (data.found) {
+                // Auth Success
+                userContext.name = data.firstName || data.firstname || data.name || "Founder";
+                onboardingModal.classList.remove('active');
+                await initLab(email, project);
+            } else {
+                // Auth Failed
+                if (errorMsg) {
+                    errorMsg.innerHTML = `Email not found. <a href="product-test.html" style="text-decoration: underline; font-weight: 700; color: #ef4444;">Take the Test</a> or try again.`;
+                    errorMsg.style.display = 'block';
+                }
+            }
+        } catch (error) {
+            console.error("Auth Error:", error);
+            if (errorMsg) {
+                errorMsg.innerText = "Connection error. Please try again.";
+                errorMsg.style.display = 'block';
+            }
+        } finally {
+            submitBtn.innerText = originalBtnText;
+            submitBtn.disabled = false;
+        }
     });
 
     initLab();
