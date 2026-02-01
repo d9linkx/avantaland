@@ -19,116 +19,138 @@ document.addEventListener('DOMContentLoaded', () => {
     const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
     const messageSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
 
-    // --- Global Chat State ---
-    let globalChatHistory = [];
-    let userContext = {
-        name: "Founder",
-        project: "Your Project"
-    };
-    
-    // --- Unified AI Fetcher (Server + Fallback) ---
-    const fetchAIResponse = async (messages) => {
-        try {
-            const response = await fetch('/api/chat', { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ messages: messages }) 
-            });
-            
-            if (response.ok) {
+    // --- CHAT SYSTEM ENGINE ---
+    const ChatSystem = {
+        history: [],
+        context: {
+            name: "Founder",
+            project: "Your Project",
+            businessType: "Business"
+        },
+        
+        loadContext: async (email) => {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getUserData&email=${encodeURIComponent(email)}`);
                 const data = await response.json();
-                return data.choices[0].message.content;
+                if (data && data.result !== 'error') {
+                    ChatSystem.context.name = data.name || data.firstName || "Founder";
+                    ChatSystem.context.businessType = data.business || data.project_name || "Business";
+                    ChatSystem.context.project = data.project_name || "Your Project";
+                    
+                    // Update UI
+                    const contextDisplay = document.getElementById('user-context-display');
+                    if(contextDisplay) contextDisplay.innerText = `${ChatSystem.context.businessType} Consultant`;
+                }
+            } catch (e) {
+                console.warn("Could not load user context", e);
             }
-            // Attempt to read specific error message from server response
-            const err = await response.json().catch(() => ({}));
-            throw new Error(err.error || `Server Error: ${response.status}`);
-        } catch (error) {
-            console.error("AI Error:", error);
-            return "I'm having trouble connecting. Please check your internet connection.";
+        },
+
+        // Core API Call
+        callAPI: async (messages) => {
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `Server Error (${response.status})`);
+                }
+                
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error("Chat API Error:", error);
+                throw error;
+            }
+        },
+
+        // 1. Global Consultant (Sidebar/Mobile)
+        askConsultant: async (userMessage) => {
+            const systemPrompt = `
+                You are "The Lab Consultant", the elite AI architect of Avantaland Academy.
+                
+                USER CONTEXT:
+                - Name: ${ChatSystem.context.name}
+                - Business Type: ${ChatSystem.context.businessType}
+                - Project: ${ChatSystem.context.project}
+                
+                YOUR IDENTITY:
+                - You are the "Brutal Truth" analyst. You value profit over passion and execution over ideas.
+                - Use your expertise in finance, marketing, and strategy to counsel them specifically on their ${ChatSystem.context.businessType}.
+                
+                GUIDELINES:
+                1. **No Fluff**: Dive straight into the answer.
+                2. **Structure**: Use bullet points and bold text for key insights.
+                3. **Action-Oriented**: End with a specific "Next Step" or a probing question.
+                4. **Tone**: Professional, intense, like a billionaire mentor.
+            `;
+
+            // Add user message to history
+            ChatSystem.history.push({ role: "user", content: userMessage });
+
+            // Prepare full message chain
+            const messages = [
+                { role: "system", content: systemPrompt },
+                ...ChatSystem.history
+            ];
+
+            try {
+                const aiResponse = await ChatSystem.callAPI(messages);
+                ChatSystem.history.push({ role: "assistant", content: aiResponse });
+                ChatSystem.saveChat(userMessage, aiResponse);
+                return aiResponse;
+            } catch (e) {
+                // Don't save failed messages to history to avoid context pollution
+                ChatSystem.history.pop(); 
+                return "I'm having trouble connecting to the server. Please try again in a moment.";
+            }
+        },
+
+        saveChat: (userMsg, aiMsg) => {
+            const email = getEmailFromUrl();
+            if (!email) return;
+            // Fire and forget save
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'saveChat', email, userMsg, aiMsg
+                })
+            }).catch(e => console.log("Chat save failed", e));
+        },
+
+        // 2. Researcher (Side Panel - Specific Truth)
+        askResearcher: async (question, truthContext) => {
+            const title = truthContext.title || "Business Strategy";
+            const cleanContent = (truthContext.deepDive || "").replace(/<[^>]*>/g, ' ').substring(0, 8000);
+            
+            const systemPrompt = `
+                You are "The Lab AI", a world-class business researcher analyzing a specific strategy.
+                
+                STRATEGY CONTEXT:
+                - Title: ${title}
+                - Summary: ${truthContext.hook}
+                - Content: ${cleanContent}
+                
+                INSTRUCTIONS:
+                Answer the user's question based specifically on the strategy content above.
+                Be direct, insightful, and practical. Keep it under 150 words.
+            `;
+
+            const messages = [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: question }
+            ];
+
+            try {
+                return await ChatSystem.callAPI(messages);
+            } catch (e) {
+                return "I couldn't analyze that right now. Please check your connection.";
+            }
         }
-    };
-
-    const askOpenAI = async (question, context) => {
-        
-        // Safety check for context
-        const title = context.title || "Business Strategy";
-        const summary = context.hook || "No summary available.";
-        const rawDeepDive = context.deepDive || "";
-        // Strip HTML tags from context for cleaner prompt
-        const cleanContent = rawDeepDive.replace(/<[^>]*>/g, ' ').substring(0, 15000); // Increase limit for better context
-        
-        const systemPrompt = `
-            You are "The Lab AI", an elite business consultant and world-class researcher for Avantaland Academy.
-            
-            **YOUR PERSONA & CAPABILITIES:**
-            1.  **World-Class Researcher**: You play the role of the best researcher with capabilities to search the internet for trends, updates, happenings, live updates, knowledge, and expert statements.
-            2.  **Universal Business Expert**: You are knowledgeable in ALL types of businesses (big or small, online or physical), all types of products or services, and all industries.
-            3.  **Brutal Truth Analyst**: You are analyzing a specific business principle called a "Brutal Truth" from the Avantaland manuscript.
-            
-            INSTRUCTIONS:
-            1.  **Role**: Act as a senior partner at a venture capital firm who is also a master researcher. You are direct, insightful, and focused on execution.
-            2.  **Context First**: Base your answer primarily on the "FULL STRATEGY CONTENT" provided above. If the user asks about the specific truth, quote or paraphrase the strategy.
-            3.  **Expand with Expertise**: Use your research capabilities and universal business knowledge to provide high-level, accurate answers for any industry or business model mentioned.
-            4.  **Tone**: Use a "tough love" coaching tone. **Start with empathy**—acknowledge how hard this specific challenge is for founders—then pivot to the brutal reality and the solution.
-            5.  **Format**: Use bolding (e.g., **key point**) for emphasis. Keep paragraphs short.
-            6.  **Conciseness**: Keep your response under 150 words unless the user asks for a detailed explanation.
-        `;
-
-        const userPrompt = `
-            CONTEXT (The "Brutal Truth" the user is currently studying):
-            ---------------------------------------------------
-            TITLE: ${title}
-            SUMMARY/HOOK: ${summary}
-            FULL STRATEGY CONTENT: ${cleanContent}
-            ---------------------------------------------------
-            
-            USER QUESTION: "${question}"
-        `;
-
-        const messages = [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt }
-        ];
-
-        return await fetchAIResponse(messages);
-    };
-
-    const askConsultantAI = async (history) => {
-        
-        const systemPrompt = `
-            You are "The Lab Consultant", the elite AI architect of Avantaland Academy. You are not a generic assistant; you are a high-stakes business strategist.
-            
-            **YOUR CORE IDENTITY:**
-            - You are the "Brutal Truth" analyst. You value profit over passion, data over feelings, and execution over ideas.
-            - You are speaking to ${userContext.name}, the founder of ${userContext.project}.
-            - Your goal is to help them turn ${userContext.project} into a market-dominating asset, or kill it quickly if it's a failure.
-            
-            **YOUR KNOWLEDGE BASE:**
-            - **Strategy:** Blue Ocean, Lean Startup, 33 Brutal Truths.
-            - **Finance:** Cash flow management, unit economics, burn rate, profit margins.
-            - **Marketing:** Direct response, copywriting, funnel psychology, viral mechanics.
-            - **Sales:** High-ticket closing, objection handling, value ladders.
-            - **Operations:** Systems, automation, delegation, hiring/firing.
-            
-            **GUIDELINES FOR INTERACTION:**
-            1.  **No Fluff:** Do not use filler words like "That's a great question." Dive straight into the answer.
-            2.  **Structure:** Use bullet points, bold text (<b>text</b>), and short paragraphs.
-            3.  **Challenge the User:** If their idea sounds weak, challenge it. Ask "How will this make money on Day 1?"
-            4.  **Action-Oriented:** Every response must end with a specific "Next Step" or a probing question to force a decision.
-            5.  **Context:** Remember previous messages. If they mentioned a problem before, reference it.
-
-            **TONE:**
-            - Professional but intense.
-            - Like a billionaire mentor who doesn't have time to waste.
-            - Encouraging only when progress is real.
-        `;
-
-        const messages = [
-            { role: "system", content: systemPrompt },
-            ...history
-        ];
-
-        return await fetchAIResponse(messages);
     };
 
     // 33 Truths Data Structure (Titles)
@@ -433,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
             chatHistory.scrollTop = chatHistory.scrollHeight;
 
             // Call OpenAI
-            const answer = await askOpenAI(question, content);
+            const answer = await ChatSystem.askResearcher(question, content);
             
             // Remove Loading and Add AI Response
             document.getElementById(loadingId).remove();
@@ -553,13 +575,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 projectNameEl.innerText = projectNameOverride || project_name || "Untitled Project";
                 rankEl.innerText = getRank(master_score);
                 
-                // Update Context for AI
-                userContext.project = projectNameEl.innerText;
+                // Load Full Context
+                await ChatSystem.loadContext(email);
                 setProgress(master_score);
                 renderGrid(truths, updateTruth);
                 
                 // Initialize Chat Welcome Message
-                addChatMessage('ai', `Hello ${userContext.name}! I'm ready to help you build <strong>${userContext.project}</strong>. What's on your mind?`);
+                addChatMessage('ai', `Hello ${ChatSystem.context.name}! I'm your Lab Consultant. How is the <strong>${ChatSystem.context.businessType}</strong> scaling today?`);
             } else {
                 projectNameEl.innerText = "Project Not Found";
             }
@@ -571,41 +593,33 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Global Chat UI Logic ---
-    const mainChatHistoryEl = document.getElementById('main-chat-history');
-    const mobileChatHistoryEl = document.getElementById('mobile-chat-history');
-    const mainChatInput = document.getElementById('main-chat-input');
-    const mobileChatInput = document.getElementById('mobile-chat-input');
-    const mainChatSend = document.getElementById('main-chat-send');
-    const mobileChatSend = document.getElementById('mobile-chat-send');
+    const chatMessagesEl = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSendBtn = document.getElementById('send-chat-btn');
     
     // Mobile Toggle Logic
-    const mobileFab = document.getElementById('mobile-chat-fab');
-    const mobileInterface = document.getElementById('mobile-chat-interface');
-    const closeMobileChat = document.getElementById('close-mobile-chat');
+    const mobileTrigger = document.getElementById('mobile-chat-trigger');
+    const consultantWrapper = document.getElementById('consultant-wrapper');
+    const closeChatMobile = document.getElementById('close-chat-mobile');
 
-    if (mobileFab) {
-        mobileFab.addEventListener('click', () => {
-            mobileInterface.classList.add('active');
-            mobileChatInput.focus();
+    if (mobileTrigger) {
+        mobileTrigger.addEventListener('click', () => {
+            consultantWrapper.classList.add('active');
+            chatInput.focus();
         });
-        closeMobileChat.addEventListener('click', () => {
-            mobileInterface.classList.remove('active');
+        closeChatMobile.addEventListener('click', () => {
+            consultantWrapper.classList.remove('active');
         });
     }
 
     const addChatMessage = (sender, text) => {
-        const bubbleClass = sender === 'user' ? 'user' : 'ai';
-        const html = `<div class="chat-message ${bubbleClass}"><div class="chat-bubble">${text}</div></div>`;
+        if (!chatMessagesEl) return;
         
-        // Append to both views
-        if (mainChatHistoryEl) {
-            mainChatHistoryEl.insertAdjacentHTML('beforeend', html);
-            mainChatHistoryEl.scrollTop = mainChatHistoryEl.scrollHeight;
-        }
-        if (mobileChatHistoryEl) {
-            mobileChatHistoryEl.insertAdjacentHTML('beforeend', html);
-            mobileChatHistoryEl.scrollTop = mobileChatHistoryEl.scrollHeight;
-        }
+        const div = document.createElement('div');
+        div.className = sender === 'user' ? 'user-msg' : 'ai-msg';
+        div.innerHTML = text.replace(/\n/g, '<br>');
+        chatMessagesEl.appendChild(div);
+        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
     };
 
     const handleGlobalChatSubmit = async (inputEl) => {
@@ -613,38 +627,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!text) return;
 
         // Clear inputs
-        if (mainChatInput) mainChatInput.value = '';
-        if (mobileChatInput) mobileChatInput.value = '';
+        inputEl.value = '';
 
         // Add User Message
         addChatMessage('user', text);
-        globalChatHistory.push({ role: "user", content: text });
 
         // Loading State
         const loadingId = 'global-loading-' + Date.now();
-        const loadingHtml = `<div class="chat-message ai" id="${loadingId}"><div class="chat-bubble typing">...</div></div>`;
-        if (mainChatHistoryEl) mainChatHistoryEl.insertAdjacentHTML('beforeend', loadingHtml);
-        if (mobileChatHistoryEl) mobileChatHistoryEl.insertAdjacentHTML('beforeend', loadingHtml);
+        const loadingHtml = `<div class="ai-msg" id="${loadingId}">...</div>`;
+        chatMessagesEl.insertAdjacentHTML('beforeend', loadingHtml);
 
         // AI Call
-        const response = await askConsultantAI(globalChatHistory);
+        const response = await ChatSystem.askConsultant(text);
         
         // Remove Loading
         document.querySelectorAll(`#${loadingId}`).forEach(el => el.remove());
 
         // Add AI Message
         addChatMessage('ai', response.replace(/\n/g, '<br>'));
-        globalChatHistory.push({ role: "assistant", content: response });
         messageSound.play().catch(() => {});
     };
 
-    if (mainChatSend) mainChatSend.addEventListener('click', () => handleGlobalChatSubmit(mainChatInput));
-    if (mobileChatSend) mobileChatSend.addEventListener('click', () => handleGlobalChatSubmit(mobileChatInput));
+    if (chatSendBtn) chatSendBtn.addEventListener('click', () => handleGlobalChatSubmit(chatInput));
     
     // Enter key support
     const handleEnter = (e, input) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGlobalChatSubmit(input); } };
-    if (mainChatInput) mainChatInput.addEventListener('keypress', (e) => handleEnter(e, mainChatInput));
-    if (mobileChatInput) mobileChatInput.addEventListener('keypress', (e) => handleEnter(e, mobileChatInput));
+    if (chatInput) chatInput.addEventListener('keypress', (e) => handleEnter(e, chatInput));
 
     // Handle Onboarding Form Submit
     onboardingForm.addEventListener('submit', async (e) => {
@@ -670,7 +678,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.found) {
                 // Auth Success
-                userContext.name = data.firstName || data.firstname || data.name || "Founder";
                 onboardingModal.classList.remove('active');
                 await initLab(email, project);
             } else {
