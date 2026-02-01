@@ -1,0 +1,107 @@
+:root {
+    --dash-bg: #F8FAFC;
+    --dash-card-bg: #FFFFFF;
+    --dash-text: #1E293B;
+    --dash-accent: #2979FF;
+    --dash-border: #E2E8F0;
+    --dash-success: #10B981;
+}
+
+body {
+    background-color: var(--dash-bg);
+}
+
+.lab-main {
+    padding-top: 120px;
+    padding-bottom: 80px;
+    min-height: 100vh;
+}
+
+.lab-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--dash-text);
+    letter-spacing: -1px;
+    text-align: center;
+}
+
+/* Progress Bar */
+.progress-container {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    text-align: center;
+}
+
+.progress-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748B;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.progress-track {
+    height: 8px;
+    background: #E2E8F0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--dash-accent);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+/* Grid */
+.truth-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.truth-card {
+    background: var(--dash-card-bg);
+    border: 1px solid var(--dash-border);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    text-decoration: none;
+    color: var(--dash-text);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.truth-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+    border-color: var(--dash-accent);
+}
+
+.truth-title {
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+/* Completed State */
+.truth-card.completed {
+    background: #F0FDF4;
+    border-color: var(--dash-success);
+}
+
+.truth-card.completed::after {
+    content: '✓';
+    font-size: 1.2rem;
+    color: var(--dash-success);
+    margin-top: 0.5rem;
+    font-weight: 800;
+}

@@ -1,0 +1,81 @@
+body {
+    background-color: #0F172A; /* Dark theme for onboarding */
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.onboarding-main {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    padding-top: 120px;
+}
+
+.onboarding-card {
+    background: #1E293B;
+    padding: 3rem;
+    border-radius: 24px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid #334155;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: rgba(41, 121, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    color: #2979FF;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #FFFFFF;
+}
+
+p {
+    color: #94A3B8;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.btn-enter {
+    background: #2979FF;
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+.btn-enter:hover {
+    background: #1E60CC;
+    transform: translateY(-2px);
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -529,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             // Redirect to Biz Lab with email
             const email = testEmailInput.value.trim();
-            window.location.href = `biz-lab.html?email=${encodeURIComponent(email)}`;
+            window.location.href = `new-dashboard.html?email=${encodeURIComponent(email)}`;
         });
 
         // --- Add Retake Link ---

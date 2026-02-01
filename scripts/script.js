@@ -37,6 +37,32 @@ function initializeSiteFunctionality() {
     };
     addBlogLink();
 
+    // --- Inject Business Lab Link ---
+    const updateBizLabLink = () => {
+        const targetUrl = 'onboardingdash.html';
+        const linkText = 'Business Lab';
+
+        // Helper to add or update link in a container
+        const handleContainer = (container) => {
+            if (!container) return;
+            // Check if a link to biz-lab.html or similar exists to replace
+            let existingLink = container.querySelector('a[href*="biz-lab"]');
+            
+            if (existingLink) {
+                existingLink.href = targetUrl;
+                existingLink.textContent = linkText;
+            } else if (!container.querySelector(`a[href="${targetUrl}"]`)) {
+                // If not found, append new
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${targetUrl}">${linkText}</a>`;
+                container.appendChild(li);
+            }
+        };
+
+        handleContainer(document.querySelector('.desktop-nav ul'));
+    };
+    updateBizLabLink();
+
     const mobileLinks = document.querySelectorAll('.mobile-nav a');
 
     // --- Header CTA Customization ---
