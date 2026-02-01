@@ -16,17 +16,23 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h10"/><path d="M9 4v16"/><path d="M3 9l3 3-3 3"/><path d="M12 6l3 3-3 3"/><path d="M12 18l3-3-3-3"/></svg>
             </div>
             <h1>Business Lab Access</h1>
-            <p>You are about to enter the Command Center. This is where you audit your business against the 33 Immutable Truths.</p>
+            <p>Enter your registered email to access the Command Center.</p>
             
-            <div class="user-welcome" id="user-welcome-msg" style="display: none;">
-                Welcome back, <span id="user-name-display">Founder</span>.
+            <div class="form-group">
+                <input type="email" id="email-input" placeholder="Enter your email address" class="auth-input">
+                <div id="auth-message" class="auth-message"></div>
             </div>
 
-            <button id="enter-lab-btn" class="btn-enter">Enter Command Center</button>
+            <button id="enter-lab-btn" class="btn-enter">Sign In</button>
+            
+            <div class="signup-prompt" style="margin-top: 1.5rem; font-size: 0.9rem; color: #64748B;">
+                New here? <a href="product-test.html" style="color: #2979FF; font-weight: 600;">Take the Sellability Test</a> to register.
+            </div>
         </div>
     </main>
 
     <div id="footer-placeholder"></div>
+    <script src="scripts/config.js"></script>
     <script src="scripts/script.js"></script>
     <script src="scripts/onboardingdash.js"></script>
 </body>
