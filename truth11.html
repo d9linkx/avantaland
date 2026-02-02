@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building something for yourself is tempting but dangerous | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #11</span>
+            <h1>Building something for yourself is tempting but dangerous</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I built my first startup for the person I wished I was: a digital nomad working from beaches in Lagos, needing elegant productivity tools to manage my "empire." The product was beautiful: a minimalist task manager with Pomodoro timers and elegant analytics.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Conduct the "pain point commonality" test
+Interview 20 people who superficially resemble you. Do not pitch. Ask: "Walk me through how you handle [this task] now." The 70% rule: If fewer than 70% describe an identical pain point with similar intensity, you are building for an audience of one.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Implement the "alien user" protocol
+Force yourself to watch someone use your prototype without instruction. Specifically, choose an "Alien User", someone opposite to you (e.g., if you’re technical, test with non-technical users). Pay attention to where they stumble.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Create the "founder detachment" ritual
+Build systems that regularly challenge your ego: Weekly "Why" sessions to challenge assumptions, Founder "support shift" (2 hours/week), and The "kill your darlings" review every month.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I built my first startup for the person I wished I was: a digital nomad working from beaches in Lagos, needing elegant productivity tools to manage my "empire." The product was beautiful: a minimalist task manager with Pomodoro timers and elegant analytics.</p>
+            <p>I was my own perfect customer. I used it every day. I assumed everyone would.</p>
+            <p>The problem was, I wasn't building for the person I actually was: a stressed founder working 80-hour weeks, juggling context switches, and needing to just not forget the damn payroll.</p>
+            <p>My beautiful app was useless for that reality. When a real crisis hit, I'd abandon it and go back to a chaotic but functional combination of Google Docs, Calendar alerts, and Scribbled notes.</p>
+            <p>The wake-up call came when I got my first 100 beta users. They didn't want beauty; they wanted Salesforce integrations and team task assignments. I found myself getting angry at them. "They don't get it," I'd mutter.</p>
+            <p>No, I was missing the point. I’d built a cathedral to my own aesthetic preferences while my potential customers were asking for a functional warehouse.</p>
+            <p>The lesson: I’d fallen in love with my own reflection in the product, and when the market showed me a different face, I couldn’t bear to look.</p>
+            <p><strong>What makes you a "weirdo" in business terms?</strong></p>
+            <p>You have "Founder-Product Fit" when your solution works for exactly one person: you. This happens when your needs are:</p>
+            <p>Too niche: You're a power user in a sea of casual users.</p>
+            <p>Too privileged: You have technical skills or resources your users lack.</p>
+            <p>Too idiosyncratic: Your workflow is unique to your own strange habits.</p>
+            <p>Not painful enough: It’s an annoyance you enjoy fixing, not a crisis others will pay for.</p>
+            <p><strong>The three traps of building for yourself</strong></p>
+            <p>The "everyone is like me" fallacy: Assuming your high tolerance for complexity and specific priorities are universal.</p>
+            <p>The "solution blindness" trap: Becoming so enamored with your elegant solution that you stop questioning if the problem is worth solving for anyone else.</p>
+            <p>The "feedback filter" problem: Dismissing negative feedback as a lack of "good taste" on the user's part.</p>
+            <p><strong>Summary</strong></p>
+            <p>Your own frustration is an excellent starting pistol, but a terrible finish line. Use your personal pain as a source of empathy and insight, not as a product roadmap.</p>
+            <p>The market doesn’t care about your elegant solutions. It cares about its own messy problems. Build for the customer you have, not the customer you wish you were.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth12.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 10; // Truth 11 is index 10
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

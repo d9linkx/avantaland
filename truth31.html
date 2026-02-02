@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiring before revenue is a gamble; hire slow, fire fast | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #31</span>
+            <h1>Hiring before revenue is a gamble; hire slow, fire fast</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>Ferdinand made his first hire when his bank account had exactly $18,000 left. They hadn't earned a single dollar of revenue, but they had a "promising pipeline" and "strong investor interest." Big words, right?</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "revenue test" before any hire
+Before creating a job description, answer these questions: Can this role be directly tied to revenue generation? Do we have at least 6 months of runway? Have we validated that this problem can't be solved through contractors?</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Create the "30-day outcomes" hiring process
+Restructure your hiring around concrete outcomes rather than qualifications. Define exactly what this person needs to accomplish in their first 30, 60, and 90 days. Test for these outcomes during the hiring process.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Build your "culture filter" system
+Define your non-negotiable cultural values. Create behavioral interview questions that test for these values. Include multiple team members in the process specifically to evaluate cultural fit.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>Ferdinand made his first hire when his bank account had exactly $18,000 left. They hadn't earned a single dollar of revenue, but they had a "promising pipeline" and "strong investor interest." Big words, right?</p>
+            <p>He hired Alex because he was talented, available, and shared their vision. What he didn't account for was the $8,000 monthly burn rate Alex represented, a time bomb that started ticking the moment he walked in the door.</p>
+            <p>For three months, Ferdinand watched their runway evaporate while Alex built beautiful, technically impressive features that nobody was buying. The pressure transformed their relationship. Alex’s strategic oversight became micromanagement. His creative problem-solving became "scope creep."</p>
+            <p>The end was messy, emotional, and expensive. When Ferdinand finally let him go, it was like a funeral. He felt he had failed as a leader, wasted precious capital, and damaged a talented person's career. The severance package and unused equity cost him another two months of runway.</p>
+            <p>Meanwhile, a fellow founder in another co-working space took a different approach. She didn't hire her first employee until she had six months of recurring revenue covering that person's salary. The interview process took four months. But when she finally hired, the new hire hit the ground running with little to no friction.</p>
+            <p>The lesson: Don’t hire early just to fill up empty roles. You’re only risking your company's survival on someone else's productivity.</p>
+            <p><strong>Why premature hiring is organizational suicide</strong></p>
+            <p>Hiring before achieving revenue isn't just risky. It's often organizational suicide. You're simply making one of the most expensive, irreversible decisions your business will ever make.</p>
+            <p><strong>Summary</strong></p>
+            <p>Early hiring is like taking on a co-pilot when you're still figuring out how to fly the plane. Wait until you're at least airborne and know your destination.</p>
+            <p>When you do hire, be more rigorous about evaluating fit than you are about evaluating skill. And when you realize you've made a mistake, fix it immediately—the cost of keeping the wrong person always exceeds the cost of letting them go. Your company's survival depends not just on who you hire, but when you hire and how quickly you correct your course.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth32.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 30; // Truth 31 is index 30
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

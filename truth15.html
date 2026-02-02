@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solve the bleeding wound today, not the itch they might have next year | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #15</span>
+            <h1>Solve the bleeding wound today, not the itch they might have next year</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I once built a product for a problem that was six months away from existing. It was 2018, and I was convinced privacy regulations would create a massive market for "compliance automation." I spent months building a beautiful platform. I was early, I was visionary, and I was completely, utterly bankrupt within a year.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Conduct the "current solution" autopsy
+When interviewing potential customers, focus entirely on what they are doing right now to solve the problem: "What's the most expensive part of your current solution?" "What workarounds have you created?" If they aren't already trying to solve it, it’s not a "right now" pain.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Implement the "pain thermometer" test
+Rate potential problems on a 1–10 scale across three dimensions: Frequency, Intensity, and Urgency. The formula: Multiply the scores. Anything below 200 is likely not worth a business; focus on pains that score 400+.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Create the "today test" for features
+For every feature or product you consider building, ask: "If I shipped this tomorrow, would customers use it immediately?" "Does this replace something they are already paying for?"</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I once built a product for a problem that was six months away from existing. It was 2018, and I was convinced privacy regulations would create a massive market for "compliance automation."</p>
+            <p>I spent months building a beautiful platform. I was early, I was visionary, and I was completely, utterly bankrupt within a year.</p>
+            <p>The problem was simple: my potential customers didn't feel the pain yet. When I'd ask about data compliance, they'd say, "Yeah, that might be important later."</p>
+            <p>They were worried about next quarter's revenue. They were worried about this week's payroll. They were worried about today's customer complaints.</p>
+            <p>My brilliant solution was a "someday" problem competing against their "right now" emergencies.</p>
+            <p>The turning point came during a demo when an e-commerce founder interrupted: "Forget that, can your system tell me why my checkout abandonment rate jumped 15% this week?"</p>
+            <p>I saw the genuine panic in his eyes. That was a pain he felt in his gut, today. I pivoted to solving that instead. It wasn't visionary or sexy, but the founders didn't say "interesting". They asked "how do I get this right now?" and "how much does it cost?"</p>
+            <p>The lesson: They were already feeling that pain, and they were actively searching for relief.</p>
+            <p><strong>Summary</strong></p>
+            <p>The market rewards painkillers, not vitamins. Don't build something that might be important someday. Build something that solves a bleeding wound today.</p>
+            <p>Find the thing that makes people say "Ouch!" and then be the bandage. Your customers' present pain will always fund your business more reliably than their future problems.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth16.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 14; // Truth 15 is index 14
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your friends are liars; they love you, so they’ll let you go bankrupt with a smile | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #23</span>
+            <h1>Your friends are liars; they love you, so they’ll let you go bankrupt with a smile</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>The most dangerous feedback I ever received was glowing praise from everyone I knew. When I showed my first business to friends and family, the responses were universally enthusiastic. Encouraged by this support, I spent six months and 90% of my savings building the full product.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "stranger test" protocol
+You must get your first 50 data points from people who have no emotional investment in you. Go where your problems live. Lead with curiosity, not solutions. Offer asymmetric value.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Create the "feedback scorecard"
+Stop listening to what people say and start tracking what they do. Use this simple scoring system: +1 point (thoughtful questions), +3 points (significant time), +5 points (offer to pay), +10 points (referrals).</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Establish the "money or time" threshold
+The only validation that matters involves either money or significant time investment. For paid products: 10 strangers paid. For free products: 50 strangers use weekly. For services: 5 paying clients.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>The most dangerous feedback I ever received was glowing praise from everyone I knew. When I showed my first business (peer-to-peer delivery app) to friends and family, the responses were universally enthusiastic.</p>
+            <p>"This is amazing!" "I'd totally use this!" “You're going to be huge!" My favorite was my aunt, who declared, "This is better than Facebook!"</p>
+            <p>They were genuinely happy for me. Encouraged by this support, I spent six months and 90% of my savings building the full product. I launched with confidence, expecting the tidal wave of users. The wave never came.</p>
+            <p>In fact, it was more like a slow leak. A few friends signed up out of obligation, used the app once, and never returned. The broader market was completely indifferent. After three months, we had 23 daily active users. 19 of them were people I knew personally.</p>
+            <p>The moment of truth came when I asked my most brutally honest friend what went wrong. He finally admitted: "Look, we all thought it was a cool idea, but honestly? We already have group texts for making plans. We didn't want to hurt your feelings by saying it wasn't necessary."</p>
+            <p>That lesson taught me something fundamental: Friendship and market validation are not the same. The people who care about you will instinctively protect your feelings, but the market will tell you the truth through their behavior (or lack thereof).</p>
+            <p><strong>The psychology of the "friend filter"</strong></p>
+            <p>The "friend filter" is one of the most common and dangerous validation traps for founders. Your friends and family are wired to support you emotionally, not evaluate your business/idea objectively.</p>
+            <p><strong>Summary</strong></p>
+            <p>Your friends' job is to support your dreams. Your customers' job is to solve their problems. Don't confuse the two.</p>
+            <p>The market's indifference feels like rejection, but it's actually data. The truth might hurt your feelings, but it will save your business. Stop collecting compliments and start collecting hard truths. Your real customers are out there. Stop talking to your friends and start finding them.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth24.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 22; // Truth 23 is index 22
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

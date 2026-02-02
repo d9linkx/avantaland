@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your first codebase will suck. Refactor later | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #20</span>
+            <h1>Your first codebase will suck. Refactor later</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I still have nightmares about "Eevvo." It was my second startup, and we were determined to do everything right. We spent three months building the "perfect" architecture: Microservices, Event sourcing, and Reactive programming patterns.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "technical debt budget"
+Consciously decide how much technical debt you're willing to carry at each stage: Stage 1 (Pre-PMF): High debt tolerance. Stage 2 (Finding PMF): Medium debt tolerance. Stage 3 (Scaling): Low debt tolerance.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Schedule "refactoring sprints"
+Instead of refactoring as you go, schedule dedicated time for it: Every 4-6 weeks, dedicate 20-30% of engineering capacity to paying down debt.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Create the "pain-driven development" rule
+Only refactor when the pain of not refactoring exceeds the cost of refactoring. Maintain a "pain log" to document what part of the codebase is causing pain and how much time it is wasting.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I still have nightmares about "Eevvo." It was my second startup, and we were determined to do everything right. We spent three months building the "perfect" architecture: Microservices, Event sourcing, and Reactive programming patterns.</p>
+            <p>We had beautiful abstractions, impeccable separation of concerns, and code so clean you could eat off it.</p>
+            <p>Then we launched, and nothing worked. Our beautiful architecture was collapsing under real-world load patterns we never anticipated. The event sourcing created unbearable complexity for simple operations. The microservices communicated so much they might as well have been one monolith.</p>
+            <p>We spent more time debugging our "perfect" system than actually building features customers wanted.</p>
+            <p>Meanwhile, a competitor launched two weeks after we started our grand architecture. Their code was what we'd call a "ball of mud". A monolithic spaghetti codebase with zero tests and database calls in the view layer. They had 10x our users within a month. Why?</p>
+            <p>While we were architecting for theoretical scale, they were shipping features for actual customers. While we were debating design patterns, they were fixing real user problems.</p>
+            <p>The lesson: You cannot architect your way to product-market fit. The quality of your code matters exactly zero if nobody wants your product. The goal of your first codebase isn't to withstand the test of time. It's to help you learn what to build before you run out of time.</p>
+            <p><strong>Why "perfect product" is the enemy of progress</strong></p>
+            <p>The obsession with perfect product is one of the most subtle, insidious business killers. It is technical perfectionism disguised as professionalism.</p>
+            <p>The most successful technical leaders embrace a simple philosophy: "Make it work, make it right, make it fast", in that order.</p>
+            <p>Your code quality should match your business certainty. When you have zero customers and zero revenue, your certainty justifies speed over engineering rigor.</p>
+            <p><strong>Summary</strong></p>
+            <p>Your first codebase is a conversation with the market, not your technical masterpiece. Write code that's good enough to learn from, not so perfect that you're afraid to throw it away.</p>
+            <p>The best codebase isn't the one with the most elegant patterns—it's the one that helped you find product-market fit fastest. Build to learn, then rebuild to scale. Your future self will thank you for the patience, and your investors will thank you for the progress.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth21.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 19; // Truth 20 is index 19
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

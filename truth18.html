@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You’ll iterate more than you plan. Accept it | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #18</span>
+            <h1>You’ll iterate more than you plan. Accept it</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I remember the exact moment our beautiful, logical product roadmap disintegrated. We were three months into building what we thought was a revolutionary project management tool. We had Gantt charts, dependencies, resource allocation, and more.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "learning loop" rhythm
+Structure your development process around tight, disciplined three-week cycles: Week 1 (Build), Week 2 (Measure), Week 3 (Learn). This creates a constant drumbeat of adjustment.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Create an "assumption tracking" system
+Maintain a living document that treats your plan as a set of hypotheses. For each core belief, track: Our belief, Test method, Evidence so far, Confidence level, and Next iteration.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Establish "pivot/persevere" decision gates
+Schedule mandatory monthly reviews to ask three hard questions: Are we solving a real problem for real users? Is our current approach the best way to solve it? Should we pivot, persevere, or pause?</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I remember the exact moment our beautiful, logical product roadmap disintegrated. We were three months into building what we thought was a revolutionary project management tool. We had Gantt charts, dependencies, resource allocation, and more. Our 6-month plan was detailed down to the week.</p>
+            <p>Then we showed it to our first real beta users. The feedback was negative and baffling: "Why would I need to track hours?" "This is way too complicated for what my team actually does." "We don't need another project manager. We need something that helps us actually make decisions in our weekly meetings."</p>
+            <p>My co-founder and I stared at our whiteboard for what felt like an hour. Then, I picked up the eraser and wiped the entire thing clean. We weren't just changing features; we were admitting that our fundamental understanding of the problem was wrong.</p>
+            <p>We spent the next four months in what I now call "the iteration storm." We changed our value proposition three times, rebuilt our core interface twice, and interviewed over 100 users. The product that eventually found traction bore almost no resemblance to our original vision. It was better for them, and real.</p>
+            <p>Iteration is the heart of any startup. The business journey isn't a straight line; it's a chaotic, looping, often-backtracking path of discovery. The companies that survive aren't those with the best initial plans, but those with the fastest learning cycles.</p>
+            <p><strong>Three iteration traps that stunt growth</strong></p>
+            <p>The "perfect iteration" fallacy: Waiting until you have a polished version before showing users. This results in building the wrong thing perfectly.</p>
+            <p>The "shiny object" iteration: Changing direction based on every random piece of feedback without a framework. This creates a "Frankenstein" product.</p>
+            <p>The "invisible" iteration: Making changes without tracking impact. If you don't measure, you're just changing things randomly, not learning systematically.</p>
+            <p>The truth: The map is not the territory. Your business plan is a guess about an unknown landscape. Iteration is how you actually explore that landscape and draw a real updated map.</p>
+            <p><strong>Summary</strong></p>
+            <p>Your initial plan is your starting point, not your destination. The real value isn't in executing the plan perfectly. It's in learning faster than your competitors which parts of the plan were wrong.</p>
+            <p>Iteration isn't a sign you're lost; it's how you find your way. Build, measure, learn, then repeat until you've built something people actually want.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth19.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 17; // Truth 18 is index 17
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

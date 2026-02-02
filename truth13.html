@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talking to users before coding is mandatory | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #13</span>
+            <h1>Talking to users before coding is mandatory</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I have a graveyard of code that never saw the light of day. The most expensive tombstone is "Project Sisyphus", a social analytics platform I spent six months building before speaking to a single user.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. The problem interview protocol
+Conduct 10 interviews focused exclusively on the problem space. Use these questions: "Walk me through the last time you encountered this problem." "How do you currently solve it?" "How much time/money does this cost you?"</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. The solution sketch method
+Test solutions without the sunk cost of development: Clickable Figma mockups, Detailed product descriptions or landing pages with "fake" buttons, and Service Prototyping.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. The "five why" technical justification
+Before any feature is coded, you must answer: Why this feature? Why now? Why this way? Why us? Why not later?</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I have a graveyard of code that never saw the light of day. The most expensive tombstone is "Project Sisyphus", a social analytics platform I spent six months building before speaking to a single user.</p>
+            <p>I built a sophisticated algorithm for "meaningful engagement." My first beta tester, Chloe, took one look and said: "I don't care about engagement. Does this post actually drive sales?"</p>
+            <p>The next four calls were the same. I soon figured out that I had built a solution to a problem nobody had.</p>
+            <p>The cost: Six months of work, thousands in server fees, and countless late nights.</p>
+            <p>The reminder: If you're not talking to users, you're just writing fan fiction about your own genius.</p>
+            <p><strong>Summary</strong></p>
+            <p>Code is liability; user understanding is an asset. Every line of code represents complexity added and flexibility lost. The best founders don't fall in love with their solutions; they fall in love with their users' problems.</p>
+            <p>Talk to your customers first. Only after then should you code. Do this every time.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth14.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 12; // Truth 13 is index 12
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

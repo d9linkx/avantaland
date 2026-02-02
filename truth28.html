@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You can't "growth hack" a product that nobody wants | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #28</span>
+            <h1>You can't "growth hack" a product that nobody wants</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I saw a startup burn through $500,000 in venture funding on the most brilliant growth hack I've ever seen. And it destroyed them. They'd built a meal-planning app that was... fine. Not great, not terrible.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "40% Rule" validation test
+Survey your active users: "How would you feel if you could no longer use this product?" If 40% or more answer "Very disappointed," you have early signs of product-market fit.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Create your "growth readiness" dashboard
+Build a simple dashboard that tracks these three metrics: Retention (30%+), Referral (10%+), and Revenue (or Value). When all three metrics are positive and stable, you've earned the right to pour gasoline on the fire.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Apply the "growth hypothesis" framework
+Treat each initiative as a scientific experiment: Hypothesis, Success Criteria, and Kill Criteria.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I saw a startup burn through $500,000 in venture funding on the most brilliant growth hack I've ever seen. And it destroyed them.</p>
+            <p>They'd built a meal-planning app that was... fine. Not great, not terrible. But they discovered a loophole in Facebook's ad platform that let them acquire users for just $0.10 each when everyone else was paying $5.</p>
+            <p>They went all in. They scaled their ad spend to $50,000 a month. Their user graph shot up and to the right. They raised more money based on these "traction" metrics. Investors were thrilled. The growth was undeniable.</p>
+            <p>There was just one problem: their product wasn't very good. The meal plans were generic. The shopping list feature was buggy. The user experience was confusing. But buried under the avalanche of new users, these problems seemed minor.</p>
+            <p>"We'll fix the product later," the founder told me. "Right now, we're focused on growth."</p>
+            <p>Then Facebook closed the loophole. Their CAC jumped from $0.10 to $8.00 overnight. And that's when the truth revealed itself: their users were leaving as fast as they were coming. Their retention curve looked like a cliff.</p>
+            <p>Without the growth hack propping them up, the fundamental weakness of their product was exposed. They had massive user acquisition but zero product-market fit. Six months later, they were out of business. The growth hack hadn't saved them—it had just given them a more expensive way to fail.</p>
+            <p>The seduction of growth hacks is that they offer the illusion of progress without the hard work of building something people actually want. This is like putting rocket fuel in a car with a broken engine. You'll move very fast until you explode.</p>
+            <p><strong>The fundamental relationship between growth and PMF</strong></p>
+            <p>Product-market fit is about building something people want so badly they'll use it, pay for it, and tell others about it—even if your marketing is terrible. Growth hacks are about removing friction between people who want your product and actually using it.</p>
+            <p><strong>Summary</strong></p>
+            <p>Growth hacks are amplifiers, not creators of value. They can make a good product successful faster, but they can't make a bad product successful.</p>
+            <p>Focus on making your product so good that your biggest growth problem is keeping up with organic demand. Then, and only then, use growth hacks to scale what's already working. Don't use growth as a substitute for value. Use it as an accelerator of value. Build something people want first; hack your way to more of them second.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth29.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 27; // Truth 28 is index 27
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

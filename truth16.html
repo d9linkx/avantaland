@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>If you aren’t embarrassed by the first version of your MVP, you shipped too late | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #16</span>
+            <h1>If you aren’t embarrassed by the first version of your MVP, you shipped too late</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I watched a founder demo his "MVP" at a pitch event, and it was heartbreaking. He'd built everything: user profiles, social features, analytics dashboards, even a complex recommendation engine. It took his team six months to build.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Define your "riskiest assumption"
+Before writing a single line of code, identify what would make the business fail if you were wrong. "Users will manually input data every day." "Businesses will pay $500/month for this." Your MVP exists solely to test this one thing.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Build the "minimum learning vehicle"
+Design the absolute simplest thing that could test that assumption: To test willingness to pay (Landing page with "Buy Now"), To test engagement (Single-feature web app), To test value (Concierge MVP).</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Implement the "learning metric" system
+Define exactly what success looks like in quantitative terms before you launch: "10% of visitors click 'Buy Now'." "40% of users return within 48 hours." These metrics are your go/no-go decisions.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I watched a founder demo his "MVP" at a pitch event, and it was heartbreaking. He'd built everything: user profiles, social features, analytics dashboards, even a complex recommendation engine. It took his team six months to build.</p>
+            <p>The product was slow, buggy, and confusing. When the first user question came: "How do I actually do the one thing this is supposed to do?" He had to click through four screens to demonstrate the core functionality.</p>
+            <p>Afterward, I asked him why he built all those features before launching. He looked at me with tired eyes and said, "I didn't want to launch something half-baked. I wanted it to be complete."</p>
+            <p>He'd missed the entire point. His "complete" product was actually half-baked: It was unstable and poorly executed. It was based entirely on untested assumptions. He spent six months building the wrong thing perfectly, when he could have spent two weeks building the right thing poorly.</p>
+            <p>I made the opposite mistake with my first startup. We shipped something so minimal it was practically useless: a login screen and one button that said "magic happens here." Users logged in, clicked the button, and said, "Okay... now what?"</p>
+            <p>We learned nothing because there was nothing to test. Both approaches fail because they misunderstand the "V" in MVP.</p>
+            <p>The lesson: "Viable" doesn't mean commercially ready. It means "capable of producing validated learning." An MVP is an experiment, not a product. It is the smallest thing you can build to test your riskiest assumption.</p>
+            <p><strong>Three MVP traps that kill businesses</strong></p>
+            <p>The "feature factory" trap: Loading the MVP with every possible feature for fear of being seen as "incomplete." This results in zero learning about what actually matters.</p>
+            <p>The "prototype in disguise" trap: Building something so minimal that it doesn't solve the problem. You learn nothing about real usage patterns.</p>
+            <p>The "future-proofing" trap: Building scalable infrastructure and enterprise security for zero users. You are building highways for a town that doesn't exist.</p>
+            <p>The most dangerous word in product development is "and." Every "and" doubles your development time and halves your learning speed. Ruthless subtraction is the art of the MVP.</p>
+            <p><strong>Summary</strong></p>
+            <p>Your MVP is not your product's first version. It's your strategy's first test. Stop building cathedrals and start setting up laboratories.</p>
+            <p>The quality of your learning matters more than the quality of your code. The fastest way to build a successful product isn't to build faster. It's to learn faster. Build just enough to run the experiment, then let your users write the rest of your roadmap for you.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth17.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 15; // Truth 16 is index 15
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

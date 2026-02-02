@@ -7,12 +7,49 @@
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/new-dash.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Truth Card Enhancements */
+        .truth-card {
+            display: flex !important;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+            min-height: 180px;
+        }
+        .truth-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.05);
+            color: #64748B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .truth-card:hover .truth-number { transform: scale(1.1); }
+        
+        /* Category Colors */
+        .truth-card[data-category="foundation"] .truth-number { color: #2979FF; background: rgba(41, 121, 255, 0.1); }
+        .truth-card[data-category="scaling"] .truth-number { color: #10B981; background: rgba(16, 185, 129, 0.1); }
+        .truth-card[data-category="defense"] .truth-number { color: #F59E0B; background: rgba(245, 158, 11, 0.1); }
+
+        .truth-card[data-category="foundation"]:hover .truth-number { background: #2979FF; color: #fff; }
+        .truth-card[data-category="scaling"]:hover .truth-number { background: #10B981; color: #fff; }
+        .truth-card[data-category="defense"]:hover .truth-number { background: #F59E0B; color: #fff; }
+        
+        .truth-card[data-category="scaling"]:hover { border-color: #10B981 !important; }
+        .truth-card[data-category="defense"]:hover { border-color: #F59E0B !important; }
+    </style>
 </head>
 <body>
     <div id="header-placeholder"></div>
     <main class="lab-main">
         <div class="container">
-            <h1 class="lab-title" style="margin-bottom: 2rem;">Truth Dashboard</h1>
+            <h1 class="lab-title" style="margin-bottom: 2rem;">Business Dashboard</h1>
             
             <!-- Feature 1: Rank & Progress -->
             <div class="progress-container">
@@ -47,39 +84,138 @@
             </div>
 
             <div class="truth-grid">
-                <a href="truth1.html" class="truth-card" data-category="foundation" data-id="0"><h3 class="truth-title">Truth 1</h3></a>
-                <a href="truth2.html" class="truth-card" data-category="foundation" data-id="1"><h3 class="truth-title">Truth 2</h3></a>
-                <a href="truth3.html" class="truth-card" data-category="foundation" data-id="2"><h3 class="truth-title">Truth 3</h3></a>
-                <a href="truth4.html" class="truth-card" data-category="foundation" data-id="3"><h3 class="truth-title">Truth 4</h3></a>
-                <a href="truth5.html" class="truth-card" data-category="foundation" data-id="4"><h3 class="truth-title">Truth 5</h3></a>
-                <a href="truth6.html" class="truth-card" data-category="foundation" data-id="5"><h3 class="truth-title">Truth 6</h3></a>
-                <a href="truth7.html" class="truth-card" data-category="foundation" data-id="6"><h3 class="truth-title">Truth 7</h3></a>
-                <a href="truth8.html" class="truth-card" data-category="foundation" data-id="7"><h3 class="truth-title">Truth 8</h3></a>
-                <a href="truth9.html" class="truth-card" data-category="foundation" data-id="8"><h3 class="truth-title">Truth 9</h3></a>
-                <a href="truth10.html" class="truth-card" data-category="foundation" data-id="9"><h3 class="truth-title">Truth 10</h3></a>
-                <a href="truth11.html" class="truth-card" data-category="foundation" data-id="10"><h3 class="truth-title">Truth 11</h3></a>
-                <a href="truth12.html" class="truth-card" data-category="foundation" data-id="11"><h3 class="truth-title">Truth 12</h3></a>
-                <a href="truth13.html" class="truth-card" data-category="foundation" data-id="12"><h3 class="truth-title">Truth 13</h3></a>
-                <a href="truth14.html" class="truth-card" data-category="foundation" data-id="13"><h3 class="truth-title">Truth 14</h3></a>
-                <a href="truth15.html" class="truth-card" data-category="foundation" data-id="14"><h3 class="truth-title">Truth 15</h3></a>
-                <a href="truth16.html" class="truth-card" data-category="foundation" data-id="15"><h3 class="truth-title">Truth 16</h3></a>
-                <a href="truth17.html" class="truth-card" data-category="scaling" data-id="16"><h3 class="truth-title">Truth 17</h3></a>
-                <a href="truth18.html" class="truth-card" data-category="scaling" data-id="17"><h3 class="truth-title">Truth 18</h3></a>
-                <a href="truth19.html" class="truth-card" data-category="defense" data-id="18"><h3 class="truth-title">Truth 19</h3></a>
-                <a href="truth20.html" class="truth-card" data-category="scaling" data-id="19"><h3 class="truth-title">Truth 20</h3></a>
-                <a href="truth21.html" class="truth-card" data-category="scaling" data-id="20"><h3 class="truth-title">Truth 21</h3></a>
-                <a href="truth22.html" class="truth-card" data-category="scaling" data-id="21"><h3 class="truth-title">Truth 22</h3></a>
-                <a href="truth23.html" class="truth-card" data-category="foundation" data-id="22"><h3 class="truth-title">Truth 23</h3></a>
-                <a href="truth24.html" class="truth-card" data-category="scaling" data-id="23"><h3 class="truth-title">Truth 24</h3></a>
-                <a href="truth25.html" class="truth-card" data-category="scaling" data-id="24"><h3 class="truth-title">Truth 25</h3></a>
-                <a href="truth26.html" class="truth-card" data-category="scaling" data-id="25"><h3 class="truth-title">Truth 26</h3></a>
-                <a href="truth27.html" class="truth-card" data-category="scaling" data-id="26"><h3 class="truth-title">Truth 27</h3></a>
-                <a href="truth28.html" class="truth-card" data-category="scaling" data-id="27"><h3 class="truth-title">Truth 28</h3></a>
-                <a href="truth29.html" class="truth-card" data-category="defense" data-id="28"><h3 class="truth-title">Truth 29</h3></a>
-                <a href="truth30.html" class="truth-card" data-category="defense" data-id="29"><h3 class="truth-title">Truth 30</h3></a>
-                <a href="truth31.html" class="truth-card" data-category="defense" data-id="30"><h3 class="truth-title">Truth 31</h3></a>
-                <a href="truth32.html" class="truth-card" data-category="defense" data-id="31"><h3 class="truth-title">Truth 32</h3></a>
-                <a href="truth33.html" class="truth-card" data-category="defense" data-id="32"><h3 class="truth-title">Truth 33</h3></a>
+                <a href="truth1.html" class="truth-card" data-category="foundation" data-id="0">
+                    <div class="truth-number">01</div>
+                    <h3 class="truth-title">You are unqualified; no amount of prep survives first contact</h3>
+                </a>
+                <a href="truth2.html" class="truth-card" data-category="foundation" data-id="1">
+                    <div class="truth-number">02</div>
+                    <h3 class="truth-title">Passion is a poverty trap; the market doesn't care how much you "love" your idea</h3>
+                </a>
+                <a href="truth3.html" class="truth-card" data-category="foundation" data-id="2">
+                    <div class="truth-number">03</div>
+                    <h3 class="truth-title">If you can’t eat "No" for breakfast, you'll starve</h3>
+                </a>
+                <a href="truth4.html" class="truth-card" data-category="foundation" data-id="3">
+                    <div class="truth-number">04</div>
+                    <h3 class="truth-title">You will want to burn your own company to the ground at least 10 times</h3>
+                </a>
+                <a href="truth5.html" class="truth-card" data-category="foundation" data-id="4">
+                    <div class="truth-number">05</div>
+                    <h3 class="truth-title">Confidence is learned through small wins, not pep talks</h3>
+                </a>
+                <a href="truth6.html" class="truth-card" data-category="foundation" data-id="5">
+                    <div class="truth-number">06</div>
+                    <h3 class="truth-title">Expect chaos; it’s the default state of early businesses</h3>
+                </a>
+                <a href="truth7.html" class="truth-card" data-category="foundation" data-id="6">
+                    <div class="truth-number">07</div>
+                    <h3 class="truth-title">Your first plan is almost always wrong; accept it</h3>
+                </a>
+                <a href="truth8.html" class="truth-card" data-category="foundation" data-id="7">
+                    <div class="truth-number">08</div>
+                    <h3 class="truth-title">Most people want to see you fail so they feel better about staying safe</h3>
+                </a>
+                <a href="truth9.html" class="truth-card" data-category="foundation" data-id="8">
+                    <div class="truth-number">09</div>
+                    <h3 class="truth-title">Your idea isn’t unique; someone else is already thinking it</h3>
+                </a>
+                <a href="truth10.html" class="truth-card" data-category="foundation" data-id="9">
+                    <div class="truth-number">10</div>
+                    <h3 class="truth-title">Validation kills ego: people will tell you it sucks. Listen</h3>
+                </a>
+                <a href="truth11.html" class="truth-card" data-category="foundation" data-id="10">
+                    <div class="truth-number">11</div>
+                    <h3 class="truth-title">Building something for yourself is tempting but dangerous</h3>
+                </a>
+                <a href="truth12.html" class="truth-card" data-category="foundation" data-id="11">
+                    <div class="truth-number">12</div>
+                    <h3 class="truth-title">A small, obsessed niche is better than a large lukewarm market</h3>
+                </a>
+                <a href="truth13.html" class="truth-card" data-category="foundation" data-id="12">
+                    <div class="truth-number">13</div>
+                    <h3 class="truth-title">Talking to users before coding is mandatory</h3>
+                </a>
+                <a href="truth14.html" class="truth-card" data-category="foundation" data-id="13">
+                    <div class="truth-number">14</div>
+                    <h3 class="truth-title">Surveys lie; prototypes don’t</h3>
+                </a>
+                <a href="truth15.html" class="truth-card" data-category="foundation" data-id="14">
+                    <div class="truth-number">15</div>
+                    <h3 class="truth-title">Solve the bleeding wound today, not the itch they might have next year</h3>
+                </a>
+                <a href="truth16.html" class="truth-card" data-category="foundation" data-id="15">
+                    <div class="truth-number">16</div>
+                    <h3 class="truth-title">If you aren’t embarrassed by the first version of your MVP, you shipped too late</h3>
+                </a>
+                <a href="truth17.html" class="truth-card" data-category="scaling" data-id="16">
+                    <div class="truth-number">17</div>
+                    <h3 class="truth-title">Features are distractions. Focus on outcomes</h3>
+                </a>
+                <a href="truth18.html" class="truth-card" data-category="scaling" data-id="17">
+                    <div class="truth-number">18</div>
+                    <h3 class="truth-title">You’ll iterate more than you plan. Accept it</h3>
+                </a>
+                <a href="truth19.html" class="truth-card" data-category="defense" data-id="18">
+                    <div class="truth-number">19</div>
+                    <h3 class="truth-title">Documentation is not sexy but will save you weeks</h3>
+                </a>
+                <a href="truth20.html" class="truth-card" data-category="scaling" data-id="19">
+                    <div class="truth-number">20</div>
+                    <h3 class="truth-title">Your first codebase will suck. Refactor later</h3>
+                </a>
+                <a href="truth21.html" class="truth-card" data-category="scaling" data-id="20">
+                    <div class="truth-number">21</div>
+                    <h3 class="truth-title">UX is the silent growth engine. Ignore at your peril</h3>
+                </a>
+                <a href="truth22.html" class="truth-card" data-category="scaling" data-id="21">
+                    <div class="truth-number">22</div>
+                    <h3 class="truth-title">A "good" product shipped today beats a "perfect" one that never exists</h3>
+                </a>
+                <a href="truth23.html" class="truth-card" data-category="foundation" data-id="22">
+                    <div class="truth-number">23</div>
+                    <h3 class="truth-title">Your friends are liars; they love you, so they’ll let you go bankrupt with a smile</h3>
+                </a>
+                <a href="truth24.html" class="truth-card" data-category="scaling" data-id="23">
+                    <div class="truth-number">24</div>
+                    <h3 class="truth-title">Early adopters are gold; casual users are noise</h3>
+                </a>
+                <a href="truth25.html" class="truth-card" data-category="scaling" data-id="24">
+                    <div class="truth-number">25</div>
+                    <h3 class="truth-title">People don’t buy products. They buy what solves their problem</h3>
+                </a>
+                <a href="truth26.html" class="truth-card" data-category="scaling" data-id="25">
+                    <div class="truth-number">26</div>
+                    <h3 class="truth-title">Marketing starts before product; awareness is traction</h3>
+                </a>
+                <a href="truth27.html" class="truth-card" data-category="scaling" data-id="26">
+                    <div class="truth-number">27</div>
+                    <h3 class="truth-title">Feedback is a weapon; use it like a boss, or your competitors will</h3>
+                </a>
+                <a href="truth28.html" class="truth-card" data-category="scaling" data-id="27">
+                    <div class="truth-number">28</div>
+                    <h3 class="truth-title">You can't "growth hack" a product that nobody wants</h3>
+                </a>
+                <a href="truth29.html" class="truth-card" data-category="defense" data-id="28">
+                    <div class="truth-number">29</div>
+                    <h3 class="truth-title">You can’t do everything</h3>
+                </a>
+                <a href="truth30.html" class="truth-card" data-category="defense" data-id="29">
+                    <div class="truth-number">30</div>
+                    <h3 class="truth-title">Your network is your early advantage. Don’t build in isolation</h3>
+                </a>
+                <a href="truth31.html" class="truth-card" data-category="defense" data-id="30">
+                    <div class="truth-number">31</div>
+                    <h3 class="truth-title">Hiring before revenue is a gamble; hire slow, fire fast</h3>
+                </a>
+                <a href="truth32.html" class="truth-card" data-category="defense" data-id="31">
+                    <div class="truth-number">32</div>
+                    <h3 class="truth-title">If your mentor only tells you what you want to hear, fire them</h3>
+                </a>
+                <a href="truth33.html" class="truth-card" data-category="defense" data-id="32">
+                    <div class="truth-number">33</div>
+                    <h3 class="truth-title">Money won't fix a broken engine; it just makes the crash more spectacular</h3>
+                </a>
             </div>
         </div>
     </main>

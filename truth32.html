@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>If your mentor only tells you what you want to hear, fire them | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #32</span>
+            <h1>If your mentor only tells you what you want to hear, fire them</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>Evans assembled what he called his "Board of Directors" in their first year. Three successful founders who believed in his vision. The problem was, they all believed in it too much. Every meeting was a love fest.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Create your "mentor matrix"
+Map your needs against mentor types: Vertical, Functional, Stage, and Psychological. Aim for at least one mentor in each category, prioritizing the areas where you're weakest.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Implement the "problem-first" mentoring approach
+Before meeting with any mentor, send them: The specific problem you're facing, What you've tried already, Your current thinking on solutions, and The specific type of feedback you need.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Establish the "challenge ritual"
+For each key decision, actively seek contradictory perspectives: Assign a "devil's advocate", Conduct a "pre-mortem", and Seek pattern recognition.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>Evans assembled what he called his "Board of Directors" in their first year. Three successful founders who believed in his vision. The problem was, they all believed in it too much. Every meeting was a love fest.</p>
+            <p>"You're on the right track!" "Trust your instincts!" "This is going to be huge!" Their encouragement felt great, no doubt. But it wasn't helping them navigate the difficult decisions that were actually determining their fate.</p>
+            <p>The turning point came during a pitch practice with a potential investor who had a reputation for being brutally honest. Within five minutes, he'd dismantled their entire business model. "Your customer acquisition math doesn't work," he said flatly. "Your pricing is naive. And you're solving a problem that doesn't seem painful enough for anyone to pay for."</p>
+            <p>Evans left that meeting feeling physically sick. His first instinct was to dismiss the investor as "not getting it." But over the next 48 hours, the criticisms kept echoing in his mind. The investor was right about everything. So Evans accepted the reality in front of him and spent the next month completely rebuilding their strategy based on their challenges, and that saved the company.</p>
+            <p>There are two categories of mentors: Comfort mentors (make you feel better) and Challenge mentors (show you a better path). The mentor selection process reveals a fundamental truth about founder psychology: we naturally gravitate toward validation when what we actually need is truth.</p>
+            <p><strong>Why we choose the wrong mentors</strong></p>
+            <p>The confirmation bias trap: We seek mentors who confirm our existing beliefs rather than challenge them. The fame fallacy: We pursue famous mentors for their brand value rather than their relevant experience or availability.</p>
+            <p><strong>Summary</strong></p>
+            <p>Comfortable mentors are like junk food. They taste good but provide little nutritional value. Challenging mentors are like vegetables. Sometimes hard to swallow, but essential for growth.</p>
+            <p>The mentors who truly change your trajectory won't always make you feel good in the moment, but they'll help you build something that lasts. Choose truth over validation, challenges over comfort, and watch your decisions—and your company—transform as a result.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth33.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 31; // Truth 32 is index 31
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

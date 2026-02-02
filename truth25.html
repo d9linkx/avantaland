@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People don’t buy products. They buy what solves their problem | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #25</span>
+            <h1>People don’t buy products. They buy what solves their problem</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I learned this lesson from one founder’s most expensive marketing mistake of his career. They’d built a project management tool with revolutionary technology. Their feature list was impressive enough to fill three pages. They were proud of their engineering marvel.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "so what?" test
+For every feature and marketing claim, ask "so what?" until you reach the emotional core. The final answer is your marketing message. The earlier answers are just stepping stones.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Create "before/after" customer narratives
+Stop listing features. Start telling stories. For each customer segment, create a clear narrative: Before (the struggle) vs After (the transformation). Use these narratives everywhere.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Build the "job-to-be-done" product roadmap
+Restructure your product development around the jobs customers "hire" you to do. Identify core jobs, Map features to jobs, and Measure job success.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I learned this lesson from one founder’s most expensive marketing mistake of his career. They’d built a project management tool with revolutionary technology. A real-time collaboration, AI-powered resource allocation, and predictive timeline forecasting.</p>
+            <p>Their feature list was impressive enough to fill three pages. They were proud of their engineering marvel. Then came their launch campaign where they made sure to highlight all this technical brilliance. They led with "The most advanced project management platform ever built" and listed their “cutting-edge features”.</p>
+            <p>The results were devastating. Their conversion rate was 0.3%. And the few people who signed up used only the basic task management features and churned quickly.</p>
+            <p>Then she met a user at a conference who perfectly articulated their failure. "I saw your ads," he said. "They were impressive, but I didn't understand what your product would actually do for me. I'm not looking for advanced technology. I'm just looking for a way to stop working weekends."</p>
+            <p>“That’s when it hit me,” Laura conceded. “We immediately rewrote our messaging from ‘what we are’ to ‘what we do for you.’ Instead of "real-time collaboration," we promised "end endless email chains." Instead of "AI-powered resource allocation," we promised "stop overworking your team." Instead of "predictive timeline forecasting," we promised "actually hit your deadlines."</p>
+            <p>“The same product, completely different positioning. Our conversion rate jumped to 4%. That was a 1,233% improvement. Did we change a single line of code? No, we didn’t. We'd simply learned to speak our customers' language.”</p>
+            <p><strong>The truth about the feature-solution confusion</strong></p>
+            <p>The feature-solution confusion is the most common marketing failure among technical founders. We fall in love with our technology and assume customers will too. But customers don't care about your technology. They care about their problems.</p>
+            <p><strong>Summary</strong></p>
+            <p>Your product is just a vehicle for delivering solutions to customer problems. Stop admiring the vehicle and start focusing on the destination.</p>
+            <p>The most successful companies aren't the ones with the best features. They're the ones who most deeply understand what their customers are truly trying to achieve. Speak to the struggle, sell the transformation. Build the bridge from their current frustration to their desired future. That's what customers actually buy.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth26.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 24; // Truth 25 is index 24
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

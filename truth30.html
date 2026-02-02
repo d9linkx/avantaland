@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your network is your early advantage. Don’t build in isolation | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #30</span>
+            <h1>Your network is your early advantage. Don’t build in isolation</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>The most expensive mistake I ever made was thinking I didn't have time for networking. In our first few months, I was heads-down coding, designing, and building. When we needed our first enterprise sale, I reached out to my network. The silence was deafening.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "give first" principle
+Before asking for anything, find ways to provide value. Make Introductions, Share Insights, Provide Skills, and Celebrate Wins. Keep a "Give First" tracker.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Create your "strategic network map"
+Visualize your network across four key categories: Peers, Advisors, Connectors, and Customers. For each category, identify gaps and set quarterly goals.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Build "networking rituals" into your schedule
+Make relationship building a non-negotiable part of your workflow: Weekly coffee/video call, Monthly industry event, Quarterly network map review.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>The most expensive mistake I ever made was thinking I didn't have time for networking. In our first few months, I was heads-down coding, designing, and building. When we needed our first enterprise sale, I reached out to my network. The silence was deafening.</p>
+            <p>When we desperately needed a technical co-founder, I scanned my contacts and found no one qualified. When we faced a legal crisis, I realized I didn't know a single lawyer.</p>
+            <p>I watched another founder in an accelerator take the opposite approach. Every week, she blocked out Thursday afternoons for "relationship building." She attended meetups, had coffee with investors, helped other founders with their problems, and consistently added value without asking for anything in return.</p>
+            <p>To my busy-minded self, it looked like distraction. Then came her crisis. A key investor pulled out two weeks before her round closed. She made three calls. Within 48 hours, she had three new term sheets from people who already knew and trusted her. When she needed a critical introduction to a Fortune 500 company, it came from a mentor she'd been helping with market research for six months.</p>
+            <p>Her network wasn't just a contact list. It was a strategic asset that moved faster than any business development process. I realized I'd been building a company. She'd been building an ecosystem.</p>
+            <p>In the early days, your network is your primary competitive advantage. Before you have traction, revenue, or social proof, relationships are the currency that opens doors, solves problems, and accelerates learning.</p>
+            <p><strong>A framework for strategic network building</strong></p>
+            <p>Building a powerful network isn't about collecting business cards. It's about systematically creating and nurturing relationships that provide mutual value over time.</p>
+            <p>The mindset shift: Avoid the entitlement mindset. Stop thinking, "How can this person help me?" Instead, start thinking: "How can I help this person?" The value you give determines the value you receive. Not the other way round.</p>
+            <p><strong>Summary</strong></p>
+            <p>Your network is like a savings account. You can't make a withdrawal if you haven't made deposits. Start building relationships today that you might not need for another year.</p>
+            <p>The founder with a strong network has access to opportunities, insights, and resources that money can't buy. Stop viewing networking as a distraction from building and start seeing it as an essential part of how you build. Your next breakthrough hire, critical customer, or game-changing insight is probably just one relationship away.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth31.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 29; // Truth 30 is index 29
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

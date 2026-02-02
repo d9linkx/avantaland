@@ -1,81 +1,114 @@
-"I remember the first time I watched someone use our product. Not a guided demo, but a proper usability test. The user (a marketing manager named Jessica) clicked around with increasing confusion.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation kills ego: people will tell you it sucks. Listen | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #10</span>
+            <h1>Validation kills ego: people will tell you it sucks. Listen</h1>
+        </header>
 
-After four minutes of struggle, she leaned back and said the words that still haunt me: ""This is... kind of stupid.""
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I remember the first time I watched someone use our product. Not a guided demo, but a proper usability test. The user (a marketing manager named Jessica) clicked around with increasing confusion. After four minutes of struggle, she leaned back and said the words that still haunt me: "This is... kind of stupid."</p>
+        </section>
 
-My face burned. Every instinct screamed to defend my creation. ""But if you just read the instructions—"" I started. The moderator cut me off. ""Let her continue.""
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "five whys" interrogation
+For every piece of negative feedback, don't just note it, dig into it. When a user says, "I don't like this," keep digging until you reach the root: Why? "It's confusing." Why? "I expected it to work like [Other Tool]." Why? "Because I don't have time to learn a new workflow for a small benefit."</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Create a "pain point priority matrix"
+Transform emotional feedback into objective data using a 2x2 grid: Critical & common (Fix immediately), Critical & rare (Fix soon), Minor & common (Schedule fixes), Minor & rare (Consider later).</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Practice "pre-mortem" sessions
+Before launching a feature, gather your team and say: "Imagine we've launched this and it's failed spectacularly. Why did it fail?" Have everyone write down reasons independently. Share and discuss.</span>
+                </label>
+            </div>
+        </section>
 
-Jessica never did figure out that feature. I felt physically ill. My beautiful, elegant solution was a confusing mess. That night, I had to make a choice:
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
 
-Protect my ego and double down on my ""vision.""
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I remember the first time I watched someone use our product. Not a guided demo, but a proper usability test. The user (a marketing manager named Jessica) clicked around with increasing confusion.</p>
+            <p>After four minutes of struggle, she leaned back and said the words that still haunt me: "This is... kind of stupid."</p>
+            <p>My face burned. Every instinct screamed to defend my creation. "But if you just read the instructions—" I started. The moderator cut me off. "Let her continue."</p>
+            <p>Jessica never did figure out that feature. I felt physically ill. My beautiful, elegant solution was a confusing mess. That night, I had to make a choice: Protect my ego and double down on my "vision," or Accept that my baby was ugly and needed serious work.</p>
+            <p>I chose the latter. We scrapped six weeks of work and started over. The new version—built around Jessica's actual workflow rather than my theoretical one—became our most praised feature.</p>
+            <p><strong>Your ego is the enemy of truth</strong></p>
+            <p>If early validation doesn't hurt, you’re not doing it right. Real validation is putting your unpolished creation in front of strangers and watching them reject it. Your ego will try to protect you with dangerous rationalizations.</p>
+            <p>The market doesn't care about your intentions. It only cares about solving its problems with the least possible friction.</p>
+            <p>Three types of painful feedback:</p>
+            <p>"I don't get it": Your solution doesn't match the user's mental model. This requires fundamental rethinking, not a better manual.</p>
+            <p>"I don't care": You're solving a problem they don't actually have, or the pain isn't acute enough to justify a change in behavior.</p>
+            <p>"This sucks": You’ve created complexity where they expected ease. This is actually a good sign. Strong negative emotions mean you’re touching a real nerve, just doing it wrong.</p>
+            <p><strong>Summary</strong></p>
+            <p>Your ego is the heaviest weight your business carries. Validation is the process of lightening that load by replacing arrogance with insight, and certainty with curiosity.</p>
+            <p>The feedback that feels like a punch to the gut today is the foundation of your product-market fit tomorrow. Don't build what you love; build what users need. The market's honesty is a gift. Unwrap it, no matter how much the paper cuts.</p>
+        </div>
 
-Accept that my baby was ugly and needed serious work.
+        <div class="navigation-footer">
+            <a href="truth11.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
 
-I chose the latter. We scrapped six weeks of work and started over. The new version—built around Jessica's actual workflow rather than my theoretical one—became our most praised feature.
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 9; // Truth 10 is index 9
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
 
-Your ego is the enemy of truth
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
 
-If early validation doesn't hurt, you’re not doing it right. Real validation is putting your unpolished creation in front of strangers and watching them reject it. Your ego will try to protect you with dangerous rationalizations:
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
 
-""They just don't get it. They're not our target user.""
-
-""The design is rough, but the concept is solid.""
-
-""Once we add that one missing feature, they'll love it.""
-
-The market doesn't care about your intentions. It only cares about solving its problems with the least possible friction.
-
-Three types of painful feedback
-
-""I don't get it"": Your solution doesn't match the user's mental model. This requires fundamental rethinking, not a better manual.
-
-""I don't care"": You're solving a problem they don't actually have, or the pain isn't acute enough to justify a change in behavior.
-
-""This sucks"": You’ve created complexity where they expected ease. This is actually a good sign. Strong negative emotions mean you’re touching a real nerve, just doing it wrong.
-
-The Risk: The most dangerous founders are those who ""listen"" but only hear the one positive comment among ten criticisms. They are seeking comfort, not truth.
-
-Implementing the ""ego-free validation"" protocol
-
-Stop viewing criticism as a personal attack. Start treating it as free invaluable data that saves you from building the wrong thing.
-
-Thank people for their honesty, especially when it hurts.
-
-1. Implement the ""five whys"" interrogation
-
-For every piece of negative feedback, don't just note it, dig into it. When a user says, ""I don't like this,"" keep digging until you reach the root:
-
-User: ""I don't like this.""
-
-Why? ""It's confusing.""
-
-Why? ""I expected it to work like [Other Tool].""
-
-Why? ""Because I don't have time to learn a new workflow for a small benefit.""
-
-2. Create a ""pain point priority matrix""
-
-Transform emotional feedback into objective data using a 2x2 grid:
-
-Critical & common: Fix immediately (your product is broken).
-
-Critical & rare: Fix soon (you’re losing potential advocates).
-
-Minor & common: Schedule fixes (death by a thousand papercuts).
-
-Minor & rare: Consider later (nice-to-haves).
-
-3. Practice ""pre-mortem"" sessions
-
-Before launching a feature, gather your team and say: ""Imagine we've launched this and it's failed spectacularly. Why did it fail?""
-
-Have everyone write down reasons independently.
-
-Share and discuss.
-
-This proactively uncover risks you were collectively ignoring and builds a culture where criticizing ideas is essential to survival.
-
-Summary
-
-Your ego is the heaviest weight your business carries. Validation is the process of lightening that load by replacing arrogance with insight, and certainty with curiosity.
-
-The feedback that feels like a punch to the gut today is the foundation of your product-market fit tomorrow. Don't build what you love; build what users need. The market's honesty is a gift. Unwrap it, no matter how much the paper cuts."
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

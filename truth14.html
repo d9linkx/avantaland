@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveys lie; prototypes don’t | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #14</span>
+            <h1>Surveys lie; prototypes don’t</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I once ran a user survey that nearly destroyed my startup. We were building a new feature for project managers and wanted to validate it before coding. The survey was elegant, but the results were misleading.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "minimum viable prototype" standard
+Before any significant build, create the simplest interactive representation: Clickable Figma/Adobe XD prototype, "Wizard of Oz" setup, or a Landing page with a "Request Access" button.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Master the "silent observation" protocol
+When a user is testing your prototype, your primary job is to shut up and watch. Give the user a realistic task to complete. Record their screen and facial reactions. Take notes on hesitations.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Create a "behavioral metric" checklist
+Replace hypothetical survey data with observable metrics: Instead of "80% say they'd use it", look for "70% of testers complete the core workflow without help."</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I once ran a user survey that nearly destroyed my startup. We were building a new feature for project managers and wanted to validate it before coding.</p>
+            <p>The survey was elegant: multiple choice, Likert scales, Beautifully designed. Then we sent it to 500 project managers and the results were statistically significant: 87% of respondents said they'd "definitely or probably use" our proposed feature. We were ecstatic.</p>
+            <p>So, as you would imagine, we spent the next three months building it. Launch day felt like a victory lap. We had the data to prove we were right.</p>
+            <p>Then, silence. Out of those 217 people who said they'd use it, exactly 3 actually did. Not 3%; three human beings.</p>
+            <p>The feature sat there, beautifully coded and utterly useless. The breakthrough came when I called a respondent who had said "definitely use" but never logged in. His response: "Oh, that survey. Yeah, I remember it. It sounded good in theory. But when I actually saw it... I guess I just don't have time to learn a new workflow right now."</p>
+            <p>That's when I understood the fatal flaw: depending on surveys instead of prototypes. Surveys only measure what people think. Behavior shows what they actually do.</p>
+            <p><strong>Why surveys lie to founders</strong></p>
+            <p>Surveys lie for deeply rooted psychological and methodological reasons. They capture intentions, but intentions are not actions.</p>
+            <p><strong>Summary</strong></p>
+            <p>Surveys give you the answer you want to hear. Prototypes give you the truth you need to hear. So stop collecting opinions and start observing behavior.</p>
+            <p>Your product's success depends not on what people say they'll do, but on what they actually do when faced with your solution. Build prototypes, not presentation PowerPoints. Watch clicks, not checkboxes. The truth is in hidden in plain sight in the user’s interaction with your prototype.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth15.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 13; // Truth 14 is index 13
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

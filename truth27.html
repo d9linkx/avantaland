@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback is a weapon; use it like a boss, or your competitors will | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #27</span>
+            <h1>Feedback is a weapon; use it like a boss, or your competitors will</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I almost destroyed my first company during a user feedback session. We were demoing our product to a potential enterprise client. The head of operations started pointing out flaws. With every criticism, I felt my face grow hotter.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "three whys" technique
+When you receive feedback, drill down to the root cause: "Why didn't you like that feature?" -> "Why was it confusing?" -> "Why wasn't it where you expected?" The third answer gives you the actionable insight.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Create a "feedback triage" system
+Score each piece on three dimensions: Frequency, Impact, and Source. Focus on high-scoring feedback (12+ points) immediately.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Schedule "criticism sessions"
+Once a week, gather your team and review the harshest feedback you received. No defending or explaining allowed. Everyone must suggest one way the criticism might be valid.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I almost destroyed my first company during a user feedback session. We were demoing our product to a potential enterprise client. The kind of deal that could make our quarter.</p>
+            <p>The head of operations, a sharp woman named Madam Rita, started pointing out flaws. "This workflow doesn't match how my team actually works," she said. "And this data visualization is confusing."</p>
+            <p>With every criticism, I felt my face grow hotter. I started explaining. "Actually, if you look here, the workflow is designed to streamline..." I talked over her concerns, defending my creation. After ten minutes of this, she held up a hand. "I can see you're very committed to your vision," she said politely. "We'll think about it."</p>
+            <p>They never signed.</p>
+            <p>The exact same week, we got nearly identical feedback from another prospect. But this time, I forced myself to shut up and listen. "Tell me more about why that doesn't work," I said. What emerged was a fundamental insight about their operational reality that completely changed our approach to the product.</p>
+            <p>The lesson: Feedback isn't personal criticism. It's market intelligence. Your product is a hypothesis; feedback is the data that proves or disproves it. Once you decide to shut up and listening to feedback, you’ll find the truth, which will set you free.</p>
+            <p><strong>The fatal instinct of defensive listening</strong></p>
+            <p>Most founders treat feedback like a personal attack. They armor up, defend their territory, and miss the goldmine of insights being offered. The natural human response is to protect your creation. But in businesses, this instinct is fatal.</p>
+            <p><strong>Summary</strong></p>
+            <p>Feedback is the raw material of iteration. The more defensive you are, the less raw material you have to work with. The founder who welcomes criticism builds with market data; the defensive founder builds with guesswork.</p>
+            <p>Stop protecting your ego and start protecting your runway. Your ability to listen to things you don't want to hear determines how quickly you'll build things people actually want.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth28.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 26; // Truth 27 is index 26
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

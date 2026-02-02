@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A small, obsessed niche is better than a large lukewarm market | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #12</span>
+            <h1>A small, obsessed niche is better than a large lukewarm market</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I once watched a pitch meeting where a founder proudly declared his TAM was "everyone with a smartphone." Then an investor dryly asked him, "So your marketing strategy is 'hello, world'?" Everyone laughed. But it wasn’t funny.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. The passion vs. pain analysis
+Evaluate potential niches on two axes: Level of pain (Are they using 5 duct-taped tools?) and Community cohesion (Do they have specific Slack groups?). The sweet spot: High Pain + High Cohesion.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. The "niche immersion" protocol
+Become the world’s leading expert on their problems for 30 days: Lurk everywhere, Deep interviews (Talk to 15 people), and Language mapping (Use their specific terminology).</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. The niche MVP checklist
+Validate before building: Can 3 niche influencers give you feedback? Does your solution address a workflow that general tools ignore? Can you get 10 strangers to pre-pay?</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I once watched a pitch meeting where a founder proudly declared his TAM was "everyone with a smartphone." Then an investor dryly asked him, "So your marketing strategy is 'hello, world'?"</p>
+            <p>Everyone laughed. But it wasn’t funny.</p>
+            <p>I made the same mistake with my second startup. We built a tool "for teams." Any teams. Startup, enterprise, remote, co-located. Our messaging was so broad it became meaningless. We spent $5,000 a month on ads and got zero qualified leads.</p>
+            <p>The turning point came when we accidentally spoke to indie game developers. They were distributed, worked with massive asset files, and needed to coordinate artists and programmers. Their pain was visceral.</p>
+            <p>We changed our homepage messaging to: "Finally, a tool that won't choke on your 4GB texture files." We didn't change the product, just the focus. We got 50 signups in one week.</p>
+            <p>These users became our evangelists and guided our roadmap.</p>
+            <p>The lesson: 100 people who love you are more valuable than 10,000 people who "kinda like" you. When you target everyone, you resonate with no one.</p>
+            <p><strong>The "niche dominance" framework</strong></p>
+            <p>Choosing a niche feels like limiting your potential, but it is actually focusing your resources.</p>
+            <p><strong>Summary</strong></p>
+            <p>The sweet spot is High Pain + High Cohesion. These groups will adopt and spread your solution. Become the world’s leading expert on their problems for 30 days.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth13.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 11; // Truth 12 is index 11
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,79 +1,114 @@
-"There's a moment in every founder's journey when the carefully constructed illusion of control shatters. For me, it was a hot Tuesday afternoon in July 2025.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expect chaos; it’s the default state of early businesses | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #6</span>
+            <h1>Expect chaos; it’s the default state of early businesses</h1>
+        </header>
 
-My co-founder and I had just closed our first major client. A deal that would triple our MRR. I was feeling like a ""real CEO."" Then, my CTO called. His voice was tight: ""The database is corrupted, and the backups failed.""
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>There's a moment in every founder's journey when the carefully constructed illusion of control shatters. For me, it was a hot Tuesday afternoon in July 2025. My co-founder and I had just closed our first major client. Then, my CTO called. His voice was tight: "The database is corrupted, and the backups failed."</p>
+        </section>
 
-In the span of 47 minutes, the following happened:
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Implement the "daily triage" ritual
+Every morning, gather the team for a 15-minute stand-up. Answer three questions: What's on fire? (Immediate crises), What's smoldering? (Delayed risks), and What's our one priority? (The single move that makes us better today).</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Create "chaos" and "recovery" sprints
+Work in one-week cycles to prevent burnout. The chaos sprint: When the "shit hits the fan," all forward-progress work is paused. The recovery sprint: Mandatory after every Chaos Sprint. No new features are started. Pay down technical debt.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Build your "emergency response" playbook
+You can't predict emergencies, but you can prepare your drill. Create living protocols for: Server down, Security breach, and Cash flow crisis. The act of creating these playbooks forces your team to think through emergencies calmly.</span>
+                </label>
+            </div>
+        </section>
 
-Our new enterprise client asked why their account was suspended.
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
 
-The payment processor threatened to freeze our funds for ""suspicious activity.""
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>There's a moment in every founder's journey when the carefully constructed illusion of control shatters. For me, it was a hot Tuesday afternoon in July 2025.</p>
+            <p>My co-founder and I had just closed our first major client. A deal that would triple our MRR. I was feeling like a "real CEO." Then, my CTO called. His voice was tight: "The database is corrupted, and the backups failed."</p>
+            <p>In the span of 47 minutes, the following happened: Our new enterprise client asked why their account was suspended. The payment processor threatened to freeze our funds for "suspicious activity." Our remote developers vanished because their workspace was being treated for pests.</p>
+            <p>I made the classic mistake: I tried to "get a handle on the situation." I was like a sea captain in a hurricane trying to arrange deck chairs by color. The chaos swallowed my organization whole.</p>
+            <p>Just when I was about to go haywire, I stopped resisting. I told the team: "This is what today is. Let's just put out the fires in the order they're burning us." We fixed the database, manually reinstated accounts, and appeased the payment processor. The lesson hit hard: Chaos wasn't an interruption of our business; it was our business.</p>
+            <p><strong>The three layers of business chaos</strong></p>
+            <p>Early-stage businesses are simply chaos given a legal structure and a bank account. They exist in a "far-from-equilibrium state"—inherently unstable and constantly on the verge of either collapse or breakthrough.</p>
+            <p>To build a nervous system that thrives, you must understand the three layers:</p>
+            <p>External chaos: Market shifts, new competitors, or regulatory changes. These are the waves. You can't control them; you can only surf them.</p>
+            <p>Internal chaos: Servers crashing, critical bugs, or key team members quitting. These are the flames that must be fought directly.</p>
+            <p>Psychological chaos: The whiplash between feeling like a "world-changer" and a "total fraud." This is the most dangerous because it paralyzes decision-making.</p>
+            <p>The mindset shift: Stop fighting chaos as an enemy. Start treating it as your training partner. Your competitive advantage isn't avoiding the storm; it's being the ship that stays seaworthy when others are sinking.</p>
+            <p><strong>Summary</strong></p>
+            <p>Stop searching for calm waters. You've chosen to sail an ocean, not float in a swimming pool. The chaos is not a sign you're failing. It's the environment in which success becomes possible.</p>
+            <p>Don't waste energy wishing the waves were smaller. Learn to build a better boat and trust your crew. The business that can dance with chaos without losing its rhythm is the business that wins.</p>
+        </div>
 
-Our remote developers vanished because their workspace was being treated for pests.
+        <div class="navigation-footer">
+            <a href="truth7.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
 
-I made the classic mistake: I tried to ""get a handle on the situation."" I was like a sea captain in a hurricane trying to arrange deck chairs by color. The chaos swallowed my organization whole.
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 5; // Truth 6 is index 5
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
 
-Just when I was about to go haywire, I stopped resisting. I told the team: ""This is what today is. Let's just put out the fires in the order they're burning us."" We fixed the database, manually reinstated accounts, and appeased the payment processor. The lesson hit hard: Chaos wasn't an interruption of our business; it was our business.
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
 
-The three layers of business chaos
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
 
-Early-stage businesses are simply chaos given a legal structure and a bank account. They exist in a ""far-from-equilibrium state""—inherently unstable and constantly on the verge of either collapse or breakthrough.
-
-To build a nervous system that thrives, you must understand the three layers:
-
-External chaos: Market shifts, new competitors, or regulatory changes. These are the waves. You can't control them; you can only surf them.
-
-Internal chaos: Servers crashing, critical bugs, or key team members quitting. These are the flames that must be fought directly.
-
-Psychological chaos: The whiplash between feeling like a ""world-changer"" and a ""total fraud."" This is the most dangerous because it paralyzes decision-making.
-
-The mindset shift: Stop fighting chaos as an enemy. Start treating it as your training partner. Your competitive advantage isn't avoiding the storm; it's being the ship that stays seaworthy when others are sinking.
-
-The chaos management protocol
-
-The goal isn't to eliminate chaos. That would mean you're no longer innovating. The goal is to create a ""container"" for it.
-
-1. Implement the ""daily triage"" ritual
-
-Every morning, gather the team for a 15-minute stand-up. Answer three questions:
-
-What's on fire? (Immediate crises: database slowness, customer threats).
-
-What's smoldering? (Delayed risks: hiring stalls, missing documentation).
-
-What's our one priority? (The single move that makes us better today, regardless of the fires).
-
-2. Create ""chaos"" and ""recovery"" sprints
-
-Work in one-week cycles to prevent burnout and technical decay.
-
-The chaos sprint: When the ""shit hits the fan,"" all forward-progress work is paused. The entire team focuses exclusively on stabilization and firefighting.
-
-The recovery sprint: Mandatory after every Chaos Sprint.
-
-No new features are started.
-
-Pay down technical debt.
-
-Conduct post-mortems on the previous chaos.
-
-Update documentation and processes.
-
-3. Build your ""emergency response"" playbook
-
-You can't predict emergencies, but you can prepare your drill. Create living protocols for:
-
-Server down: Who gets called? What do we tell the users?
-
-Security breach: What are the containment steps? Who handles PR?
-
-Cash flow crisis: Which expenses get frozen immediately?
-
-The act of creating these playbooks is more valuable than the document. It forces your team to think through emergencies calmly before they happen.
-
-Summary
-
-Stop searching for calm waters.
-
-You've chosen to sail an ocean, not float in a swimming pool. The chaos is not a sign you're failing. It's the environment in which success becomes possible.
-
-Don't waste energy wishing the waves were smaller. Learn to build a better boat and trust your crew. The business that can dance with chaos without losing its rhythm is the business that wins."
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

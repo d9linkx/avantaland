@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing starts before product; awareness is traction | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #26</span>
+            <h1>Marketing starts before product; awareness is traction</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>Imagine two chefs opening a restaurant. Chef A finds a location, spends six months designing a beautiful interior, and perfects a menu in total secrecy. On opening day, he flips the sign to "Open" and waits. The street is empty.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Phase 1: Problem exploration & authority building
+Create a "Content Mission" focused entirely on the problem, not your solution. Start a newsletter or social account. Write about the nuances of the problem. Deliverable: 500–1,000 engaged followers.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Phase 2: Solution tease & community building
+Introduce your vision and start building a dedicated inner circle. Create a simple "Coming Soon" landing page. Offer value for signing up. Deliverable: A targeted waiting list of at least 500 people.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Phase 3: Beta launch & evangelist creation
+Turn your waiting list into co-creators. Invite your most engaged followers into a private beta. Create a dedicated community channel. Deliverable: 50/100 beta users who are emotionally invested.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>Imagine two chefs opening a restaurant. Chef A finds a location, spends six months designing a beautiful interior, and perfects a menu in total secrecy. On opening day, he flips the sign to "Open" and waits. The street is empty. He's confused and heartbroken. He built a perfect restaurant, so why aren't customers lining up?</p>
+            <p>Chef B, nine months before her doors open, starts a food blog. She documents her journey finding local farmers, shares stories about recipes, and builds an email list of 3,000 enthusiasts. She hosts pop-up dinners to test her dishes and lets future customers vote on menu items.</p>
+            <p>The result of building in public: When Chef B's restaurant finally opens, it's not an opening. It's a victory lap. Her email list ensures a packed house for weeks. Her blog readers become her first evangelists. The local press is already eager to cover the story.</p>
+            <p>I was Chef A in my first startup. I built what I ‘thought’ or ‘assumed’ was a masterpiece in a soundproof room. The silence during the public launch was deafening. I learned the hard way that a product launched in a vacuum stays in a vacuum.</p>
+            <p>The lesson: Marketing isn't the megaphone you use on launch day; it's the foundation you build long before you lay the first brick.</p>
+            <p><strong>The "marketing-first" philosophy</strong></p>
+            <p>The "if you build it, they will come" philosophy is responsible for more business failures than almost any other miscalculation. Pre-launch marketing is the systematic process of de-risking your business by building an audience and validating demand before you commit significant resources.</p>
+            <p><strong>Summary</strong></p>
+            <p>Launch day should not be the starting pistol; it should be the finish line of your first marathon. The real work begins with the first conversation about the problem and the first email address on your list.</p>
+            <p>Stop building in the dark. Turn the lights on, invite people in, and let them watch (and help) you build.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth27.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 25; // Truth 26 is index 25
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

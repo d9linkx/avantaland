@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You can’t do everything | Avantaland Biz Lab</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/truth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="truth-page-container">
+        <a href="new-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <header class="truth-header">
+            <span class="truth-number">Truth #29</span>
+            <h1>You can’t do everything</h1>
+        </header>
+
+        <section class="truth-summary-box">
+            <h3>Executive Summary</h3>
+            <p>I hit my breaking point at 3 AM in a warehouse, covered in cardboard dust and despair. We were shipping our first major order (500 units) and our fulfillment partner had fallen through. So I became the fulfillment partner.</p>
+        </section>
+
+        <section class="truth-checklist">
+            <h3>Actionable Checklist</h3>
+            <div class="fix-list">
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">1. Conduct a "time audit" with the 3D framework
+For one week, track how you spend every working hour. Then categorize each task into tasks you: Delegate, Document, or Double down. Your goal is to systematically move tasks from "Double Down" to "Document" to "Delegate" over time.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">2. Implement the "weekly delegation ritual"
+Every Friday, identify one task from your "Delegate" or "Document" categories to offload the following week. Monday: Document. Tuesday: Shadow. Wednesday: Watch. Thursday: Independent. Friday: Review.</span>
+                </label>
+                <label class="fix-item">
+                    <input type="checkbox" class="fix-checkbox">
+                    <span class="fix-text">3. Create your "zone of genius" filter
+Before taking on any new task, ask: Is this something only I can do? Does this play to my unique strengths? Does this create disproportionate value? Is this the best use of my time?</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
+        </div>
+
+        <div id="full-truth-content" class="full-content" style="display: none;">
+            <hr class="divider">
+            <p>I hit my breaking point at 3 AM in a warehouse, covered in cardboard dust and despair. We were shipping our first major order (500 units) and our fulfillment partner had fallen through. So I became the fulfillment partner.</p>
+            <p>For 72 hours straight, I was CEO, warehouse packer, customer service rep, and quality control inspector. My hands were raw from cutting tape. My back ached from lifting boxes. My mind was numb from answering support emails between packing sessions.</p>
+            <p>In that moment, hunched over a shipping label printer that kept jamming, I had a crystal-clear realization: this is how businesses die. Not with a dramatic failure, but with the slow accumulation of tasks that shouldn't be the founder's job. I was so busy being a hero that I was failing as a leader.</p>
+            <p>The turning point came when I looked at our metrics that week. Product development had stalled. Sales calls went unmade. Strategic partnerships languished. I'd saved so much on fulfillment costs but cost us at least $200 in missed opportunities. I was optimizing for the wrong things: for short-term savings instead of long-term growth, for personal capability instead of team capacity.</p>
+            <p>The following week, I hired a part-time fulfillment helper for $15/hour. The freedom was intoxicating. I suddenly had 20 hours back to focus on what actually moved the needle. That $300 investment generated more value than any other decision I made that month.</p>
+            <p><strong>Why founders struggle to let go</strong></p>
+            <p>The founder's journey from "doer" to "delegator" is one of the most painful but necessary transitions in building a company. In the beginning, you have to do everything. But there comes a point where continuing to do everything becomes a form of selfishness.</p>
+            <p><strong>Summary</strong></p>
+            <p>Trying to do everything yourself isn't dedication. It's a limitation. Your first duty as a founder isn't to be the most capable individual contributor. It's to build the most capable organization.</p>
+            <p>The boundaries you learn through painful experience become the guardrails that allow your company to scale beyond your personal capacity. Stop measuring your value by how busy you are, and start measuring it by what you enable others to accomplish. The most powerful thing you can do as a leader is to make yourself progressively less essential to daily operations.</p>
+        </div>
+
+        <div class="navigation-footer">
+            <a href="truth30.html" class="btn-next-truth">Next Truth →</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const truthIndex = 28; // Truth 29 is index 28
+            const revealBtn = document.getElementById('reveal-btn');
+            const completeBtn = document.getElementById('mark-complete-btn');
+            const fullContent = document.getElementById('full-truth-content');
+
+            // Check Completion Status
+            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+            if (savedProgress[truthIndex]) {
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            }
+
+            // Reveal Logic
+            revealBtn.addEventListener('click', () => {
+                if (fullContent.style.display === 'none') {
+                    fullContent.style.display = 'block';
+                    revealBtn.innerText = 'Hide Full Truth';
+                } else {
+                    fullContent.style.display = 'none';
+                    revealBtn.innerText = '📖 Read Full Truth';
+                }
+            });
+
+            // Completion Logic
+            completeBtn.addEventListener('click', () => {
+                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
+                progress[truthIndex] = true;
+                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
+                
+                completeBtn.innerText = '✓ Completed';
+                completeBtn.classList.add('completed');
+                completeBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>
