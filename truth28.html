@@ -70,42 +70,11 @@ Treat each initiative as a scientific experiment: Hypothesis, Success Criteria, 
         </div>
     </div>
 
+    <script src="scripts/truth-utils.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const truthIndex = 27; // Truth 28 is index 27
-            const revealBtn = document.getElementById('reveal-btn');
-            const completeBtn = document.getElementById('mark-complete-btn');
-            const fullContent = document.getElementById('full-truth-content');
-
-            // Check Completion Status
-            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
-            if (savedProgress[truthIndex]) {
-                completeBtn.innerText = '✓ Completed';
-                completeBtn.classList.add('completed');
-                completeBtn.disabled = true;
-            }
-
-            // Reveal Logic
-            revealBtn.addEventListener('click', () => {
-                if (fullContent.style.display === 'none') {
-                    fullContent.style.display = 'block';
-                    revealBtn.innerText = 'Hide Full Truth';
-                } else {
-                    fullContent.style.display = 'none';
-                    revealBtn.innerText = '📖 Read Full Truth';
-                }
-            });
-
-            // Completion Logic
-            completeBtn.addEventListener('click', () => {
-                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
-                progress[truthIndex] = true;
-                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
-                
-                completeBtn.innerText = '✓ Completed';
-                completeBtn.classList.add('completed');
-                completeBtn.disabled = true;
-            });
+            // Truth 28 is at index 27 (0-based index)
+            initializeTruthPage(27);
         });
     </script>
 </body>

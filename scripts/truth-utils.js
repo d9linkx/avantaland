@@ -46,7 +46,7 @@ function initializeTruthPage(truthIndex) {
     function updateCompleteButtonState() {
         if (isCompleted || !completeBtn) return;
         
-        const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
         if (allChecked) {
             completeBtn.disabled = false;
             completeBtn.innerText = 'Mark as Completed';
@@ -85,7 +85,7 @@ function initializeTruthPage(truthIndex) {
     if (completeBtn) {
         completeBtn.addEventListener('click', () => {
             // Double check validation
-            const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
             if (!allChecked) return;
 
             const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
