@@ -60,6 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('up-next-num').innerText = truthNum;
         document.getElementById('up-next-title').innerText = title;
         upNextLink.href = nextCard.getAttribute('href');
+
+        // Check if user has started this truth
+        const checklistState = JSON.parse(localStorage.getItem('bizLabChecklist')) || {};
+        const pageState = checklistState[firstUnfinishedIndex];
+        const hasStarted = pageState && Object.values(pageState).some(val => val === true);
+        const arrowDiv = upNextLink.querySelector('.up-next-arrow');
+        if (arrowDiv) arrowDiv.innerText = hasStarted ? 'Continue Fix →' : 'Start Fix →';
+
         upNextContainer.style.display = 'block';
     } else if (upNextContainer) {
         upNextContainer.style.display = 'none'; // All done
