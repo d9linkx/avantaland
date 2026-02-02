@@ -11,11 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
     const dateDisplay = document.getElementById('date-display');
     const backlogList = document.getElementById('backlog-list');
+    const vaultList = document.getElementById('vault-list');
     const primeCountDisplay = document.getElementById('prime-count');
     const input = document.getElementById('new-task-input');
     const addBtn = document.getElementById('add-task-btn');
     const focusBtn = document.getElementById('focus-mode-btn');
     const backlogSection = document.getElementById('backlog-section');
+    const vaultSection = document.getElementById('vault-section');
     const energyHud = document.getElementById('energy-hud');
     
     // Modal Elements
@@ -31,6 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const peakEnd = document.getElementById('peak-end');
     const troughStart = document.getElementById('trough-start');
     const troughEnd = document.getElementById('trough-end');
+
+    // Tax Modal Elements
+    const taxModal = document.getElementById('tax-modal');
+    const taxReflection = document.getElementById('tax-reflection');
+    const payTaxBtn = document.getElementById('pay-tax-btn');
+    const taxStrikeCount = document.getElementById('tax-strike-count');
+    let taskToTaxId = null;
+
+    // HUD Elements
+    const hudOverlay = document.getElementById('hud-overlay');
+    const hudTaskText = document.getElementById('hud-task-text');
+    const hudTimerDisplay = document.getElementById('hud-timer-display');
+    const hudTimerToggle = document.getElementById('hud-timer-toggle');
+    let hudTimerInterval = null;
+    let hudTimeLeft = 25 * 60;
 
     // --- Initialization ---
     const today = new Date();
@@ -56,13 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
     focusBtn.addEventListener('click', () => {
         focusMode = !focusMode;
         if (focusMode) {
-            backlogSection.style.opacity = '0';
-            setTimeout(() => backlogSection.style.display = 'none', 300); // Smooth fade out
+            openHUD();
             focusBtn.classList.add('active');
             focusBtn.innerHTML = '<span class="icon"><i class="ph ph-lock-key-open"></i></span> Exit Focus';
         } else {
-            backlogSection.style.display = 'block';
-            setTimeout(() => backlogSection.style.opacity = '1', 10);
+            closeHUD();
             focusBtn.classList.remove('active');
             focusBtn.innerHTML = '<span class="icon"><i class="ph ph-eye"></i></span> Focus Mode';
         }
@@ -74,6 +89,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     saveEnergyBtn.addEventListener('click', handleSaveEnergy);
+    payTaxBtn.addEventListener('click', handlePayTax);
+    
+    document.getElementById('hud-close-btn').addEventListener('click', () => {
+        focusMode = false;
+        closeHUD();
+        focusBtn.classList.remove('active');
+        focusBtn.innerHTML = '<span class="icon"><i class="ph ph-eye"></i></span> Focus Mode';
+    });
+
+    hudTimerToggle.addEventListener('click', toggleHUDTimer);
+    document.getElementById('hud-complete-btn').addEventListener('click', () => {
+        // Complete current active task
+        const activeTask = tasks.find(t => t.status === 'active');
+        if (activeTask) {
+            window.plannerActions.complete(activeTask.id);
+            closeHUD();
+        }
+    });
 
     // --- Core Logic ---
 
@@ -149,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     t.status = 'backlog';
                     t.slot = null;
                     t.postponed = true; // Mark of shame/delay
+                    t.postponeCount = (t.postponeCount || 0) + 1;
                 } else if (t.status === 'active' && t.completed) {
                     t.status = 'archived'; // Clear the board
                 }
@@ -173,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             text: text,
             status: 'backlog', // Always start in backlog
             slot: null,
+            postponeCount: 0,
             createdAt: new Date().toISOString()
         };
 
@@ -189,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         renderSlots();
         renderBacklog();
+        renderVault();
         updateStats();
     }
 
@@ -232,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button onclick="window.plannerActions.demote(${task.id})" title="Kick back to backlog"><i class="ph ph-arrow-u-up-left"></i></button>
                         </div>
                     </div>
-                    <div class="task-meta">${task.weight === 'deep' ? '<i class="ph ph-lightning"></i> Deep Work' : '<i class="ph ph-coffee"></i> Shallow Work'} • Scheduled: ${task.scheduledTime}</div>
+                    <div class="task-meta ${task.goalType === 'survival' ? 'survival' : ''}">${task.weight === 'deep' ? '<i class="ph ph-lightning"></i> Deep Work' : '<i class="ph ph-coffee"></i> Shallow Work'} • ${task.goalType === 'survival' ? 'SURVIVAL WORK' : 'STRATEGIC'}</div>
                 `;
                 container.appendChild(content);
             } else {
@@ -268,12 +304,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 const el = document.createElement('div');
                 el.className = 'task-item fade-in';
                 el.innerHTML = `
-                    <span class="task-text">${task.postponed ? '<i class="ph ph-warning"></i> ' : ''}${task.text}</span>
+                    <span class="task-text">${task.postponeCount > 0 ? `<span style="color:#EF4444; font-weight:bold;">[${task.postponeCount}x DELAY]</span> ` : ''}${task.text}</span>
                     <div class="task-actions">
                         <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
                     </div>
                 `;
                 backlogList.appendChild(el);
+            });
+        }
+    }
+
+    function renderVault() {
+        vaultList.innerHTML = '';
+        // Show completed today and "Cringe Log" (deleted via tax)
+        const vaultTasks = tasks.filter(t => (t.status === 'active' && t.completed) || t.status === 'cringe');
+        
+        if (vaultTasks.length === 0) {
+            vaultList.innerHTML = `<div style="text-align:center; color:#94a3b8; padding: 1rem;">Vault empty. Execute to fill.</div>`;
+        } else {
+            vaultTasks.forEach(task => {
+                const el = document.createElement('div');
+                el.className = 'task-item fade-in';
+                el.style.opacity = '0.7';
+                el.innerHTML = `
+                    <span class="task-text" style="${task.status === 'cringe' ? 'text-decoration:line-through; color:#EF4444;' : ''}">${task.status === 'cringe' ? '💀 ' : '🏆 '}${task.text}</span>
+                `;
+                vaultList.appendChild(el);
             });
         }
     }
@@ -300,10 +356,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="margin-bottom:8px; font-weight:600;">${task.text}</div>
                     <div class="weight-selection">
                         <button class="btn-weight" onclick="window.plannerActions.promote(${task.id}, '${currentSlotSelection}', 'deep')">
-                            <i class="ph ph-lightning"></i> Deep (Heavy)
+                            <i class="ph ph-lightning"></i> Deep
                         </button>
                         <button class="btn-weight" onclick="window.plannerActions.promote(${task.id}, '${currentSlotSelection}', 'shallow')">
-                            <i class="ph ph-coffee"></i> Shallow (Light)
+                            <i class="ph ph-coffee"></i> Shallow
                         </button>
                     </div>
                 `;
@@ -312,6 +368,71 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         modal.style.display = 'flex';
+    }
+
+    // --- Tax System ---
+    function handlePayTax() {
+        const reflection = taxReflection.value.trim();
+        if (!reflection) {
+            alert("You must reflect on why.");
+            return;
+        }
+        
+        const task = tasks.find(t => t.id === taskToTaxId);
+        if (task) {
+            task.postponeCount = (task.postponeCount || 0) + 1;
+            task.reflection = reflection; // Save reflection
+            
+            if (task.postponeCount >= 3) {
+                task.status = 'cringe'; // Move to Cringe Log
+                task.slot = null;
+                alert("Task deleted. It was a distraction.");
+            } else {
+                task.status = 'backlog';
+                task.slot = null;
+                task.completed = false;
+            }
+        }
+        
+        saveTasks();
+        renderAll();
+        taxModal.style.display = 'none';
+        taxReflection.value = '';
+    }
+
+    // --- HUD System ---
+    function openHUD() {
+        const activeTask = tasks.find(t => t.status === 'active' && !t.completed);
+        if (activeTask) {
+            hudTaskText.innerText = activeTask.text;
+        } else {
+            hudTaskText.innerText = "No Active Mission";
+        }
+        hudOverlay.style.display = 'flex';
+    }
+
+    function closeHUD() {
+        hudOverlay.style.display = 'none';
+        clearInterval(hudTimerInterval);
+        hudTimerInterval = null;
+        hudTimerToggle.innerHTML = '<i class="ph ph-play"></i>';
+    }
+
+    function toggleHUDTimer() {
+        if (hudTimerInterval) {
+            clearInterval(hudTimerInterval);
+            hudTimerInterval = null;
+            hudTimerToggle.innerHTML = '<i class="ph ph-play"></i>';
+        } else {
+            hudTimerToggle.innerHTML = '<i class="ph ph-pause"></i>';
+            hudTimerInterval = setInterval(() => {
+                hudTimeLeft--;
+                const m = Math.floor(hudTimeLeft / 60).toString().padStart(2, '0');
+                const s = (hudTimeLeft % 60).toString().padStart(2, '0');
+                hudTimerDisplay.innerText = `${m}:${s}`;
+                if (hudTimeLeft <= 0) clearInterval(hudTimerInterval);
+            }, 1000);
+        }
     }
 
     // Expose actions to global scope for inline onclick handlers
@@ -323,6 +444,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 task.slot = slotType;
                 task.weight = weight;
                 task.postponed = false; // Reset shame marker
+                
+                // Reverse-Engineering Check
+                const isStrategic = confirm("Does this task directly serve your 3-year vision?\nOK = Yes (Strategic)\nCancel = No (Survival Work)");
+                task.goalType = isStrategic ? 'strategic' : 'survival';
                 
                 // Auto-Mapping Logic
                 if (energyProfile) {
@@ -342,13 +467,11 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         demote: (id) => {
             const task = tasks.find(t => t.id === id);
-            if (task) {
-                task.status = 'backlog';
-                task.slot = null;
-                task.completed = false; // Reset completion if moved back
-            }
-            saveTasks();
-            renderAll();
+            taskToTaxId = id;
+            const currentStrikes = (task.postponeCount || 0) + 1;
+            taxStrikeCount.innerText = currentStrikes;
+            taxModal.style.display = 'flex';
+            // Logic continues in handlePayTax
         },
         complete: (id) => {
             const task = tasks.find(t => t.id === id);

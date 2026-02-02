@@ -29,37 +29,11 @@
             </header>
 
             <div class="planner-grid">
-                <!-- Left Column: The Rule of 3 -->
-                <section class="prime-section fade-in">
-                    <div class="section-header" style="margin-bottom: 0.5rem;">
-                        <h2>Today's Mission</h2>
-                        <span class="badge" id="prime-count">0/3 Slots Filled</span>
-                    </div>
-                    <p class="helper-text">Strict Limit. 3 Tasks. No Multitasking.</p>
-                    
-                    <div class="slots-container">
-                        <!-- Slot 1: Revenue -->
-                        <div id="slot-revenue" class="mission-slot" data-type="revenue">
-                            <!-- Injected via JS -->
-                        </div>
-
-                        <!-- Slot 2: Operations -->
-                        <div id="slot-operations" class="mission-slot" data-type="operations">
-                            <!-- Injected via JS -->
-                        </div>
-
-                        <!-- Slot 3: Development -->
-                        <div id="slot-development" class="mission-slot" data-type="development">
-                            <!-- Injected via JS -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Right Column: The Backlog -->
+                <!-- Left Column: The Buffer (Incoming Chaos) -->
                 <section class="backlog-section fade-in" id="backlog-section">
                     <div class="section-header">
-                        <h2>Brain Dump</h2>
-                        <span class="badge-neutral">Buffer</span>
+                        <h2>The Buffer</h2>
+                        <span class="badge-neutral">Inbox</span>
                     </div>
                     <div class="input-group">
                         <input type="text" id="new-task-input" placeholder="Capture a task..." autocomplete="off">
@@ -67,6 +41,35 @@
                     </div>
                     <div id="backlog-list" class="task-list backlog-list">
                         <!-- Tasks injected via JS -->
+                    </div>
+                </section>
+
+                <!-- Center Column: The Forge (Active Tasks) -->
+                <section class="prime-section fade-in">
+                    <div class="section-header" style="margin-bottom: 0.5rem;">
+                        <h2>The Forge</h2>
+                        <span class="badge" id="prime-count">0/3 Slots Filled</span>
+                    </div>
+                    <p class="helper-text">Strict Limit. 3 Tasks. No Multitasking.</p>
+                    
+                    <div class="slots-container">
+                        <!-- Slot 1: Revenue -->
+                        <div id="slot-revenue" class="mission-slot" data-type="revenue"></div>
+                        <!-- Slot 2: Operations -->
+                        <div id="slot-operations" class="mission-slot" data-type="operations"></div>
+                        <!-- Slot 3: Development -->
+                        <div id="slot-development" class="mission-slot" data-type="development"></div>
+                    </div>
+                </section>
+
+                <!-- Right Column: The Vault (Wins & Failures) -->
+                <section class="vault-section fade-in" id="vault-section">
+                    <div class="section-header">
+                        <h2>The Vault</h2>
+                        <span class="badge-neutral">History</span>
+                    </div>
+                    <div id="vault-list" class="task-list vault-list">
+                        <!-- Completed/Failed tasks -->
                     </div>
                 </section>
             </div>
@@ -96,6 +99,33 @@
             </div>
 
             <button id="save-energy-btn" class="btn-primary" style="width:100%; margin-top:1rem;">Calibrate System</button>
+        </div>
+    </div>
+
+    <!-- Tax Modal -->
+    <div id="tax-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3 style="color: #EF4444;"><i class="ph ph-warning"></i> Procrastination Tax</h3>
+            <p>You are postponing this task. Why wasn't it done?</p>
+            <textarea id="tax-reflection" placeholder="Be honest. Why did you delay?" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 1rem;"></textarea>
+            <p class="helper-text" style="font-size: 0.8rem;">Strike <span id="tax-strike-count">1</span>/3. At 3 strikes, this task is deleted.</p>
+            <button id="pay-tax-btn" class="btn-primary" style="width: 100%; background-color: #EF4444;">Pay Tax & Postpone</button>
+        </div>
+    </div>
+
+    <!-- Mini-HUD Overlay -->
+    <div id="hud-overlay" class="hud-overlay" style="display: none;">
+        <div class="hud-content">
+            <div class="hud-header">
+                <span class="hud-label">CURRENT MISSION</span>
+                <button id="hud-close-btn" class="hud-close"><i class="ph ph-x"></i></button>
+            </div>
+            <h1 id="hud-task-text">No Active Task</h1>
+            <div class="hud-timer">
+                <span id="hud-timer-display">25:00</span>
+                <button id="hud-timer-toggle"><i class="ph ph-play"></i></button>
+            </div>
+            <button id="hud-complete-btn" class="btn-primary btn-hud-complete">Mission Complete</button>
         </div>
     </div>
 

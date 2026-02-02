@@ -9,6 +9,7 @@
     --slot-ops: #3B82F6;
     --slot-dev: #8B5CF6;
     --victory-bg: #ECFDF5;
+    --survival-color: #F59E0B;
 }
 
 /* --- Chrono-Mapping Modes --- */
@@ -104,7 +105,7 @@ body.victory-state {
 
 .planner-grid {
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
+    grid-template-columns: 1fr 1.2fr 1fr;
     gap: 3rem;
 }
 
@@ -198,6 +199,12 @@ body.victory-state {
     margin-top: 4px;
 }
 
+.task-meta.survival {
+    color: var(--survival-color);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
 .btn-fill-slot {
     background: white;
     border: 1px solid var(--border-light);
@@ -242,6 +249,10 @@ body.victory-state {
 
 /* Backlog Section */
 .backlog-section {
+    padding: 1rem;
+}
+
+.vault-section {
     padding: 1rem;
 }
 
@@ -338,6 +349,76 @@ body.victory-state {
     padding: 8px;
     border-radius: 8px;
     border: 1px solid var(--border-light);
+}
+
+/* HUD Overlay */
+.hud-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.hud-content {
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+}
+
+.hud-label {
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    color: #94A3B8;
+    font-weight: 800;
+}
+
+#hud-task-text {
+    font-size: 2.5rem;
+    margin: 2rem 0;
+    line-height: 1.2;
+}
+
+.hud-timer {
+    font-size: 4rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+#hud-timer-toggle {
+    background: none;
+    border: 2px solid rgba(255,255,255,0.2);
+    color: white;
+    border-radius: 50%;
+    width: 60px; height: 60px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#hud-timer-toggle:hover {
+    background: white;
+    color: black;
+}
+
+.hud-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
 }
 
 @media (max-width: 768px) {
