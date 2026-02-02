@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles/styles.css">
     <link rel="stylesheet" href="styles/planner.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
     <div id="header-placeholder"></div>
@@ -21,7 +22,7 @@
                 </div>
                 <div class="planner-controls">
                     <button id="focus-mode-btn" class="btn-focus">
-                        <span class="icon">👁️</span> Focus Mode
+                        <span class="icon"><i class="ph ph-eye"></i></span> Focus Mode
                     </button>
                     <a href="new-dashboard.html" class="back-link">Exit to Dashboard</a>
                 </div>
@@ -79,7 +80,7 @@
             <p>To optimize your day, we need to map your biological rhythm.</p>
             
             <div class="energy-input-group">
-                <label>⚡ Peak Zone (High Focus)</label>
+                <label><i class="ph ph-lightning"></i> Peak Zone (High Focus)</label>
                 <p class="helper-text">When is your brain sharpest for complex problem solving?</p>
                 <div class="time-range-select">
                     <select id="peak-start"></select> <span>to</span> <select id="peak-end"></select>
@@ -87,7 +88,7 @@
             </div>
 
             <div class="energy-input-group">
-                <label>💤 Trough Zone (Low Focus)</label>
+                <label><i class="ph ph-moon"></i> Trough Zone (Low Focus)</label>
                 <p class="helper-text">When do you typically crash or feel sluggish?</p>
                 <div class="time-range-select">
                     <select id="trough-start"></select> <span>to</span> <select id="trough-end"></select>

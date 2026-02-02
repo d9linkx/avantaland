@@ -59,12 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
             backlogSection.style.opacity = '0';
             setTimeout(() => backlogSection.style.display = 'none', 300); // Smooth fade out
             focusBtn.classList.add('active');
-            focusBtn.innerHTML = '<span class="icon">🔓</span> Exit Focus';
+            focusBtn.innerHTML = '<span class="icon"><i class="ph ph-lock-key-open"></i></span> Exit Focus';
         } else {
             backlogSection.style.display = 'block';
             setTimeout(() => backlogSection.style.opacity = '1', 10);
             focusBtn.classList.remove('active');
-            focusBtn.innerHTML = '<span class="icon">👁️</span> Focus Mode';
+            focusBtn.innerHTML = '<span class="icon"><i class="ph ph-eye"></i></span> Focus Mode';
         }
     });
 
@@ -127,14 +127,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (hour >= energyProfile.peak.start && hour < energyProfile.peak.end) {
             body.classList.add('peak-mode');
-            energyHud.innerHTML = "⚡ PEAK ZONE: DEEP WORK ONLY";
+            energyHud.innerHTML = "<i class='ph ph-lightning'></i> PEAK ZONE: DEEP WORK ONLY";
             energyHud.style.color = "#FFD600";
         } else if (hour >= energyProfile.trough.start && hour < energyProfile.trough.end) {
             body.classList.add('trough-mode');
-            energyHud.innerHTML = "💤 TROUGH ZONE: ADMIN & RECOVERY";
+            energyHud.innerHTML = "<i class='ph ph-moon'></i> TROUGH ZONE: ADMIN & RECOVERY";
             energyHud.style.color = "#0284C7";
         } else {
-            energyHud.innerHTML = "🔋 RECOVERY ZONE";
+            energyHud.innerHTML = "<i class='ph ph-battery-charging'></i> RECOVERY ZONE";
             energyHud.style.color = "#64748B";
         }
     }
@@ -228,11 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                         <span style="font-weight:600; font-size:1.1rem;">${task.text}</span>
                         <div class="task-actions">
-                            ${!task.completed ? `<button onclick="window.plannerActions.complete(${task.id})" title="Complete">✅</button>` : ''}
-                            <button onclick="window.plannerActions.demote(${task.id})" title="Kick back to backlog">↩️</button>
+                            ${!task.completed ? `<button onclick="window.plannerActions.complete(${task.id})" title="Complete"><i class="ph ph-check-circle"></i></button>` : ''}
+                            <button onclick="window.plannerActions.demote(${task.id})" title="Kick back to backlog"><i class="ph ph-arrow-u-up-left"></i></button>
                         </div>
                     </div>
-                    <div class="task-meta">${task.weight === 'deep' ? '⚡ Deep Work' : '☕ Shallow Work'} • Scheduled: ${task.scheduledTime}</div>
+                    <div class="task-meta">${task.weight === 'deep' ? '<i class="ph ph-lightning"></i> Deep Work' : '<i class="ph ph-coffee"></i> Shallow Work'} • Scheduled: ${task.scheduledTime}</div>
                 `;
                 container.appendChild(content);
             } else {
@@ -268,9 +268,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const el = document.createElement('div');
                 el.className = 'task-item fade-in';
                 el.innerHTML = `
-                    <span class="task-text">${task.postponed ? '⚠️ ' : ''}${task.text}</span>
+                    <span class="task-text">${task.postponed ? '<i class="ph ph-warning"></i> ' : ''}${task.text}</span>
                     <div class="task-actions">
-                        <button onclick="window.plannerActions.remove(${task.id})" title="Delete">🗑️</button>
+                        <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
                     </div>
                 `;
                 backlogList.appendChild(el);
@@ -300,10 +300,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="margin-bottom:8px; font-weight:600;">${task.text}</div>
                     <div class="weight-selection">
                         <button class="btn-weight" onclick="window.plannerActions.promote(${task.id}, '${currentSlotSelection}', 'deep')">
-                            ⚡ Deep (Heavy)
+                            <i class="ph ph-lightning"></i> Deep (Heavy)
                         </button>
                         <button class="btn-weight" onclick="window.plannerActions.promote(${task.id}, '${currentSlotSelection}', 'shallow')">
-                            ☕ Shallow (Light)
+                            <i class="ph ph-coffee"></i> Shallow (Light)
                         </button>
                     </div>
                 `;

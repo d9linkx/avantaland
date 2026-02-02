@@ -484,21 +484,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const nameAddress = userFirstName ? userFirstName : 'there';
 
         if (totalScore <= 29) {
-            status = "⚠️ Hobby, Not Business";
+            status = "<i class='ph ph-warning'></i> Hobby, Not Business";
             meaning = `<p>Hi ${nameAddress}, the data shows that <strong>${userProductName}</strong> is currently a high-risk project. Right now, it’s acting more like an expensive hobby than a profitable business. There are major 'Blind Spots' in your plan that will cost you a lot of money if you launch today.</p><p><strong>The Solution:</strong> You don't need a better logo; you need a better foundation. You must stop building and fix these structural failures before you spend another dollar.</p>`;
             face = faces.shocked;
             sound = emergencySound;
             gaugeClass = 'danger';
             statusText.className = 'emergency';
         } else if (totalScore <= 49) {
-            status = "🏗️ Solid Start, High Risk";
+            status = "<i class='ph ph-barricade'></i> Solid Start, High Risk";
             meaning = `<p>Good work, ${nameAddress}. <strong>${userProductName}</strong> has a real spark, but you are currently 'guessing' on the big things—like how to find customers or manage your cash. You are one bad month away from a collapse because you don't have a system yet.</p><p><strong>The Next Move:</strong> You’ve come too far to let a blind spot take it all away. It’s time to move from 'Founder with an idea' to 'CEO with a company' by removing the guesses.</p>`;
             face = faces.neutral;
             sound = vulnerableSound;
             gaugeClass = 'warning';
             statusText.className = 'vulnerable';
         } else {
-            status = "🏆 Market Ready / Top 1%";
+            status = "<i class='ph ph-trophy'></i> Market Ready / Top 1%";
             meaning = `<p>Impressive, ${nameAddress}. <strong>${userProductName}</strong> is in the top 1% of audited ideas. You have the discipline and the proof. However, at this level, mistakes are much more expensive. A small 5% error won't cost you hundreds; it could cost you thousands.</p><p><strong>The Advice:</strong> Don't get comfortable. You need an 'Unfair Advantage' to protect your lead and scale without losing your mind or your money.</p>`;
             face = faces.happy;
             sound = eliteSound;

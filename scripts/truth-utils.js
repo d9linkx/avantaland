@@ -49,19 +49,19 @@ function initializeTruthPage(truthIndex) {
         const allChecked = Array.from(checkboxes).every(cb => cb.checked);
         if (allChecked) {
             completeBtn.disabled = false;
-            completeBtn.innerText = 'Mark as Completed';
+            completeBtn.innerHTML = 'Mark as Completed';
             completeBtn.style.opacity = '1';
             completeBtn.style.cursor = 'pointer';
         } else {
             completeBtn.disabled = true;
-            completeBtn.innerText = 'Complete Checklist First';
+            completeBtn.innerHTML = 'Complete Checklist First';
             completeBtn.style.opacity = '0.5';
             completeBtn.style.cursor = 'not-allowed';
         }
     }
 
     function markAsCompletedUI() {
-        completeBtn.innerText = '✓ Completed';
+        completeBtn.innerHTML = '<i class="ph ph-check-circle"></i> Completed';
         completeBtn.classList.add('completed');
         completeBtn.disabled = true;
         completeBtn.style.opacity = '1';
@@ -77,7 +77,7 @@ function initializeTruthPage(truthIndex) {
         revealBtn.addEventListener('click', () => {
             const isHidden = fullContent.style.display === 'none';
             fullContent.style.display = isHidden ? 'block' : 'none';
-            revealBtn.innerText = isHidden ? 'Hide Full Truth' : '📖 Read Full Truth';
+            revealBtn.innerHTML = isHidden ? 'Hide Full Truth' : '<i class="ph ph-book-open-text"></i> Read Full Truth';
         });
     }
 
