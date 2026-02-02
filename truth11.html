@@ -44,7 +44,7 @@ Build systems that regularly challenge your ego: Weekly "Why" sessions to challe
         </section>
 
         <div class="action-bar">
-            <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
+            <button id="mark-complete-btn" class="btn-complete" disabled>Complete Checklist First</button>
             <button id="reveal-btn" class="btn-reveal">📖 Read Full Truth</button>
         </div>
 
@@ -77,42 +77,10 @@ Build systems that regularly challenge your ego: Weekly "Why" sessions to challe
         </div>
     </div>
 
+    <script src="scripts/truth-utils.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const truthIndex = 10; // Truth 11 is index 10
-            const revealBtn = document.getElementById('reveal-btn');
-            const completeBtn = document.getElementById('mark-complete-btn');
-            const fullContent = document.getElementById('full-truth-content');
-
-            // Check Completion Status
-            const savedProgress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
-            if (savedProgress[truthIndex]) {
-                completeBtn.innerText = '✓ Completed';
-                completeBtn.classList.add('completed');
-                completeBtn.disabled = true;
-            }
-
-            // Reveal Logic
-            revealBtn.addEventListener('click', () => {
-                if (fullContent.style.display === 'none') {
-                    fullContent.style.display = 'block';
-                    revealBtn.innerText = 'Hide Full Truth';
-                } else {
-                    fullContent.style.display = 'none';
-                    revealBtn.innerText = '📖 Read Full Truth';
-                }
-            });
-
-            // Completion Logic
-            completeBtn.addEventListener('click', () => {
-                const progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
-                progress[truthIndex] = true;
-                localStorage.setItem('bizLabProgress', JSON.stringify(progress));
-                
-                completeBtn.innerText = '✓ Completed';
-                completeBtn.classList.add('completed');
-                completeBtn.disabled = true;
-            });
+            initializeTruthPage(10);
         });
     </script>
 </body>
