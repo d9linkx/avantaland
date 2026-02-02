@@ -11,6 +11,22 @@
     --victory-bg: #ECFDF5;
 }
 
+/* --- Chrono-Mapping Modes --- */
+body.peak-mode {
+    --planner-bg: #0F172A;
+    --prime-bg: #1E293B;
+    --text-dark: #FFFFFF;
+    --text-muted: #94A3B8;
+    --border-light: #334155;
+}
+
+body.trough-mode {
+    --planner-bg: #F0F9FF;
+    --prime-bg: #E0F2FE;
+    --accent-focus: #0284C7;
+}
+/* ---------------------------- */
+
 body {
     background-color: var(--planner-bg);
 }
@@ -46,6 +62,15 @@ body.victory-state {
     color: var(--text-muted);
     font-weight: 600;
     font-size: 1.1rem;
+}
+
+.energy-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
 }
 
 .planner-controls {
@@ -167,6 +192,12 @@ body.victory-state {
     margin-bottom: 0.5rem;
 }
 
+.task-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
 .btn-fill-slot {
     background: white;
     border: 1px solid var(--border-light);
@@ -276,6 +307,37 @@ body.victory-state {
 .modal-task-item:hover {
     background: #F8FAFC;
     border-color: var(--text-dark);
+}
+
+.weight-selection {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.btn-weight {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-weight:hover {
+    background: var(--planner-bg);
+    border-color: var(--accent-focus);
+}
+
+.energy-input-group {
+    margin-bottom: 1.5rem;
+}
+.time-range-select select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
 }
 
 @media (max-width: 768px) {

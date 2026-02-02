@@ -2,7 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- State Management ---
     const STORAGE_KEY = 'avantaland_planner_tasks';
     const DATE_KEY = 'avantaland_planner_date';
+    const ENERGY_PROFILE_KEY = 'avantaland_energy_profile';
     let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    let energyProfile = JSON.parse(localStorage.getItem(ENERGY_PROFILE_KEY));
     let focusMode = false;
     let currentSlotSelection = null; // Tracks which slot is asking for a task
 
@@ -14,12 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const addBtn = document.getElementById('add-task-btn');
     const focusBtn = document.getElementById('focus-mode-btn');
     const backlogSection = document.getElementById('backlog-section');
+    const energyHud = document.getElementById('energy-hud');
     
     // Modal Elements
     const modal = document.getElementById('task-picker-modal');
     const modalSlotName = document.getElementById('modal-slot-name');
     const modalList = document.getElementById('modal-task-list');
     const closeModalBtn = document.getElementById('close-modal-btn');
+    
+    // Energy Setup Elements
+    const energyModal = document.getElementById('energy-setup-modal');
+    const saveEnergyBtn = document.getElementById('save-energy-btn');
+    const peakStart = document.getElementById('peak-start');
+    const peakEnd = document.getElementById('peak-end');
+    const troughStart = document.getElementById('trough-start');
+    const troughEnd = document.getElementById('trough-end');
 
     // --- Initialization ---
     const today = new Date();
@@ -27,6 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
     dateDisplay.innerText = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     
     checkEndOfDayPurge(todayStr);
+    
+    if (!energyProfile) {
+        initEnergySetup();
+    } else {
+        startEnergyLoop();
+    }
+    
     renderAll();
 
     // --- Event Listeners ---
@@ -55,7 +73,71 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSlotSelection = null;
     });
 
+    saveEnergyBtn.addEventListener('click', handleSaveEnergy);
+
     // --- Core Logic ---
+
+    function initEnergySetup() {
+        // Populate Selects (6 AM to 10 PM)
+        const populate = (select, start, end) => {
+            select.innerHTML = '';
+            for(let i=start; i<=end; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                const suffix = i >= 12 ? 'PM' : 'AM';
+                const hour = i > 12 ? i - 12 : i;
+                opt.innerText = `${hour}:00 ${suffix}`;
+                select.appendChild(opt);
+            }
+        };
+        
+        populate(peakStart, 6, 22);
+        populate(peakEnd, 7, 23);
+        populate(troughStart, 6, 22);
+        populate(troughEnd, 7, 23);
+        
+        // Defaults
+        peakStart.value = 9; peakEnd.value = 11;
+        troughStart.value = 14; troughEnd.value = 16;
+        
+        energyModal.style.display = 'flex';
+    }
+
+    function handleSaveEnergy() {
+        energyProfile = {
+            peak: { start: parseInt(peakStart.value), end: parseInt(peakEnd.value) },
+            trough: { start: parseInt(troughStart.value), end: parseInt(troughEnd.value) }
+        };
+        localStorage.setItem(ENERGY_PROFILE_KEY, JSON.stringify(energyProfile));
+        energyModal.style.display = 'none';
+        startEnergyLoop();
+    }
+
+    function startEnergyLoop() {
+        updateEnergyHUD();
+        setInterval(updateEnergyHUD, 60000); // Check every minute
+    }
+
+    function updateEnergyHUD() {
+        const hour = new Date().getHours();
+        const body = document.body;
+        
+        body.classList.remove('peak-mode', 'trough-mode');
+        energyHud.style.display = 'inline-block';
+
+        if (hour >= energyProfile.peak.start && hour < energyProfile.peak.end) {
+            body.classList.add('peak-mode');
+            energyHud.innerHTML = "⚡ PEAK ZONE: DEEP WORK ONLY";
+            energyHud.style.color = "#FFD600";
+        } else if (hour >= energyProfile.trough.start && hour < energyProfile.trough.end) {
+            body.classList.add('trough-mode');
+            energyHud.innerHTML = "💤 TROUGH ZONE: ADMIN & RECOVERY";
+            energyHud.style.color = "#0284C7";
+        } else {
+            energyHud.innerHTML = "🔋 RECOVERY ZONE";
+            energyHud.style.color = "#64748B";
+        }
+    }
 
     function checkEndOfDayPurge(todayStr) {
         const lastDate = localStorage.getItem(DATE_KEY);
@@ -79,6 +161,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleAddTask() {
         const text = input.value.trim();
         if (!text) return;
+
+        // Complexity Check: Ensure task is granular
+        if (text.length > 50) {
+            alert("Is this a task or a project? Break it down into one executable step.");
+            return;
+        }
 
         const newTask = {
             id: Date.now(),
@@ -129,6 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     completedCount++;
                 }
 
+                // Energy Mismatch Warning
+                if (task.weight === 'deep' && document.body.classList.contains('trough-mode')) {
+                    container.style.border = "2px solid #F59E0B"; // Warning border
+                }
+
                 const content = document.createElement('div');
                 content.style.width = '100%';
                 content.innerHTML = `
@@ -139,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button onclick="window.plannerActions.demote(${task.id})" title="Kick back to backlog">↩️</button>
                         </div>
                     </div>
+                    <div class="task-meta">${task.weight === 'deep' ? '⚡ Deep Work' : '☕ Shallow Work'} • Scheduled: ${task.scheduledTime}</div>
                 `;
                 container.appendChild(content);
             } else {
@@ -198,14 +292,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (backlogTasks.length === 0) {
             modalList.innerHTML = '<p style="text-align:center; color:#64748B;">Backlog is empty. Add tasks first.</p>';
         } else {
+            modalList.innerHTML = '<p style="margin-bottom:1rem; font-size:0.9rem;">Select a task and its cognitive weight:</p>';
             backlogTasks.forEach(task => {
                 const div = document.createElement('div');
                 div.className = 'modal-task-item';
-                div.innerText = task.text;
-                div.onclick = () => {
-                    window.plannerActions.promote(task.id, currentSlotSelection);
-                    modal.style.display = 'none';
-                };
+                div.innerHTML = `
+                    <div style="margin-bottom:8px; font-weight:600;">${task.text}</div>
+                    <div class="weight-selection">
+                        <button class="btn-weight" onclick="window.plannerActions.promote(${task.id}, '${currentSlotSelection}', 'deep')">
+                            ⚡ Deep (Heavy)
+                        </button>
+                        <button class="btn-weight" onclick="window.plannerActions.promote(${task.id}, '${currentSlotSelection}', 'shallow')">
+                            ☕ Shallow (Light)
+                        </button>
+                    </div>
+                `;
                 modalList.appendChild(div);
             });
         }
@@ -215,12 +316,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Expose actions to global scope for inline onclick handlers
     window.plannerActions = {
-        promote: (id, slotType) => {
+        promote: (id, slotType, weight) => {
             const task = tasks.find(t => t.id === id);
             if (task) {
                 task.status = 'active';
                 task.slot = slotType;
+                task.weight = weight;
                 task.postponed = false; // Reset shame marker
+                
+                // Auto-Mapping Logic
+                if (energyProfile) {
+                    if (weight === 'deep') {
+                        task.scheduledTime = `${energyProfile.peak.start}:00 ${energyProfile.peak.start >= 12 ? 'PM' : 'AM'}`;
+                    } else {
+                        task.scheduledTime = `${energyProfile.trough.start}:00 ${energyProfile.trough.start >= 12 ? 'PM' : 'AM'}`;
+                    }
+                } else {
+                    task.scheduledTime = "Today";
+                }
+                
+                modal.style.display = 'none';
             }
             saveTasks();
             renderAll();
