@@ -1,0 +1,325 @@
+:root {
+    --planner-bg: #F8FAFC;
+    --prime-bg: #FFFFFF;
+    --accent-focus: #2979FF;
+    --text-dark: #1E293B;
+    --text-muted: #64748B;
+    --border-light: #E2E8F0;
+    --slot-revenue: #10B981;
+    --slot-ops: #3B82F6;
+    --slot-dev: #8B5CF6;
+    --victory-bg: #ECFDF5;
+}
+
+body {
+    background-color: var(--planner-bg);
+}
+
+.planner-main {
+    padding-top: 120px;
+    padding-bottom: 80px;
+    min-height: 90vh;
+}
+
+/* Victory State Animation */
+body.victory-state {
+    background-color: var(--victory-bg);
+    transition: background-color 1s ease;
+}
+
+.planner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 1.5rem;
+}
+
+.planner-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-dark);
+}
+
+#date-display {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.planner-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.btn-focus {
+    background: var(--text-dark);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-focus:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn-focus.active {
+    background: var(--accent-focus);
+}
+
+.planner-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 3rem;
+}
+
+/* Prime Section & Slots */
+.prime-section {
+    background: var(--prime-bg);
+    padding: 2rem;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-light);
+    height: fit-content;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.badge {
+    background: #EFF6FF;
+    color: var(--accent-focus);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.helper-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.slots-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.mission-slot {
+    border: 2px dashed var(--border-light);
+    border-radius: 16px;
+    padding: 1.5rem;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    position: relative;
+    background: #FAFAFA;
+}
+
+.mission-slot.filled {
+    border-style: solid;
+    background: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    align-items: flex-start;
+}
+
+.mission-slot.completed {
+    opacity: 0.6;
+    background: #F1F5F9;
+    text-decoration: line-through;
+}
+
+/* Slot Types */
+.mission-slot[data-type="revenue"] { border-color: rgba(16, 185, 129, 0.3); }
+.mission-slot[data-type="revenue"].filled { border-left: 6px solid var(--slot-revenue); border-color: var(--border-light); }
+
+.mission-slot[data-type="operations"] { border-color: rgba(59, 130, 246, 0.3); }
+.mission-slot[data-type="operations"].filled { border-left: 6px solid var(--slot-ops); border-color: var(--border-light); }
+
+.mission-slot[data-type="development"] { border-color: rgba(139, 92, 246, 0.3); }
+.mission-slot[data-type="development"].filled { border-left: 6px solid var(--slot-dev); border-color: var(--border-light); }
+
+.slot-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.btn-fill-slot {
+    background: white;
+    border: 1px solid var(--border-light);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-dark);
+    transition: all 0.2s;
+}
+.btn-fill-slot:hover {
+    background: var(--text-dark);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.task-item {
+    background: #fff;
+    border: 1px solid var(--border-light);
+    padding: 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.task-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.task-actions button:hover {
+    opacity: 1;
+}
+
+/* Backlog Section */
+.backlog-section {
+    padding: 1rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 2rem;
+}
+
+#new-task-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    font-size: 1rem;
+}
+
+.btn-add {
+    background: var(--text-dark);
+    color: white;
+    border: none;
+    width: 48px;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+
+.modal-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 1rem;
+}
+
+.modal-task-item {
+    padding: 1rem;
+    border: 1px solid var(--border-light);
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.modal-task-item:hover {
+    background: #F8FAFC;
+    border-color: var(--text-dark);
+}
+
+@media (max-width: 768px) {
+    .planner-main {
+        padding-top: 90px;
+    }
+
+    .planner-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+    }
+
+    .planner-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0;
+    }
+
+    #date-display {
+        font-size: 0.9rem;
+    }
+
+    .planner-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .planner-grid { 
+        grid-template-columns: 1fr; 
+        gap: 2rem;
+    }
+
+    .prime-section {
+        padding: 1.25rem;
+    }
+
+    .mission-slot {
+        min-height: 100px;
+        padding: 1rem;
+    }
+    
+    .slots-container {
+        gap: 1rem;
+    }
+}
