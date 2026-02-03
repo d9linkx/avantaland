@@ -58,9 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // HUD Elements
     const hudOverlay = document.getElementById('hud-overlay');
     const hudTaskText = document.getElementById('hud-task-text');
-    const hudTimerDisplay = document.getElementById('hud-timer-display');
     const hudTimerToggle = document.getElementById('hud-timer-toggle');
-    let hudTimerInterval = null;
+    
+    // Main Timer Elements
+    const mainTimerDisplay = document.getElementById('main-timer');
+    let mainTimerInterval = null;
     let hudTimeLeft = 25 * 60;
 
     // --- Initialization ---
@@ -146,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeHUD();
     });
 
-    hudTimerToggle.addEventListener('click', toggleHUDTimer);
+    mainTimerDisplay.addEventListener('click', toggleMainTimer);
     document.getElementById('hud-complete-btn').addEventListener('click', () => {
         // Complete current active task
         const activeTask = tasks.find(t => t.status === 'active');
@@ -208,15 +210,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (hour >= energyProfile.peak.start && hour < energyProfile.peak.end) {
             body.classList.add('peak-mode');
-            energyHud.innerHTML = "<i class='ph ph-lightning'></i> High Energy Time";
-            energyHud.style.color = "#2979FF"; // Brand's blue color
+            energyHud.innerText = "Peak Energy Zone";
+            energyHud.style.color = "var(--color-blue)";
         } else if (hour >= energyProfile.trough.start && hour < energyProfile.trough.end) {
             body.classList.add('trough-mode');
-            energyHud.innerHTML = "<i class='ph ph-moon'></i> Low Energy Time";
-            energyHud.style.color = "#0284C7";
+            energyHud.innerText = "Trough Energy Zone";
+            energyHud.style.color = "var(--text-muted)";
         } else {
-            energyHud.innerHTML = "<i class='ph ph-battery-charging'></i> Normal Energy";
-            energyHud.style.color = "#64748B";
+            energyHud.innerText = "Normal Energy";
+            energyHud.style.color = "var(--text-muted)";
         }
     }
 
@@ -294,30 +296,45 @@ document.addEventListener('DOMContentLoaded', () => {
             const label = document.createElement('div');
             label.className = 'slot-label';
             label.innerText = slotLabels[type] || type.toUpperCase();
-            container.appendChild(label);
+            // Label is appended later or handled via CSS, but let's keep structure clean
+            // container.appendChild(label); 
 
             if (task) {
                 container.classList.add('filled');
 
-                // Energy Mismatch Warning
-                if (task.weight === 'deep' && document.body.classList.contains('trough-mode')) {
-                    container.style.border = "2px solid #F59E0B"; // Warning border
+                // --- New Color Logic ---
+                if (task.completed) {
+                    container.classList.add('slot-completed');
+                } else if (task.weight === 'deep') {
+                    container.classList.add('slot-deep');
+                } else {
+                    container.classList.add('slot-shallow');
                 }
+
+                // --- Geometric Icons ---
+                const iconHtml = task.weight === 'deep' 
+                    ? '<i class="ph ph-lightning-fill slot-icon-large"></i>' // Bolt for Deep
+                    : '<i class="ph ph-paper-plane-tilt-fill slot-icon-large"></i>'; // Plane for Shallow
 
                 const content = document.createElement('div');
                 content.style.width = '100%';
                 content.innerHTML = `
+                    <div style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="slot-label" style="margin:0;">${slotLabels[type]}</span>
+                        ${iconHtml}
+                    </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                        <span style="font-weight:600; font-size:1.1rem;">${task.text}</span>
+                        <span data-task-id="${task.id}" style="font-weight:600; font-size:1.1rem;">${task.text}</span>
                         <div class="task-actions">
-                            <button onclick="window.plannerActions.complete(${task.id})" title="Complete"><i class="ph ph-check-circle"></i></button>
-                            <button onclick="window.plannerActions.demote(${task.id})" title="Move to Inbox"><i class="ph ph-arrow-u-up-left"></i></button>
+                            <button onclick="window.plannerActions.complete(${task.id})" title="Complete" class="action-btn-complete"><i class="ph ph-check-circle"></i></button>
+                            <button onclick="window.plannerActions.edit(${task.id}, this)" title="Edit"><i class="ph ph-pencil-simple"></i></button>
+                            <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
                         </div>
                     </div>
-                    <div class="task-meta ${task.goalType === 'survival' ? 'survival' : ''}">${task.weight === 'deep' ? '<i class="ph ph-lightning"></i> High Focus' : '<i class="ph ph-coffee"></i> Low Focus'} • ${task.goalType === 'survival' ? 'Maintenance' : 'Growth'}</div>
                 `;
                 container.appendChild(content);
             } else {
+                container.appendChild(label); // Add label for empty state
                 const slotIcons = {
                     revenue: 'ph-briefcase',
                     operations: 'ph-list-checks',
@@ -466,22 +483,26 @@ document.addEventListener('DOMContentLoaded', () => {
         hudOverlay.style.display = 'none';
         clearInterval(hudTimerInterval);
         hudTimerInterval = null;
-        hudTimerToggle.innerHTML = '<i class="ph ph-play"></i>';
     }
 
-    function toggleHUDTimer() {
-        if (hudTimerInterval) {
-            clearInterval(hudTimerInterval);
-            hudTimerInterval = null;
-            hudTimerToggle.innerHTML = '<i class="ph ph-play"></i>';
+    // --- Main Timer Logic ---
+    function toggleMainTimer() {
+        if (mainTimerInterval) {
+            clearInterval(mainTimerInterval);
+            mainTimerInterval = null;
+            mainTimerDisplay.style.opacity = "0.7"; // Paused look
         } else {
-            hudTimerToggle.innerHTML = '<i class="ph ph-pause"></i>';
-            hudTimerInterval = setInterval(() => {
+            mainTimerDisplay.style.opacity = "1";
+            mainTimerInterval = setInterval(() => {
                 hudTimeLeft--;
                 const m = Math.floor(hudTimeLeft / 60).toString().padStart(2, '0');
                 const s = (hudTimeLeft % 60).toString().padStart(2, '0');
-                hudTimerDisplay.innerText = `${m}:${s}`;
-                if (hudTimeLeft <= 0) clearInterval(hudTimerInterval);
+                mainTimerDisplay.innerText = `${m}:${s}`;
+                
+                // Urgency transition
+                if (hudTimeLeft < 60) mainTimerDisplay.classList.add('urgent');
+                
+                if (hudTimeLeft <= 0) clearInterval(mainTimerInterval);
             }, 1000);
         }
     }
@@ -517,12 +538,13 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(renderAll, 0);
         },
         edit: (id, buttonEl) => {
-            const taskItem = buttonEl.closest('.task-item');
-            const taskTextSpan = taskItem.querySelector(`.task-text[data-task-id="${id}"]`);
+            const taskContainer = buttonEl.closest('.task-item') || buttonEl.closest('.mission-slot');
+            if (!taskContainer) return;
+            const taskTextSpan = taskContainer.querySelector(`[data-task-id="${id}"]`);
             const task = tasks.find(t => t.id === id);
 
             // Prevent re-clicking edit while already in edit mode
-            if (!task || taskItem.querySelector('.edit-task-input')) return;
+            if (!task || !taskTextSpan || taskContainer.querySelector('.edit-task-input')) return;
 
             const originalText = task.text;
             

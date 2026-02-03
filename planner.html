@@ -10,13 +10,16 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         /* Force Light Theme & Fix Colors */
-        :root, body, body.peak-mode, body.trough-mode {
+        :root {
             --planner-bg: #F8FAFC !important;
             --prime-bg: #FFFFFF !important;
             --text-dark: #1E293B !important;
             --text-muted: #64748B !important;
             --border-light: #E2E8F0 !important;
-            --accent-focus: #2563EB !important;
+            --color-orange: #FF8C00 !important;
+            --color-white: #FFFFFF !important;
+            --color-blue: #2563EB !important;
+            --color-grey: #94A3B8 !important;
         }
 
         body {
@@ -39,14 +42,14 @@
             border-radius: 16px;
         }
 
-        /* New Color Scheme */
-        .prime-section { /* Orange Card */
-            background: #FFF7ED;
-            border-color: #FFEFE1;
+        /* Layout & Section Styles */
+        .prime-section {
+            background: var(--color-white);
+            border-color: var(--border-light);
             padding: 1.5rem;
         }
 
-        .prime-section .helper-text {
+        .helper-text {
             background: none;
             padding: 0;
             border: none;
@@ -61,7 +64,7 @@
             width: 100%;
             padding: 6px 8px;
             border-radius: 6px;
-            border: 1px solid var(--accent-focus);
+            border: 1px solid var(--color-blue);
         }
 
         /* Vault item interaction */
@@ -82,7 +85,7 @@
 
         .clickable-question {
             cursor: pointer;
-            color: var(--accent-focus) !important;
+            color: var(--color-blue) !important;
             font-weight: 600;
             text-decoration: underline;
             text-decoration-style: dotted;
@@ -104,6 +107,125 @@
             align-items: center;
         }
 
+        /* --- New Visual Identity Styles --- */
+        
+        /* Header Layout */
+        .planner-header {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Energy Wave Graphic */
+        .energy-wave-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .energy-wave-svg {
+            width: 40px;
+            height: 24px;
+        }
+        .energy-wave-svg path {
+            stroke-width: 3;
+            stroke-linecap: round;
+            fill: none;
+            transition: stroke 0.3s ease;
+        }
+        /* Peak Mode: Blue Wave */
+        body.peak-mode .energy-wave-svg path { stroke: var(--color-blue); }
+        /* Trough Mode: Grey Wave */
+        body.trough-mode .energy-wave-svg path { stroke: var(--color-grey); }
+        /* Default */
+        .energy-wave-svg path { stroke: var(--color-grey); }
+
+        /* Main Timer */
+        .main-timer {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--color-blue);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .main-timer.urgent {
+            color: var(--color-orange);
+        }
+
+        /* Slot Logic Styles */
+        .mission-slot {
+            background: var(--color-white);
+            border: 1px solid var(--border-light);
+            box-shadow: none !important; /* Remove glassmorphism shadows */
+        }
+
+        /* Deep Work: Solid Orange */
+        .mission-slot.slot-deep {
+            background-color: var(--color-orange) !important;
+            color: #000000 !important;
+            border: 2px solid var(--color-orange) !important;
+        }
+        .mission-slot.slot-deep h3, 
+        .mission-slot.slot-deep span, 
+        .mission-slot.slot-deep .task-meta,
+        .mission-slot.slot-deep i {
+            color: #000000 !important;
+        }
+        .mission-slot.slot-deep .task-actions button {
+            color: #000000 !important;
+            opacity: 0.7;
+        }
+        .mission-slot.slot-deep .task-actions button:hover {
+            opacity: 1;
+        }
+
+        /* Shallow Work: White with Blue Border */
+        .mission-slot.slot-shallow {
+            background-color: var(--color-white) !important;
+            border: 2px solid var(--color-blue) !important;
+        }
+        .mission-slot.slot-shallow h3, 
+        .mission-slot.slot-shallow span {
+            color: var(--text-dark) !important;
+        }
+
+        /* Completed: Ghost State */
+        .mission-slot.slot-completed {
+            background-color: var(--color-white) !important;
+            border: 1px solid var(--border-light) !important;
+            opacity: 0.5;
+        }
+        .mission-slot.slot-completed span {
+            text-decoration: line-through;
+            color: var(--text-muted) !important;
+        }
+
+        /* Peak Hour Glow */
+        body.peak-mode .mission-slot.slot-deep {
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4) !important; /* Blue Glow */
+        }
+
+        /* Icons */
+        .slot-icon-large {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Make complete button bigger */
+        .task-actions .action-btn-complete {
+            font-size: 1.5rem;
+        }
+
         /* Mobile Responsiveness */
         @media (max-width: 992px) {
             .planner-grid {
@@ -120,12 +242,7 @@
             .planner-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 1rem;
-                padding: 1.5rem 0;
-            }
-            
-            .planner-header .back-link {
-                order: -1;
+                gap: 1.5rem;
             }
 
             .planner-header h1 {
@@ -171,12 +288,20 @@
     <main class="planner-main">
         <div class="container">
             <header class="planner-header fade-in">
-                <div>
+                <div class="header-left">
+                    <div class="energy-wave-container">
+                        <svg class="energy-wave-svg" viewBox="0 0 40 24">
+                            <path d="M2 12 C 10 12, 10 2, 20 12 C 30 22, 30 12, 38 12" />
+                        </svg>
+                        <div id="energy-hud" class="energy-badge" style="margin:0; color: var(--text-muted);">Detecting...</div>
+                    </div>
                     <h1>My Daily Planner</h1>
-                    <div id="energy-hud" class="energy-badge" style="display:none;">Checking time...</div>
                     <p id="date-display">Loading date...</p>
                 </div>
-                <a href="new-dashboard.html" class="back-link"><i class="ph ph-arrow-left"></i> Exit to Dashboard</a>
+                <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+                    <div id="main-timer" class="main-timer">25:00</div>
+                    <a href="new-dashboard.html" class="back-link"><i class="ph ph-arrow-left"></i> Exit to Dashboard</a>
+                </div>
             </header>
 
             <div class="planner-grid">
