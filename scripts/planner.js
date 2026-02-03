@@ -29,6 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const explanationModal = document.getElementById('explanation-modal');
     const closeExplanationModalBtn = document.getElementById('close-explanation-modal-btn');
     
+    // Complete Confirmation Modal Elements
+    const completeConfirmModal = document.getElementById('complete-confirm-modal');
+    const confirmCompleteBtn = document.getElementById('confirm-complete-btn');
+    const cancelCompleteBtn = document.getElementById('cancel-complete-btn');
+    const completeTaskText = document.getElementById('complete-task-text');
+    let taskToCompleteId = null;
+
     // Delete Confirmation Modal Elements
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
     const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
@@ -48,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const taxModal = document.getElementById('tax-modal');
     const taxReflection = document.getElementById('tax-reflection');
     const payTaxBtn = document.getElementById('pay-tax-btn');
+    const cancelTaxBtn = document.getElementById('cancel-tax-btn'); // New element
     const taxStrikeCount = document.getElementById('tax-strike-count');
     let taskToTaxId = null;
 
@@ -96,6 +104,28 @@ document.addEventListener('DOMContentLoaded', () => {
         try { refreshInbox(); } catch (e) {}
     });
 
+    confirmCompleteBtn.addEventListener('click', () => {
+        if (taskToCompleteId) {
+            const task = tasks.find(t => t.id === taskToCompleteId);
+            if (task) {
+                task.completed = true;
+                task.completedAt = new Date().toISOString();
+            }
+            saveTasks();
+            // Play sound effect
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3');
+            audio.volume = 0.5;
+            audio.play().catch(e => {});
+        }
+        completeConfirmModal.style.display = 'none';
+        taskToCompleteId = null;
+    });
+
+    cancelCompleteBtn.addEventListener('click', () => {
+        completeConfirmModal.style.display = 'none';
+        taskToCompleteId = null;
+    });
+
     confirmDeleteBtn.addEventListener('click', () => {
         if (taskToDeleteId) {
             tasks = tasks.filter(t => t.id !== taskToDeleteId);
@@ -117,6 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     saveEnergyBtn.addEventListener('click', handleSaveEnergy);
     payTaxBtn.addEventListener('click', handlePayTax);
+    
+    cancelTaxBtn.addEventListener('click', () => { // New listener
+        taxModal.style.display = 'none';
+        taskToTaxId = null;
+    });
     
     document.getElementById('hud-close-btn').addEventListener('click', () => {
         closeHUD();
@@ -334,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                         <span style="font-weight:600; font-size:1.1rem;">${task.text}</span>
                         <div class="task-actions">
-                            ${!task.completed ? `<button onclick="window.plannerActions.complete(${task.id})" title="Complete"><i class="ph ph-check-circle"></i></button>` : ''}
+                        <button onclick="window.plannerActions.complete(${task.id})" title="Complete"><i class="ph ph-check-circle"></i></button>
                             <button onclick="window.plannerActions.demote(${task.id})" title="Move to Inbox"><i class="ph ph-arrow-u-up-left"></i></button>
                         </div>
                     </div>
@@ -369,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
             primeCountDisplay.style.color = "#10B981";
         } else {
             document.body.classList.remove('victory-state');
-            primeCountDisplay.innerText = `${tasks.filter(t => t.status === 'active').length}/3 Tasks Selected`;
+            primeCountDisplay.innerText = `${visibleInSlots.length}/3 Tasks Selected`;
             primeCountDisplay.style.color = "#2979FF";
         }
     }
@@ -620,16 +655,11 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         complete: (id) => {
             const task = tasks.find(t => t.id === id);
-            if (task) {
-                task.completed = true;
-                task.completedAt = new Date().toISOString();
+            if (task && !task.completed) {
+                taskToCompleteId = id;
+                completeTaskText.innerText = task.text;
+                completeConfirmModal.style.display = 'flex';
             }
-            saveTasks();
-            renderAll();
-            // Play sound effect if available
-            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3');
-            audio.volume = 0.5;
-            audio.play().catch(e => {});
         },
         remove: (id) => {
             const task = tasks.find(t => t.id === id);

@@ -126,7 +126,7 @@
             }
 
             .planner-header h1 {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
 
             .planner-controls {
@@ -145,11 +145,19 @@
             }
 
             .section-header h2 {
-                font-size: 1.15rem;
+                font-size: 1rem;
             }
 
             .input-group input, .input-group button {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+            }
+
+            .helper-text {
+                font-size: 0.8rem;
+            }
+
+            .mission-slot span {
+                font-size: 0.95rem !important;
             }
         }
     </style>
@@ -186,7 +194,7 @@
                 <!-- Center Column: The Forge (Active Tasks) -->
                 <section class="prime-section fade-in">
                     <div class="section-header">
-                        <h2>Today's Priorities</h2>
+                        <h2>Selected Priority Tasks</h2>
                         <span class="badge" id="prime-count">0/3 Tasks Selected</span>
                     </div>
                     <p class="helper-text">
@@ -251,7 +259,23 @@
             <p>Why are you moving this back to the inbox?</p>
             <textarea id="tax-reflection" placeholder="Reason for delay..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 1rem;"></textarea>
             <p class="helper-text" style="font-size: 0.8rem;">Delay count: <span id="tax-strike-count">1</span>/3. Too many delays will remove the task.</p>
-            <button id="pay-tax-btn" class="btn-primary" style="width: 100%; background-color: #EF4444;">Move to Inbox</button>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button id="cancel-tax-btn" class="btn-secondary" style="flex: 1;">Cancel</button>
+                <button id="pay-tax-btn" class="btn-primary" style="flex: 1; background-color: #EF4444;">Move to Inbox</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Confirmation Modal -->
+    <div id="complete-confirm-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3 style="color: #10B981;"><i class="ph ph-check-circle"></i> Complete Task?</h3>
+            <p>Are you sure you want to mark this task as complete?</p>
+            <p id="complete-task-text" style="font-weight: 600; background: #F8FAFC; padding: 1rem; border-radius: 8px; margin: 1rem 0;"></p>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button id="cancel-complete-btn" class="btn-secondary" style="flex: 1;">Cancel</button>
+                <button id="confirm-complete-btn" class="btn-primary" style="flex: 1; background-color: #10B981; border-color: #10B981;">Yes, Complete</button>
+            </div>
         </div>
     </div>
 
