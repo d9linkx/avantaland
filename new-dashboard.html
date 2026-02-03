@@ -162,6 +162,29 @@
             transform: translateY(-4px);
             box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
         }
+
+        .planner-promo-label {
+            margin-top: -40px;
+        }
+
+        /* Top Grid Layout for Desktop */
+        .dashboard-top-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        @media (min-width: 992px) {
+            .dashboard-top-grid {
+                flex-direction: row;
+            }
+            .dashboard-top-grid > * {
+                flex: 1;
+            }
+            .planner-promo-label {
+                margin-top: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -176,27 +199,30 @@
                 <div class="progress-track"><div class="progress-fill"></div></div>
             </div>
 
-            <!-- Feature 2: Next Critical Action -->
-            <div id="up-next-container" class="up-next-wrapper fade-in" style="display: none;">
-                <div class="up-next-label">Next Critical Action</div>
-                <a href="#" id="up-next-link" class="up-next-card" style="background-color: #2979FF; border-color: #2979FF; color: #ffffff;">
-                    <div class="up-next-content">
-                        <span class="up-next-number">Truth #<span id="up-next-num"></span></span>
-                        <h3 id="up-next-title"></h3>
-                    </div>
-                    <div class="up-next-arrow">Start Fix &rarr;</div>
-                </a>
-            </div>
+            <div class="dashboard-top-grid">
+                <!-- Feature 2: Next Critical Action -->
+                <div id="up-next-container" class="up-next-wrapper fade-in" style="display: none;">
+                    <div class="up-next-label">Next Critical Action</div>
+                    <a href="#" id="up-next-link" class="up-next-card" style="background-color: #2979FF; border-color: #2979FF; color: #ffffff;">
+                        <div class="up-next-content">
+                            <span class="up-next-number">Truth #<span id="up-next-num"></span></span>
+                            <h3 id="up-next-title"></h3>
+                        </div>
+                        <div class="up-next-arrow">Start Fix &rarr;</div>
+                    </a>
+                </div>
 
-            <!-- Feature 2.5: Planner Promo -->
-            <div id="planner-promo" class="fade-in" style="margin-bottom: 2rem;">
-                <a href="planner.html" class="promo-card" style="background: linear-gradient(135deg, #1e40af 0%, #172554 100%); border: 1px solid #3b82f6; color: white; flex-direction: row; align-items: center; justify-content: space-between; padding: 2rem; min-height: auto;">
-                    <div>
-                        <div style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: #bfdbfe; margin-bottom: 0.5rem; font-weight: 700;">Plan Your Day Better</div>
-                        <h3 style="margin: 0; font-size: 1.5rem; color: white;">100% High-Performance Daily Planner</h3>
-                    </div>
-                    <div style="font-size: 2.5rem;"><i class="ph ph-arrow-right"></i></div>
-                </a>
+                <!-- Feature 2.5: Planner Promo -->
+                <div id="planner-promo" class="fade-in">
+                    <div class="up-next-label planner-promo-label">Plan to Succeed</div>
+                    <a href="planner.html" class="promo-card" style="background: linear-gradient(135deg, #1e40af 0%, #172554 100%); border: 1px solid #3b82f6; color: white; flex-direction: row; align-items: center; justify-content: space-between; padding: 2rem; min-height: auto;">
+                        <div>
+                            <div style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: #bfdbfe; margin-bottom: 0.5rem; font-weight: 700;">Plan Your Day Better</div>
+                            <h3 style="margin: 0; font-size: 1.5rem; color: white;">100% High-Performance Daily Planner</h3>
+                        </div>
+                        <div style="font-size: 2.5rem;"><i class="ph ph-arrow-right"></i></div>
+                    </a>
+                </div>
             </div>
 
             <!-- Feature 3: Category Filters & Actions -->
