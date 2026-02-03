@@ -22,26 +22,30 @@
             <p>We spent three months building the "perfect" software architecture. It was beautiful, clean, and a complete failure in the real world. Meanwhile, a competitor with a messy "ball of mud" codebase launched in weeks and stole the market. While we were debating design patterns, they were shipping features and learning from customers. The lesson was painful: code quality is irrelevant if nobody wants your product. Your first codebase isn't a masterpiece; it's a conversation with the market. Build to learn first, then rebuild to scale. Speed of learning beats technical perfection every time.</p>
         </section>
 
-        <section class="truth-checklist">
-            <h3>Actionable Checklist</h3>
-            <div class="fix-list">
-                <label class="fix-item">
-                    <input type="checkbox" class="fix-checkbox">
-                    <span class="fix-text">1. Implement the "technical debt budget"
-Consciously decide how much technical debt you're willing to carry at each stage: Stage 1 (Pre-PMF): High debt tolerance. Stage 2 (Finding PMF): Medium debt tolerance. Stage 3 (Scaling): Low debt tolerance.</span>
-                </label>
-                <label class="fix-item">
-                    <input type="checkbox" class="fix-checkbox">
-                    <span class="fix-text">2. Schedule "refactoring sprints"
-Instead of refactoring as you go, schedule dedicated time for it: Every 4-6 weeks, dedicate 20-30% of engineering capacity to paying down debt.</span>
-                </label>
-                <label class="fix-item">
-                    <input type="checkbox" class="fix-checkbox">
-                    <span class="fix-text">3. Create the "pain-driven development" rule
-Only refactor when the pain of not refactoring exceeds the cost of refactoring. Maintain a "pain log" to document what part of the codebase is causing pain and how much time it is wasting.</span>
-                </label>
-            </div>
-        </section>
+<section class="truth-checklist">
+    <h3>Actionable Checklist</h3>
+    <div class="fix-list">
+        <label class="fix-item">
+            <input type="checkbox" class="fix-checkbox">
+            <span class="fix-text"><strong>1. Set a "Messiness Budget":</strong> 
+            Decide how much "quick and dirty" work you can live with right now. If you're just starting, it's okay to be a little messy to move fast. As you get more customers, you need to tighten things up. Know which phase you're in so you don't over-polish too early.</span>
+        </label>
+        
+        <label class="fix-item">
+            <input type="checkbox" class="fix-checkbox">
+            <span class="fix-text"><strong>2. Schedule "Cleanup Weeks":</strong> 
+            Don't try to fix every tiny mistake as you go—it kills your speed. Instead, every month or two, spend a full week doing nothing but cleaning up messy code, fixing bugs, and organizing your files. This keeps the "mess" from taking over.</span>
+        </label>
+        
+        
+
+        <label class="fix-item">
+            <input type="checkbox" class="fix-checkbox">
+            <span class="fix-text"><strong>3. Only Fix What Truly Hurts:</strong> 
+            Don't rewrite something just because it looks "ugly." Keep a "Frustration Log" of parts of your project that actually waste your time or cause errors. Only spend time fixing the things that show up on that list over and over again.</span>
+        </label>
+    </div>
+</section>
 
         <div class="action-bar">
             <button id="mark-complete-btn" class="btn-complete">Mark as Completed</button>
