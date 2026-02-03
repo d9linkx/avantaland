@@ -906,6 +906,15 @@ footer {
     .hero-social-proof { justify-content: center; flex-direction: column; gap: 0.5rem; }
     .hero-main-img { transform: rotate(0deg); margin-top: 2rem; }
     .floating-card { left: 50%; transform: translateX(-50%); bottom: -20px; width: 90%; animation: none; }
+
+    .hero-text h1 {
+        font-size: clamp(2.2rem, 7vw, 2.8rem);
+        margin-bottom: 1rem;
+    }
+    .hero-text p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
     
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
     
