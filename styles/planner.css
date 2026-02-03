@@ -417,6 +417,10 @@ body.victory-state {
     color: var(--prime-bg);
 }
 
+.btn-fill-slot {
+    background-color: #3b83f6;
+}
+
 .hud-close {
     position: absolute;
     top: 2rem;
