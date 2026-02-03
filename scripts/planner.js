@@ -494,8 +494,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button class="btn-adjust-time" onclick="window.plannerActions.adjustTime(${task.id}, 5)" title="+5 min">
                                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
                             </button>
-                            ${startTimeDisplay}
-                            <button class="btn-skip-task" onclick="window.plannerActions.skipTask(${task.id})" title="Skip Task"><i class="ph ph-fast-forward"></i></button>
                         </div>
                     </div>
 
@@ -883,27 +881,5 @@ document.addEventListener('DOMContentLoaded', () => {
             saveTasks();
             renderAll();
         },
-        skipTask: (id) => {
-            const task = tasks.find(t => t.id === id);
-            if (!task) return;
-
-            const slotType = task.slot;
-            const index = slotOrder.indexOf(slotType);
-
-            if (index > -1) {
-                // If it was the running task, stop the timer
-                if (task.isOngoing && mainTimerInterval) {
-                    clearInterval(mainTimerInterval);
-                    mainTimerInterval = null;
-                    task.isOngoing = false;
-                }
-
-                slotOrder.splice(index, 1);
-                slotOrder.push(slotType); // Move to the end
-                saveSlotOrder();
-                saveTasks();
-                renderAll();
-            }
-        }
     };
 });
