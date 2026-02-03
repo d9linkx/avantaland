@@ -47,7 +47,7 @@ body.victory-state {
 .planner-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: baseline;
     margin-bottom: 3rem;
     border-bottom: 1px solid var(--border-light);
     padding-bottom: 1.5rem;

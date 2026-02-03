@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const ENERGY_PROFILE_KEY = 'avantaland_energy_profile';
     let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     let energyProfile = JSON.parse(localStorage.getItem(ENERGY_PROFILE_KEY));
-    let focusMode = false;
     let currentSlotSelection = null; // Tracks which slot is asking for a task
 
     // --- DOM Elements ---
@@ -15,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const primeCountDisplay = document.getElementById('prime-count');
     const input = document.getElementById('new-task-input');
     const addBtn = document.getElementById('add-task-btn');
-    const focusBtn = document.getElementById('focus-mode-btn');
     const backlogSection = document.getElementById('backlog-section');
     const vaultSection = document.getElementById('vault-section');
     const energyHud = document.getElementById('energy-hud');
@@ -31,6 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const explanationModal = document.getElementById('explanation-modal');
     const closeExplanationModalBtn = document.getElementById('close-explanation-modal-btn');
     
+    // Delete Confirmation Modal Elements
+    const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+    const deleteTaskText = document.getElementById('delete-task-text');
+    let taskToDeleteId = null;
+
     // Energy Setup Elements
     const energyModal = document.getElementById('energy-setup-modal');
     const saveEnergyBtn = document.getElementById('save-energy-btn');
@@ -75,22 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') handleAddTask();
     });
 
-    focusBtn.addEventListener('click', () => {
-        focusMode = !focusMode;
-        if (focusMode) {
-            openHUD();
-            focusBtn.classList.add('active');
-            focusBtn.innerHTML = '<span class="icon"><i class="ph ph-lock-key-open"></i></span> Exit View';
-        } else {
-            closeHUD();
-            focusBtn.classList.remove('active');
-            focusBtn.innerHTML = '<span class="icon"><i class="ph ph-eye"></i></span> Focus View';
-        }
-    });
-
     closeModalBtn.addEventListener('click', () => {
         modal.style.display = 'none';
         currentSlotSelection = null;
+        // Ensure inbox refreshes after closing the picker modal
+        try { refreshInbox(); } catch (e) {}
     });
 
     whyThreeTasksLink.addEventListener('click', () => {
@@ -99,20 +93,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeExplanationModalBtn.addEventListener('click', () => {
         explanationModal.style.display = 'none';
+        try { refreshInbox(); } catch (e) {}
+    });
+
+    confirmDeleteBtn.addEventListener('click', () => {
+        if (taskToDeleteId) {
+            tasks = tasks.filter(t => t.id !== taskToDeleteId);
+            saveTasks();
+        }
+        deleteConfirmModal.style.display = 'none';
+        taskToDeleteId = null;
+    });
+
+    cancelDeleteBtn.addEventListener('click', () => {
+        deleteConfirmModal.style.display = 'none';
+        taskToDeleteId = null;
     });
 
     document.getElementById('close-vault-modal-btn').addEventListener('click', () => {
         document.getElementById('vault-detail-modal').style.display = 'none';
+        try { refreshInbox(); } catch (e) {}
     });
 
     saveEnergyBtn.addEventListener('click', handleSaveEnergy);
     payTaxBtn.addEventListener('click', handlePayTax);
     
     document.getElementById('hud-close-btn').addEventListener('click', () => {
-        focusMode = false;
         closeHUD();
-        focusBtn.classList.remove('active');
-        focusBtn.innerHTML = '<span class="icon"><i class="ph ph-eye"></i></span> Focus View';
     });
 
     hudTimerToggle.addEventListener('click', toggleHUDTimer);
@@ -236,9 +243,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveTasks() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        // Immediately re-render the UI after saving to ensure Inbox / other sections
+        // reflect changes without a full page reload.
+        try {
+            console.debug('[planner] saveTasks called — tasks.length =', tasks.length);
+            // Use requestAnimationFrame to avoid potential reflow/race with event handlers
+            // Dispatch a small event so other listeners (including other windows) can react
+            try { window.dispatchEvent(new CustomEvent('planner:change', { detail: { count: tasks.length } })); } catch (e) {}
+            requestAnimationFrame(() => {
+                renderAll();
+                // Also ensure backlog is refreshed and visible
+                try { refreshInbox(); } catch (e) {}
+            });
+        } catch (e) {
+            // renderAll may not be defined yet during initialization; ignore in that case
+        }
     }
 
+    // Listen for storage events (other tabs/windows) and sync UI immediately
+    window.addEventListener('storage', (e) => {
+        if (e.key === STORAGE_KEY) {
+            try {
+                tasks = JSON.parse(e.newValue) || [];
+            } catch (err) {
+                tasks = [];
+            }
+            renderAll();
+        }
+    });
+
+    // Listen for internal planner change events and refresh the inbox quickly
+    window.addEventListener('planner:change', () => {
+        try { refreshInbox(); } catch (e) {}
+    });
+
     function renderAll() {
+        // Rehydrate tasks from localStorage to ensure we're rendering the latest
+        // data (covers cases where other code or flows wrote directly to storage).
+        try {
+            const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            if (Array.isArray(stored)) tasks = stored;
+        } catch (e) {
+            // Ignore parse errors and use in-memory tasks
+        }
+
         renderSlots();
         renderBacklog();
         renderVault();
@@ -327,11 +375,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderBacklog() {
-        backlogList.innerHTML = '';
+        const backlogEl = document.getElementById('backlog-list');
+        if (!backlogEl) {
+            console.warn('[planner] renderBacklog: backlog-list element not found');
+            return;
+        }
+
+        backlogEl.innerHTML = '';
         const backlogTasks = tasks.filter(t => t.status === 'backlog');
+        console.debug('[planner] renderBacklog — backlogTasks.length =', backlogTasks.length);
 
         if (backlogTasks.length === 0) {
-            backlogList.innerHTML = `<div style="text-align:center; color:#94a3b8; padding: 1rem;">Inbox is empty. Add a task above.</div>`;
+            backlogEl.innerHTML = `<div style="text-align:center; color:#94a3b8; padding: 1rem;">Inbox is empty. Add a task above.</div>`;
         } else {
             backlogTasks.forEach(task => {
                 const el = document.createElement('div');
@@ -344,8 +399,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
                     </div>
                 `;
-                backlogList.appendChild(el);
+                backlogEl.appendChild(el);
             });
+        }
+    }
+
+    // Force-refresh the inbox/backlog section. This re-reads storage then re-renders
+    // the backlog area and makes sure it's visible. Use this when UI changes come
+    // from modal interactions or other non-standard flows.
+    function refreshInbox() {
+        try {
+            const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            if (Array.isArray(stored)) tasks = stored;
+        } catch (e) {}
+
+        // Re-render backlog specifically
+        try {
+            renderBacklog();
+            const backlogSec = document.getElementById('backlog-section') || backlogSection;
+            const backlogEl = document.getElementById('backlog-list');
+            if (backlogSec) backlogSec.style.display = '';
+            // Force a reflow so the browser paints the updated backlog immediately
+            if (backlogEl) void backlogEl.offsetHeight;
+        } catch (e) {
+            console.warn('[planner] refreshInbox failed', e);
         }
     }
 
@@ -555,10 +632,11 @@ document.addEventListener('DOMContentLoaded', () => {
             audio.play().catch(e => {});
         },
         remove: (id) => {
-            if(confirm('Delete this task?')) {
-                tasks = tasks.filter(t => t.id !== id);
-                saveTasks();
-                renderAll();
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                taskToDeleteId = id;
+                deleteTaskText.innerText = task.text;
+                deleteConfirmModal.style.display = 'flex';
             }
         },
         showVaultDetails: (id) => {
