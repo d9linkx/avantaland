@@ -459,6 +459,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     startTimeDisplay = `<span class="task-start-time">Starts at ${task.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
                 }
 
+                const displayText = task.text.length > 40 ? task.text.substring(0, 40) + '...' : task.text;
+
                 const content = document.createElement('div');
                 content.style.width = '100%';
                 content.innerHTML = `
@@ -467,12 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${iconHtml}
                     </div>
                     <div class="task-main-row" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                        <span data-task-id="${task.id}" style="font-weight:600; font-size:1.1rem; flex-grow: 1; margin-right: 1rem;">${task.text}</span>
-                        <div class="task-actions">
-                            <button onclick="window.plannerActions.complete(${task.id})" title="Complete" class="action-btn-complete"><i class="ph ph-check-circle"></i></button>
-                            <button onclick="window.plannerActions.edit(${task.id}, this)" title="Edit"><i class="ph ph-pencil-simple"></i></button>
-                            <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
-                        </div>
+                        <span data-task-id="${task.id}" style="font-weight:600; font-size:1.1rem; flex-grow: 1; margin-right: 1rem;">${displayText}</span>
                     </div>
                     <div class="task-meta-controls" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 1rem;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -493,6 +490,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ${isTopTask ? (task.isOngoing ? (mainTimerInterval ? 'Pause' : 'Resume') : 'Start') : 'Queued'}
                             </button>
                         </div>
+                    </div>
+                    <div class="task-actions" style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.05);">
+                        <button onclick="window.plannerActions.edit(${task.id})" title="Edit"><i class="ph ph-pencil-simple"></i></button>
+                        <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
+                        <button onclick="window.plannerActions.complete(${task.id})" title="Complete" class="action-btn-complete"><i class="ph ph-check-circle"></i></button>
                     </div>
                 `;
                 container.appendChild(content);
