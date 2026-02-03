@@ -1,4 +1,4 @@
 const CONFIG = {
-    GOOGLE_SCRIPT_URL_LEAD_MAGNET: 'https://script.google.com/macros/s/AKfycbx9YlOv53uK1Ij1KQUfy4ZsSXIkMuf1UqYLOC9PuHQDUdkbKES97urTZTs99MSLki_A/exec',
-    GOOGLE_SCRIPT_URL_APP: 'https://script.google.com/macros/s/AKfycbzc15roxFieyBuiRS5X7bUhe-zCDI6VRQTimFZFp8zwL5cKFG3lCdUNheF6R_B2a0co/exec'
+    GOOGLE_SCRIPT_URL_LEAD_MAGNET: 'https://script.google.com/macros/s/AKfycbznm53Vu6bVzqBpNVWc6zk4_QO0HcT1q3d0_ss_W1rfQ7X_4C-F35HTQW643LdlkVGq/exec',
+    GOOGLE_SCRIPT_URL_APP: 'https://script.google.com/macros/s/AKfycbznm53Vu6bVzqBpNVWc6zk4_QO0HcT1q3d0_ss_W1rfQ7X_4C-F35HTQW643LdlkVGq/exec'
 };

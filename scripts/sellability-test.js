@@ -32,10 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const persuasionContent = document.getElementById('results-persuasion-content');
 
     // --- App State ---
-    const SCRIPT_URL = CONFIG.GOOGLE_SCRIPT_URL_APP;
-    let userAnswers = [];
-    let userFirstName = '';
-    let userProductName = '';
+// --- App State ---
+const SCRIPT_URL = (typeof CONFIG !== 'undefined') ? CONFIG.GOOGLE_SCRIPT_URL_APP : 'https://script.google.com/macros/s/AKfycbznm53Vu6bVzqBpNVWc6zk4_QO0HcT1q3d0_ss_W1rfQ7X_4C-F35HTQW643LdlkVGq/exec';
+let userAnswers = [];
+let currentQuestionIndex = 0; // Add this!
+let userFirstName = '';
+let userProductName = '';
     let typeWriterTimeout;
     const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'); // Subtle click sound
     const happyClickSound = new Audio('happy.mp3'); // Happy/Exciting sound
@@ -170,10 +172,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Functions ---
-    const switchScreen = (screenName) => {
-        Object.values(screens).forEach(screen => screen.classList.remove('active'));
-        screens[screenName].classList.add('active');
-    };
+const switchScreen = (screenName) => {
+    // 1. Hide EVERY section with the class 'test-screen'
+    document.querySelectorAll('.test-screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+
+    // 2. Show the specific screen requested
+    const target = screens[screenName] || document.getElementById(`${screenName}-screen`);
+    if (target) {
+        target.classList.add('active');
+    } else {
+        console.error(`Could not find screen: ${screenName}`);
+    }
+};
 
     const checkEmail = async (email) => {
         const btn = emailCheckForm.querySelector('button');
@@ -181,15 +193,27 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.innerText = 'Checking...';
         emailErrorMsg.innerText = '';
 
+        if (!SCRIPT_URL) {
+            emailErrorMsg.innerText = "System Error: Configuration missing.";
+            btn.disabled = false;
+            btn.innerText = 'Start Test';
+            return;
+        }
+
         try {
-            const response = await fetch(`${SCRIPT_URL}?action=checkEmail&email=${encodeURIComponent(email)}`);
+            const response = await fetch(`${SCRIPT_URL}?action=checkEmail&email=${encodeURIComponent(email)}`, {
+    method: 'GET',
+    mode: 'cors', // Ensure CORS is handled
+    redirect: 'follow' // Google Scripts always redirect; you must follow
+});
             const result = await response.json();
             console.log("Google Script Response:", result); // Debugging: Check console to see what is returned
 
             if (result.found) {
                 // Check for common variations of the name property
                 const firstName = result.firstName || result.firstname || result.name || result.FirstName;
-                initQuiz(firstName);
+                userFirstName = firstName || '';
+                displayIntro(userFirstName);
             } else {
                 emailErrorMsg.innerHTML = "Email not registered. Please register on <a href='product-test.html' style='text-decoration: underline;'>this page</a> first.";
             }
@@ -200,12 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled = false;
             btn.innerText = 'Start Test';
         }
-    };
-
-    const initQuiz = (firstName) => {
-        userFirstName = firstName || ''; // Prevent 'undefined' if name is missing
-        // Display the intro message before starting the quiz
-        displayIntro(userFirstName);
     };
 
     const displayIntro = (firstName) => {
@@ -273,9 +291,14 @@ document.addEventListener('DOMContentLoaded', () => {
         productNameInput.addEventListener('input', validateInputs);
         productDescInput.addEventListener('input', validateInputs);
 
+        // Run validation immediately to handle potential autofill
+        validateInputs();
+
         startBtn.addEventListener('click', () => {
             userProductName = productNameInput.value.trim() || "Your Project";
             const auditingTag = document.createElement('div');
+            auditingTag.id = 'auditing-tag';
+            auditingTag.innerText = `AUDITING: ${userProductName}`;
             document.getElementById('quiz-screen').prepend(auditingTag);
             startQuiz(userProductName); // Start the actual quiz
         });
