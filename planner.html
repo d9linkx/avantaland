@@ -16,10 +16,10 @@
             --text-dark: #1E293B !important;
             --text-muted: #64748B !important;
             --border-light: #ffffff !important;
-            --color-orange: #FF8C00 !important;
+            --color-orange: hsl(221, 83%, 53%) !important;
             --color-white: #FFFFFF !important;
             --color-blue: #2563EB !important;
-            --color-grey: #94A3B8 !important;
+            --color-grey: #010102 !important;
         }
 
         body {
@@ -175,6 +175,10 @@
         }
         .mission-slot.slot-deep .task-actions button:hover {
             opacity: 1;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
         }
 
         /* Shallow Work: White with Blue Border */
@@ -474,7 +478,7 @@
                 <!-- Center Column: The Forge (Active Tasks) -->
                 <section class="prime-section fade-in">
                     <div class="section-header">
-                        <h2>Today's Focus</h2>
+                        <h2>Any plans for today?</h2>
                         <span class="badge" id="prime-count">0/3 Tasks Selected</span>
                     </div>
                     <p class="helper-text">
@@ -555,12 +559,12 @@
     <!-- Complete Confirmation Modal -->
     <div id="complete-confirm-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <h3 style="color: #10B981;"><i class="ph ph-check-circle"></i> Complete Task?</h3>
+            <h3 style="color: #2563EB;"><i class="ph ph-check-circle"></i> Complete Task?</h3>
             <p>Are you sure you want to mark this task as complete?</p>
             <p id="complete-task-text" style="font-weight: 600; background: #F8FAFC; padding: 1rem; border-radius: 8px; margin: 1rem 0;"></p>
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                 <button id="cancel-complete-btn" class="btn-secondary" style="flex: 1;">Cancel</button>
-                <button id="confirm-complete-btn" class="btn-primary" style="flex: 1; background-color: #10B981; border-color: #10B981;">Yes, Complete</button>
+                <button id="confirm-complete-btn" class="btn-primary" style="flex: 1; background-color: #2563EB; border-color: #2563EB;">Yes, Complete</button>
             </div>
         </div>
     </div>
