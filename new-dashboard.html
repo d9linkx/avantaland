@@ -44,6 +44,124 @@
         
         .truth-card[data-category="scaling"]:hover { border-color: #10B981 !important; }
         .truth-card[data-category="defense"]:hover { border-color: #F59E0B !important; }
+
+        /* Dashboard Controls & Filters */
+        .dashboard-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            background: #F1F5F9;
+            padding: 4px;
+            border-radius: 12px;
+        }
+
+        .filter-btn {
+            border: none;
+            background: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #64748B;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: #fff;
+            color: #1E293B;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .action-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: white;
+            border: 1px solid #E2E8F0;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            color: #64748B;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            border-color: #94A3B8;
+            color: #1E293B;
+        }
+
+        /* Mobile/Tablet Responsive Adjustments */
+        @media (max-width: 768px) {
+            .dashboard-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1.5rem;
+            }
+
+            .filter-group {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr); /* 2 columns for 4 items */
+                gap: 10px;
+                background: transparent;
+                padding: 0;
+            }
+
+            .filter-btn {
+                background: #F8FAFC;
+                border: 1px solid #E2E8F0;
+                padding: 12px;
+                text-align: center;
+                width: 100%;
+                border-radius: 10px;
+                font-size: 0.95rem;
+            }
+
+            .filter-btn.active {
+                background: #1E293B;
+                color: #ffffff;
+                border-color: #1E293B;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            .action-group {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            
+            .action-btn {
+                width: 100%;
+                padding: 12px;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        .promo-card {
+            display: flex !important;
+            position: relative;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .promo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -72,7 +190,7 @@
 
             <!-- Feature 2.5: Planner Promo -->
             <div id="planner-promo" class="fade-in" style="margin-bottom: 2rem;">
-                <a href="planner.html" class="truth-card" style="background: linear-gradient(135deg, #1e40af 0%, #172554 100%); border: 1px solid #3b82f6; color: white; flex-direction: row; align-items: center; justify-content: space-between; padding: 2rem; min-height: auto;">
+                <a href="planner.html" class="promo-card" style="background: linear-gradient(135deg, #1e40af 0%, #172554 100%); border: 1px solid #3b82f6; color: white; flex-direction: row; align-items: center; justify-content: space-between; padding: 2rem; min-height: auto;">
                     <div>
                         <div style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: #bfdbfe; margin-bottom: 0.5rem; font-weight: 700;">Plan Your Day Better</div>
                         <h3 style="margin: 0; font-size: 1.5rem; color: white;">100% High-Performance Daily Planner</h3>
@@ -85,9 +203,9 @@
             <div class="dashboard-controls fade-in">
                 <div class="filter-group">
                     <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn" data-filter="foundation">Foundation</button>
-                    <button class="filter-btn" data-filter="scaling">Scaling</button>
-                    <button class="filter-btn" data-filter="defense">Defense</button>
+                    <button class="filter-btn" data-filter="foundation">Starting</button>
+                    <button class="filter-btn" data-filter="scaling">Growing</button>
+                    <button class="filter-btn" data-filter="defense">Surviving</button>
                 </div>
                 <div class="action-group">
                     <button id="btn-export" class="action-btn outline">Export Audit</button>
