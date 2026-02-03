@@ -419,13 +419,17 @@ document.addEventListener('DOMContentLoaded', () => {
             development: 'Learning & Growth'
         };
 
+        // Re-order the DOM elements based on the slotOrder array
+        const slotElements = slotOrder.map(type => document.getElementById(`slot-${type}`));
+        slotElements.forEach(el => slotsContainer.appendChild(el));
+
         const activeTasks = tasks.filter(t => t.status === 'active');
         const visibleInSlots = activeTasks.filter(t => !t.completed);
         const completedCount = activeTasks.length - visibleInSlots.length;
 
         let cumulativeEndTime = new Date();
 
-        slotOrder.forEach(type => {
+        slotOrder.forEach((type, index) => {
             const container = document.getElementById(`slot-${type}`);
             const task = visibleInSlots.find(t => t.slot === type); // Find from visible tasks
             
@@ -437,7 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (task) {
                 container.classList.add('filled');
 
-                const isTopTask = task.slot === slotOrder[0];
+                const isTopTask = index === 0;
 
                 if (isTopTask) {
                     container.classList.add('slot-active');
@@ -459,6 +463,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     startTimeDisplay = `<span class="task-start-time">Starts at ${task.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
                 }
 
+                const taskText = task.text.length > 40 ? task.text.substring(0, 37) + '...' : task.text;
+
                 const content = document.createElement('div');
                 content.style.width = '100%';
                 content.innerHTML = `
@@ -466,14 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="slot-label" style="margin:0;">${slotLabels[type] || 'Task'}</span>
                         ${iconHtml}
                     </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                        <span data-task-id="${task.id}" style="font-weight:600; font-size:1.1rem; flex-grow: 1; margin-right: 1rem;">${task.text}</span>
-                        <div class="task-actions">
-                            <button onclick="window.plannerActions.complete(${task.id})" title="Complete" class="action-btn-complete"><i class="ph ph-check-circle"></i></button>
-                            <button onclick="window.plannerActions.edit(${task.id}, this)" title="Edit"><i class="ph ph-pencil-simple"></i></button>
-                            <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
-                        </div>
-                    </div>
+                    <span data-task-id="${task.id}" title="${task.text}" style="font-weight:600; font-size:1.1rem; flex-grow: 1; margin-right: 1rem; display: block; width: 100%;">${taskText}</span>
                     <div class="task-meta-controls" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 1rem;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <button class="btn-adjust-time" onclick="window.plannerActions.adjustTime(${task.id}, -5)" title="-5 min">
@@ -489,6 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="task-actions" style="display: flex; align-items: center; gap: 0.75rem;">
                             ${startTimeDisplay}
                             <button class="btn-skip-task" onclick="window.plannerActions.skipTask(${task.id})" title="Skip Task"><i class="ph ph-fast-forward"></i></button>
+                            <button onclick="window.plannerActions.edit(${task.id}, this)" title="Edit"><i class="ph ph-pencil-simple"></i></button>
+                            <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
+                            <button onclick="window.plannerActions.complete(${task.id})" title="Complete" class="action-btn-complete">Mark Done</button>
                             <button class="btn-start-task ${task.isOngoing && mainTimerInterval ? 'paused' : ''}" onclick="window.plannerActions.playPause(${task.id})">
                                 ${isTopTask ? (task.isOngoing ? (mainTimerInterval ? 'Pause' : 'Resume') : 'Start') : 'Queued'}
                             </button>

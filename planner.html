@@ -11,11 +11,11 @@
     <style>
         /* Force Light Theme & Fix Colors */
         :root {
-            --planner-bg: #F8FAFC !important;
+            --planner-bg: #FFFFFF !important;
             --prime-bg: #FFFFFF !important;
             --text-dark: #1E293B !important;
             --text-muted: #64748B !important;
-            --border-light: #E2E8F0 !important;
+            --border-light: #ffffff !important;
             --color-orange: #FF8C00 !important;
             --color-white: #FFFFFF !important;
             --color-blue: #2563EB !important;
@@ -40,13 +40,13 @@
             background-color: var(--prime-bg);
             border: 1px solid var(--border-light);
             border-radius: 16px;
+            padding: 1.5rem;
         }
 
         /* Layout & Section Styles */
         .prime-section {
             background: var(--color-white);
             border-color: var(--border-light);
-            padding: 1.5rem;
         }
 
         .helper-text {
@@ -210,8 +210,19 @@
         }
 
         /* Make complete button bigger */
-        .task-actions .action-btn-complete {
-            font-size: 1.5rem;
+        .action-btn-complete {
+            background: #10B981;
+            color: white !important;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .action-btn-complete:hover {
+            background: #059669;
         }
 
         /* Header Pulse for Deep Work in Peak Mode */
@@ -222,10 +233,27 @@
         .header-pulse { animation: pulse-orange 4s ease-in-out infinite; }
 
         /* Sequential Engine Styles */
-        .mission-slot.slot-active { background-color: var(--color-orange) !important; border-color: var(--color-orange) !important; }
-        .mission-slot.slot-active, .mission-slot.slot-active span, .mission-slot.slot-active i { color: #000 !important; }
-        .mission-slot.slot-active .task-actions button { color: #000 !important; opacity: 0.7; }
+        .mission-slot.slot-active {
+            background-color: var(--color-orange) !important;
+            border-color: var(--color-orange) !important;
+        }
+        .mission-slot.slot-active, 
+        .mission-slot.slot-active span, 
+        .mission-slot.slot-active i,
+        .mission-slot.slot-active .btn-fill-slot,
+        .mission-slot.slot-active .task-actions button {
+            color: #000 !important;
+        }
+        .mission-slot.slot-active .btn-fill-slot {
+            background: rgba(255,255,255,0.3);
+            border: 1px solid black;
+        }
+        .mission-slot.slot-active .task-actions button { opacity: 0.7; }
         .mission-slot.slot-active .task-actions button:hover { opacity: 1; }
+        .mission-slot.slot-active .btn-start-task {
+            color: black !important;
+            background: rgba(255,255,255,0.3);
+        }
 
         .mission-slot.slot-queued { background-color: var(--color-white) !important; border: 1px solid var(--border-light) !important; }
 
@@ -281,7 +309,7 @@
         .btn-adjust-time svg { width: 20px; height: 20px; }
         
         .btn-start-task {
-            background: var(--color-blue);
+            background: #475569;
             color: white; border: none; padding: 6px 14px;
             border-radius: 8px; cursor: pointer; font-weight: 600;
         }
@@ -306,44 +334,40 @@
             }
 
             .planner-header {
-                flex-direction: column;
-                align-items: flex-start;
+                grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
 
             .planner-header h1 {
                 font-size: 2rem;
             }
-
-            .planner-controls {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                gap: 0.5rem;
-            }
-
-            .planner-controls .btn-focus,
-            .planner-controls .back-link {
-                width: 100%;
+            
+            .header-left, .planner-header > div:last-child {
+                justify-self: center;
                 text-align: center;
-                justify-content: center;
-                font-size: 0.9rem;
+                align-items: center;
             }
 
             .section-header h2 {
                 font-size: 1.25rem;
             }
-
-            .input-group input, .input-group button {
-                font-size: 0.85rem;
-            }
-
             .helper-text {
                 font-size: 0.8rem;
             }
 
             .mission-slot span {
                 font-size: 0.95rem !important;
+            }
+
+            .task-meta-controls {
+                flex-direction: column;
+                align-items: flex-start; /* Align to left */
+                gap: 1rem;
+            }
+            .task-meta-controls .task-actions {
+                width: 100%;
+                justify-content: flex-end; /* Align buttons to right */
+                gap: 0.5rem;
             }
         }
     </style>
