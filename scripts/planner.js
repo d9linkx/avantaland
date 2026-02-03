@@ -12,9 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
     const dateDisplay = document.getElementById('date-display');
     const slotsContainer = document.querySelector('.slots-container');
-    const vaultList = document.getElementById('vault-list');
     const primeCountDisplay = document.getElementById('prime-count');
-    const vaultSection = document.getElementById('vault-section');
+    const historyTimeline = document.getElementById('history-timeline');
+    const historyInsight = document.getElementById('history-insight');
+    const historyFilter = document.getElementById('history-filter');
     const energyHud = document.getElementById('energy-hud');
     
     // Modal Elements
@@ -160,6 +161,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (task) {
                 task.completed = true;
                 task.completedAt = new Date().toISOString();
+                
+                // Calculate Actual Time
+                if (task.isOngoing && mainTimerInterval) {
+                    task.actualDuration = (task.duration || 1500) - hudTimeLeft;
+                } else {
+                    task.actualDuration = task.duration || 1500;
+                }
             }
             saveTasks();
             // Play sound effect
@@ -207,6 +215,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('hud-close-btn').addEventListener('click', () => {
         closeHUD();
     });
+    
+    if (historyFilter) {
+        historyFilter.addEventListener('change', renderHistory);
+    }
 
     // --- Drag and Drop for Priority Slots ---
     let draggedSlotType = null;
@@ -407,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderSlots();
-        renderVault();
+        renderHistory();
         updateMainTimerDisplay();
         updateStats();
     }
@@ -561,29 +573,90 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderVault() {
-        vaultList.innerHTML = '';
-        const vaultTasks = tasks.filter(t => (t.status === 'active' && t.completed) || t.status === 'cringe');
+    function renderHistory() {
+        if (!historyTimeline) return;
+        historyTimeline.innerHTML = '';
         
-        if (vaultTasks.length === 0) {
-            vaultList.innerHTML = `
-                <div class="empty-state-illustration" style="text-align: center; padding: 2rem 0;">
-                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15L12 18" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/><path d="M12 6V12" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#CBD5E1" stroke-width="1.5"/></svg>
-                    <p style="color: var(--text-muted); font-weight: 600; margin-top: 1rem;">No history yet.</p>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Complete a priority task to see it here.</p>
-                </div>`;
-        } else {
-            vaultTasks.forEach(task => {
-                const el = document.createElement('div');
-                el.className = 'task-item fade-in vault-item';
-                el.style.opacity = '0.7';
-                el.onclick = () => window.plannerActions.showVaultDetails(task.id);
-                el.innerHTML = `
-                    <span class="task-text" style="${task.status === 'cringe' ? 'text-decoration:line-through; color:#EF4444;' : ''}">${task.status === 'cringe' ? '💀 ' : '🏆 '}${task.text}</span>
-                `;
-                vaultList.appendChild(el);
-            });
+        const filterType = historyFilter ? historyFilter.value : 'all';
+        
+        // 1. Filter & Group
+        const grouped = {};
+        let totalSeconds = 0;
+        
+        tasks.forEach(t => {
+            // Only show completed or archived/cringe tasks in history
+            if (t.status === 'backlog' || (t.status === 'active' && !t.completed)) return;
+            
+            if (filterType !== 'all' && t.slot !== filterType) return;
+
+            const dateKey = t.createdAt.split('T')[0];
+            if (!grouped[dateKey]) grouped[dateKey] = [];
+            grouped[dateKey].push(t);
+            
+            // Stats for last 7 days
+            const taskDate = new Date(t.createdAt);
+            const diffTime = Math.abs(new Date() - taskDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            if (diffDays <= 7 && t.actualDuration) {
+                totalSeconds += t.actualDuration;
+            }
+        });
+
+        // 2. Render Insight
+        const hours = Math.floor(totalSeconds / 3600);
+        const mins = Math.floor((totalSeconds % 3600) / 60);
+        const categoryName = filterType === 'all' ? 'all tasks' : historyFilter.options[historyFilter.selectedIndex].text;
+        historyInsight.innerHTML = `In the last 7 days, you spent <strong>${hours}h ${mins}m</strong> on ${categoryName}.`;
+
+        // 3. Render Timeline
+        const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+        
+        if (sortedDates.length === 0) {
+            historyTimeline.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:1rem;">No history found.</div>`;
+            return;
         }
+
+        sortedDates.forEach(date => {
+            const dayTasks = grouped[date];
+            const dateObj = new Date(date);
+            const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            
+            // Generate Dots
+            let dotsHtml = '';
+            // We expect up to 3 tasks per day usually
+            for(let i=0; i<3; i++) {
+                if (i < dayTasks.length) {
+                    const t = dayTasks[i];
+                    if (t.completed) dotsHtml += `<div class="dot orange"></div>`;
+                    else dotsHtml += `<div class="dot hollow"></div>`;
+                } else {
+                    dotsHtml += `<div class="dot empty"></div>`;
+                }
+            }
+
+            const row = document.createElement('div');
+            row.className = 'timeline-date-row';
+            row.innerHTML = `
+                <div class="timeline-header" onclick="this.nextElementSibling.classList.toggle('active')">
+                    <span class="date-label">${dateStr}</span>
+                    <div class="dots-container">${dotsHtml}</div>
+                </div>
+                <div class="timeline-details">
+                    ${dayTasks.map(t => `
+                        <div class="history-card">
+                            <div class="history-card-header">
+                                <span style="font-weight:600; ${t.completed ? '' : 'text-decoration:line-through; color:var(--text-muted);'}">${t.text}</span>
+                            </div>
+                            <div class="history-time-stats">
+                                Planned: ${Math.floor((t.duration||1500)/60)}m | Actual: ${t.actualDuration ? Math.floor(t.actualDuration/60) : '--'}m
+                            </div>
+                            ${t.reflection ? `<div class="cringe-box"><strong>Excuse:</strong> ${t.reflection}</div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+                `;
+            historyTimeline.appendChild(row);
+        });
     }
 
     function updateStats() {

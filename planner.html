@@ -353,6 +353,56 @@
         .task-row-footer { justify-content: space-between; margin-top: 0.5rem; }
 
         /* Mobile Responsiveness */
+        /* --- History Section Styles --- */
+        .history-controls {
+            margin-left: auto;
+        }
+        .history-filter {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-light);
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            background: var(--color-white);
+        }
+        .history-insight {
+            background: #F8FAFC;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-light);
+        }
+        .history-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .timeline-date-row {
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 0.5rem;
+        }
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .timeline-header:hover { background: #f1f5f9; }
+        .date-label { font-weight: 600; font-size: 0.9rem; }
+        .dots-container { display: flex; gap: 4px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot.orange { background-color: var(--color-orange); }
+        .dot.hollow { border: 1px solid var(--text-muted); background: transparent; box-sizing: border-box; }
+        .dot.empty { background: #e2e8f0; }
+        
+        .timeline-details { display: none; margin-top: 0.5rem; padding-left: 0.5rem; }
+        .timeline-details.active { display: block; }
+        
         @media (max-width: 992px) {
             .planner-grid {
                 grid-template-columns: 1fr;
@@ -446,11 +496,17 @@
                 <section class="vault-section fade-in" id="vault-section">
                     <div class="section-header">
                         <h2>History</h2>
-                        <span class="badge-neutral">Completed</span>
+                        <div class="history-controls">
+                            <select id="history-filter" class="history-filter">
+                                <option value="all">All Types</option>
+                                <option value="revenue">Work & Money</option>
+                                <option value="operations">Admin & Chores</option>
+                                <option value="development">Learning & Growth</option>
+                            </select>
+                        </div>
                     </div>
-                    <div id="vault-list" class="task-list vault-list">
-                        <!-- Completed/Failed tasks -->
-                    </div>
+                    <div id="history-insight" class="history-insight">Loading stats...</div>
+                    <div id="history-timeline" class="history-timeline"></div>
                 </section>
             </div>
         </div>
