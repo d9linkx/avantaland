@@ -134,4 +134,26 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('storage', (e) => {
         if (e.key === 'bizLabProgress') location.reload();
     });
+
+    // Welcome Modal Logic
+    setTimeout(() => {
+        const hideWelcome = localStorage.getItem('avantaland_hide_welcome');
+        if (!hideWelcome) {
+            const modal = document.getElementById('welcome-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+    }, 3000);
+
+    const proceedBtn = document.getElementById('welcome-proceed-btn');
+    const dontShowCheckbox = document.getElementById('dont-show-welcome');
+    const welcomeModal = document.getElementById('welcome-modal');
+
+    if (proceedBtn) {
+        proceedBtn.addEventListener('click', () => {
+            if (dontShowCheckbox && dontShowCheckbox.checked) {
+                localStorage.setItem('avantaland_hide_welcome', 'true');
+            }
+            if (welcomeModal) welcomeModal.style.display = 'none';
+        });
+    }
 });
