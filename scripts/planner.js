@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalSlotName = document.getElementById('modal-slot-name');
     const modalList = document.getElementById('modal-task-list');
     const closeModalBtn = document.getElementById('close-modal-btn');
+
+    // Explanation Modal Elements
+    const whyThreeTasksLink = document.getElementById('why-three-tasks-link');
+    const explanationModal = document.getElementById('explanation-modal');
+    const closeExplanationModalBtn = document.getElementById('close-explanation-modal-btn');
     
     // Energy Setup Elements
     const energyModal = document.getElementById('energy-setup-modal');
@@ -75,17 +80,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (focusMode) {
             openHUD();
             focusBtn.classList.add('active');
-            focusBtn.innerHTML = '<span class="icon"><i class="ph ph-lock-key-open"></i></span> Exit Focus';
+            focusBtn.innerHTML = '<span class="icon"><i class="ph ph-lock-key-open"></i></span> Exit View';
         } else {
             closeHUD();
             focusBtn.classList.remove('active');
-            focusBtn.innerHTML = '<span class="icon"><i class="ph ph-eye"></i></span> Focus Mode';
+            focusBtn.innerHTML = '<span class="icon"><i class="ph ph-eye"></i></span> Focus View';
         }
     });
 
     closeModalBtn.addEventListener('click', () => {
         modal.style.display = 'none';
         currentSlotSelection = null;
+    });
+
+    whyThreeTasksLink.addEventListener('click', () => {
+        explanationModal.style.display = 'flex';
+    });
+
+    closeExplanationModalBtn.addEventListener('click', () => {
+        explanationModal.style.display = 'none';
+    });
+
+    document.getElementById('close-vault-modal-btn').addEventListener('click', () => {
+        document.getElementById('vault-detail-modal').style.display = 'none';
     });
 
     saveEnergyBtn.addEventListener('click', handleSaveEnergy);
@@ -95,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         focusMode = false;
         closeHUD();
         focusBtn.classList.remove('active');
-        focusBtn.innerHTML = '<span class="icon"><i class="ph ph-eye"></i></span> Focus Mode';
+        focusBtn.innerHTML = '<span class="icon"><i class="ph ph-eye"></i></span> Focus View';
     });
 
     hudTimerToggle.addEventListener('click', toggleHUDTimer);
@@ -160,14 +177,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (hour >= energyProfile.peak.start && hour < energyProfile.peak.end) {
             body.classList.add('peak-mode');
-            energyHud.innerHTML = "<i class='ph ph-lightning'></i> PEAK ZONE: DEEP WORK ONLY";
-            energyHud.style.color = "#FFD600";
+            energyHud.innerHTML = "<i class='ph ph-lightning'></i> High Energy Time";
+            energyHud.style.color = "#2979FF"; // Brand's blue color
         } else if (hour >= energyProfile.trough.start && hour < energyProfile.trough.end) {
             body.classList.add('trough-mode');
-            energyHud.innerHTML = "<i class='ph ph-moon'></i> TROUGH ZONE: ADMIN & RECOVERY";
+            energyHud.innerHTML = "<i class='ph ph-moon'></i> Low Energy Time";
             energyHud.style.color = "#0284C7";
         } else {
-            energyHud.innerHTML = "<i class='ph ph-battery-charging'></i> RECOVERY ZONE";
+            energyHud.innerHTML = "<i class='ph ph-battery-charging'></i> Normal Energy";
             energyHud.style.color = "#64748B";
         }
     }
@@ -198,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Complexity Check: Ensure task is granular
         if (text.length > 50) {
-            alert("Is this a task or a project? Break it down into one executable step.");
+            alert("Try to make this a smaller task. Keep it simple.");
             return;
         }
 
@@ -213,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tasks.unshift(newTask); // Add to top of backlog
         saveTasks();
-        renderAll();
+        setTimeout(renderAll, 0); // Use a deferred, full render to ensure UI consistency
         input.value = '';
     }
 
@@ -230,6 +247,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderSlots() {
         const slotTypes = ['revenue', 'operations', 'development'];
+        const slotLabels = {
+            revenue: 'Work & Money',
+            operations: 'Admin & Chores',
+            development: 'Learning & Growth'
+        };
         let completedCount = 0;
 
         slotTypes.forEach(type => {
@@ -243,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add Label
             const label = document.createElement('div');
             label.className = 'slot-label';
-            label.innerText = type.toUpperCase();
+            label.innerText = slotLabels[type] || type.toUpperCase();
             container.appendChild(label);
 
             if (task) {
@@ -265,17 +287,28 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span style="font-weight:600; font-size:1.1rem;">${task.text}</span>
                         <div class="task-actions">
                             ${!task.completed ? `<button onclick="window.plannerActions.complete(${task.id})" title="Complete"><i class="ph ph-check-circle"></i></button>` : ''}
-                            <button onclick="window.plannerActions.demote(${task.id})" title="Kick back to backlog"><i class="ph ph-arrow-u-up-left"></i></button>
+                            <button onclick="window.plannerActions.demote(${task.id})" title="Move to Inbox"><i class="ph ph-arrow-u-up-left"></i></button>
                         </div>
                     </div>
-                    <div class="task-meta ${task.goalType === 'survival' ? 'survival' : ''}">${task.weight === 'deep' ? '<i class="ph ph-lightning"></i> Deep Work' : '<i class="ph ph-coffee"></i> Shallow Work'} • ${task.goalType === 'survival' ? 'SURVIVAL WORK' : 'STRATEGIC'}</div>
+                    <div class="task-meta ${task.goalType === 'survival' ? 'survival' : ''}">${task.weight === 'deep' ? '<i class="ph ph-lightning"></i> High Focus' : '<i class="ph ph-coffee"></i> Low Focus'} • ${task.goalType === 'survival' ? 'Maintenance' : 'Growth'}</div>
                 `;
                 container.appendChild(content);
             } else {
-                // Empty State
+                // Empty State with Icon
+                const slotIcons = {
+                    revenue: 'ph-briefcase',
+                    operations: 'ph-list-checks',
+                    development: 'ph-brain'
+                };
+                const iconClass = slotIcons[type] || 'ph-plus-circle';
+
+                const icon = document.createElement('i');
+                icon.className = `ph ${iconClass} slot-empty-icon`;
+                container.appendChild(icon);
+
                 const btn = document.createElement('button');
                 btn.className = 'btn-fill-slot';
-                btn.innerText = '+ Fill Slot';
+                btn.innerText = '+ Select Task';
                 btn.onclick = () => openTaskPicker(type);
                 container.appendChild(btn);
             }
@@ -284,11 +317,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Visual Momentum / Victory State
         if (completedCount === 3) {
             document.body.classList.add('victory-state');
-            primeCountDisplay.innerText = "MISSION ACCOMPLISHED";
+            primeCountDisplay.innerText = "All Done!";
             primeCountDisplay.style.color = "#10B981";
         } else {
             document.body.classList.remove('victory-state');
-            primeCountDisplay.innerText = `${tasks.filter(t => t.status === 'active').length}/3 Slots Filled`;
+            primeCountDisplay.innerText = `${tasks.filter(t => t.status === 'active').length}/3 Tasks Selected`;
             primeCountDisplay.style.color = "#2979FF";
         }
     }
@@ -298,14 +331,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const backlogTasks = tasks.filter(t => t.status === 'backlog');
 
         if (backlogTasks.length === 0) {
-            backlogList.innerHTML = `<div style="text-align:center; color:#94a3b8; padding: 1rem;">Backlog empty. Capture your mind.</div>`;
+            backlogList.innerHTML = `<div style="text-align:center; color:#94a3b8; padding: 1rem;">Inbox is empty. Add a task above.</div>`;
         } else {
             backlogTasks.forEach(task => {
                 const el = document.createElement('div');
                 el.className = 'task-item fade-in';
+                // Add data-task-id to the span for easy selection during edit
                 el.innerHTML = `
-                    <span class="task-text">${task.postponeCount > 0 ? `<span style="color:#EF4444; font-weight:bold;">[${task.postponeCount}x DELAY]</span> ` : ''}${task.text}</span>
+                    <span class="task-text" data-task-id="${task.id}">${task.postponeCount > 0 ? `<span style="color:#EF4444; font-weight:bold;">[Delayed ${task.postponeCount}x]</span> ` : ''}${task.text}</span>
                     <div class="task-actions">
+                        <button onclick="window.plannerActions.edit(${task.id}, this)" title="Edit"><i class="ph ph-pencil-simple"></i></button>
                         <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
                     </div>
                 `;
@@ -320,12 +355,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const vaultTasks = tasks.filter(t => (t.status === 'active' && t.completed) || t.status === 'cringe');
         
         if (vaultTasks.length === 0) {
-            vaultList.innerHTML = `<div style="text-align:center; color:#94a3b8; padding: 1rem;">Vault empty. Execute to fill.</div>`;
+            vaultList.innerHTML = `<div style="text-align:center; color:#94a3b8; padding: 1rem;">No completed tasks yet.</div>`;
         } else {
             vaultTasks.forEach(task => {
                 const el = document.createElement('div');
-                el.className = 'task-item fade-in';
+                el.className = 'task-item fade-in vault-item';
                 el.style.opacity = '0.7';
+                el.onclick = () => window.plannerActions.showVaultDetails(task.id);
                 el.innerHTML = `
                     <span class="task-text" style="${task.status === 'cringe' ? 'text-decoration:line-through; color:#EF4444;' : ''}">${task.status === 'cringe' ? '💀 ' : '🏆 '}${task.text}</span>
                 `;
@@ -374,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handlePayTax() {
         const reflection = taxReflection.value.trim();
         if (!reflection) {
-            alert("You must reflect on why.");
+            alert("Please enter a reason.");
             return;
         }
         
@@ -386,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (task.postponeCount >= 3) {
                 task.status = 'cringe'; // Move to Cringe Log
                 task.slot = null;
-                alert("Task deleted. It was a distraction.");
+                alert("Task removed due to too many delays.");
             } else {
                 task.status = 'backlog';
                 task.slot = null;
@@ -395,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         saveTasks();
-        renderAll();
+        setTimeout(renderAll, 0); // Use a deferred render for consistency
         taxModal.style.display = 'none';
         taxReflection.value = '';
     }
@@ -406,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeTask) {
             hudTaskText.innerText = activeTask.text;
         } else {
-            hudTaskText.innerText = "No Active Mission";
+            hudTaskText.innerText = "No Active Task";
         }
         hudOverlay.style.display = 'flex';
     }
@@ -446,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 task.postponed = false; // Reset shame marker
                 
                 // Reverse-Engineering Check
-                const isStrategic = confirm("Does this task directly serve your 3-year vision?\nOK = Yes (Strategic)\nCancel = No (Survival Work)");
+                const isStrategic = confirm("Is this task for long-term growth?\nOK = Yes (Growth)\nCancel = No (Maintenance)");
                 task.goalType = isStrategic ? 'strategic' : 'survival';
                 
                 // Auto-Mapping Logic
@@ -465,6 +501,38 @@ document.addEventListener('DOMContentLoaded', () => {
             saveTasks();
             renderAll();
         },
+        edit: (id, buttonEl) => {
+            const taskItem = buttonEl.closest('.task-item');
+            const taskTextSpan = taskItem.querySelector(`.task-text[data-task-id="${id}"]`);
+            const task = tasks.find(t => t.id === id);
+
+            // Prevent re-clicking edit while already in edit mode
+            if (!task || taskItem.querySelector('.edit-task-input')) return;
+
+            const originalText = task.text;
+            
+            // Replace span content with an input field
+            taskTextSpan.innerHTML = `<input type="text" class="edit-task-input" value="${originalText}" />`;
+            
+            const input = taskTextSpan.querySelector('input');
+            input.focus();
+            input.select();
+
+            const saveEdit = () => {
+                const newText = input.value.trim();
+                if (newText && newText !== originalText) {
+                    task.text = newText;
+                    saveTasks();
+                }
+                // Defer the render call slightly. This prevents a potential race condition in some browsers
+                // where the 'blur' event's target element is destroyed by the render function
+                // before the event handling is fully complete, causing the UI update to fail.
+                setTimeout(renderAll, 0);
+            };
+
+            input.addEventListener('blur', saveEdit);
+            input.addEventListener('keypress', (e) => { if (e.key === 'Enter') input.blur(); });
+        },
         demote: (id) => {
             const task = tasks.find(t => t.id === id);
             taskToTaxId = id;
@@ -475,7 +543,10 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         complete: (id) => {
             const task = tasks.find(t => t.id === id);
-            if (task) task.completed = true;
+            if (task) {
+                task.completed = true;
+                task.completedAt = new Date().toISOString();
+            }
             saveTasks();
             renderAll();
             // Play sound effect if available
@@ -489,6 +560,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveTasks();
                 renderAll();
             }
+        },
+        showVaultDetails: (id) => {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            const modal = document.getElementById('vault-detail-modal');
+            const content = document.getElementById('vault-detail-content');
+            
+            let detailsHtml = `
+                <h4 style="font-size: 1.2rem; margin-bottom: 1.5rem; line-height: 1.4;">${task.text}</h4>
+                <div class="vault-detail-grid">
+                    <div><strong>Status:</strong> ${task.status === 'cringe' ? '<span style="color: #EF4444;">Deleted</span>' : '<span style="color: #10B981;">Completed</span>'}</div>
+                    <div><strong>Category:</strong> ${task.slot ? task.slot.charAt(0).toUpperCase() + task.slot.slice(1) : 'N/A'}</div>
+                    <div><strong>Effort:</strong> ${task.weight === 'deep' ? 'High Focus' : 'Low Focus'}</div>
+                    <div><strong>Type:</strong> ${task.goalType === 'survival' ? 'Maintenance' : 'Growth'}</div>
+                </div>
+            `;
+
+            if (task.completedAt) {
+                detailsHtml += `<p style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);"><strong>Completed On:</strong> ${new Date(task.completedAt).toLocaleString()}</p>`;
+            }
+            
+            if (task.reflection) {
+                 detailsHtml += `
+                    <div style="margin-top: 1rem; padding: 1rem; background: #FFFBE6; border-radius: 8px; border: 1px solid #FFE58F;">
+                        <p style="font-weight: 600; margin-bottom: 0.5rem;">Reason for previous delay:</p>
+                        <p style="font-style: italic; color: #57534E;">"${task.reflection}"</p>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = detailsHtml;
+            modal.style.display = 'flex';
         }
     };
 });

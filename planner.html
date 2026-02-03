@@ -8,6 +8,140 @@
     <link rel="stylesheet" href="styles/planner.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* Force Light Theme & Fix Colors */
+        :root, body, body.peak-mode, body.trough-mode {
+            --planner-bg: #F8FAFC !important;
+            --prime-bg: #FFFFFF !important;
+            --text-dark: #1E293B !important;
+            --text-muted: #64748B !important;
+            --border-light: #E2E8F0 !important;
+            --accent-focus: #2563EB !important;
+        }
+
+        body {
+            background-color: var(--planner-bg) !important;
+            color: var(--text-dark) !important;
+        }
+
+        .planner-main, h1, h2, h3, p, span, div, button, input {
+            color: var(--text-dark);
+        }
+        
+        .helper-text, .back-link, .badge-neutral, .slot-label, .task-meta {
+            color: var(--text-muted) !important;
+        }
+
+        /* Card Styles */
+        .backlog-section, .prime-section, .vault-section {
+            background-color: var(--prime-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+        }
+
+        /* Strategic coloring for primary section */
+        .prime-section {
+            background: linear-gradient(180deg, #EFF6FF 0%, #F8FAFC 100%);
+            padding: 1.5rem;
+        }
+
+        .prime-section .section-header {
+            margin-bottom: 1rem;
+        }
+
+        .prime-section .helper-text {
+            background: none;
+            padding: 0;
+            border: none;
+        }
+
+        /* Styles for inline task editing */
+        .task-text {
+            flex-grow: 1;
+            margin-right: 1rem;
+        }
+        .edit-task-input {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--accent-focus);
+        }
+
+        /* Vault item interaction */
+        .vault-item {
+            cursor: pointer;
+        }
+        .vault-item:hover {
+            opacity: 1 !important;
+            background-color: #F8FAFC;
+        }
+        .vault-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .vault-detail-grid strong { color: var(--text-dark); }
+
+        .clickable-question {
+            cursor: pointer;
+            color: var(--accent-focus) !important;
+            font-weight: 600;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            display: block;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 992px) {
+            .planner-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .planner-main .container {
+                padding: 0 1rem;
+            }
+
+            .planner-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0;
+            }
+
+            .planner-header h1 {
+                font-size: 2rem;
+            }
+
+            .planner-controls {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+            }
+
+            .planner-controls .btn-focus,
+            .planner-controls .back-link {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+                font-size: 0.9rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.15rem;
+            }
+
+            .input-group input, .input-group button {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="header-placeholder"></div>
@@ -16,13 +150,13 @@
         <div class="container">
             <header class="planner-header fade-in">
                 <div>
-                    <h1>100% Planner</h1>
-                    <div id="energy-hud" class="energy-badge" style="display:none;">Detecting Energy Zone...</div>
+                    <h1>My Daily Plan</h1>
+                    <div id="energy-hud" class="energy-badge" style="display:none;">Checking time...</div>
                     <p id="date-display">Loading date...</p>
                 </div>
                 <div class="planner-controls">
                     <button id="focus-mode-btn" class="btn-focus">
-                        <span class="icon"><i class="ph ph-eye"></i></span> Focus Mode
+                        <span class="icon"><i class="ph ph-eye"></i></span> Focus View
                     </button>
                     <a href="new-dashboard.html" class="back-link">Exit to Dashboard</a>
                 </div>
@@ -32,11 +166,11 @@
                 <!-- Left Column: The Buffer (Incoming Chaos) -->
                 <section class="backlog-section fade-in" id="backlog-section">
                     <div class="section-header">
-                        <h2>The Buffer</h2>
-                        <span class="badge-neutral">Inbox</span>
+                        <h2>Inbox</h2>
+                        <span class="badge-neutral">Ideas</span>
                     </div>
                     <div class="input-group">
-                        <input type="text" id="new-task-input" placeholder="Capture a task..." autocomplete="off">
+                        <input type="text" id="new-task-input" placeholder="Add a new task..." autocomplete="off">
                         <button id="add-task-btn" class="btn-add">+</button>
                     </div>
                     <div id="backlog-list" class="task-list backlog-list">
@@ -46,11 +180,14 @@
 
                 <!-- Center Column: The Forge (Active Tasks) -->
                 <section class="prime-section fade-in">
-                    <div class="section-header" style="margin-bottom: 0.5rem;">
-                        <h2>The Forge</h2>
-                        <span class="badge" id="prime-count">0/3 Slots Filled</span>
+                    <div class="section-header">
+                        <h2>Today's Priorities</h2>
+                        <span class="badge" id="prime-count">0/3 Tasks Selected</span>
                     </div>
-                    <p class="helper-text">Strict Limit. 3 Tasks. No Multitasking.</p>
+                    <p class="helper-text">
+                        Choose your top 3 tasks for today.
+                        <span id="why-three-tasks-link" class="clickable-question">Why only 3?</span>
+                    </p>
                     
                     <div class="slots-container">
                         <!-- Slot 1: Revenue -->
@@ -65,8 +202,8 @@
                 <!-- Right Column: The Vault (Wins & Failures) -->
                 <section class="vault-section fade-in" id="vault-section">
                     <div class="section-header">
-                        <h2>The Vault</h2>
-                        <span class="badge-neutral">History</span>
+                        <h2>History</h2>
+                        <span class="badge-neutral">Completed</span>
                     </div>
                     <div id="vault-list" class="task-list vault-list">
                         <!-- Completed/Failed tasks -->
@@ -79,37 +216,37 @@
     <!-- Energy Calibration Modal -->
     <div id="energy-setup-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content energy-setup-content">
-            <h2 class="text-gradient">Energy Baseline Calibration</h2>
-            <p>To optimize your day, we need to map your biological rhythm.</p>
+            <h2 class="text-gradient">Personalize Your Schedule</h2>
+            <p>To help you focus, tell us when you work best.</p>
             
             <div class="energy-input-group">
-                <label><i class="ph ph-lightning"></i> Peak Zone (High Focus)</label>
-                <p class="helper-text">When is your brain sharpest for complex problem solving?</p>
+                <label><i class="ph ph-lightning"></i> High Energy Time</label>
+                <p class="helper-text">When do you feel most focused?</p>
                 <div class="time-range-select">
                     <select id="peak-start"></select> <span>to</span> <select id="peak-end"></select>
                 </div>
             </div>
 
             <div class="energy-input-group">
-                <label><i class="ph ph-moon"></i> Trough Zone (Low Focus)</label>
-                <p class="helper-text">When do you typically crash or feel sluggish?</p>
+                <label><i class="ph ph-moon"></i> Low Energy Time</label>
+                <p class="helper-text">When do you feel tired or need a break?</p>
                 <div class="time-range-select">
                     <select id="trough-start"></select> <span>to</span> <select id="trough-end"></select>
                 </div>
             </div>
 
-            <button id="save-energy-btn" class="btn-primary" style="width:100%; margin-top:1rem;">Calibrate System</button>
+            <button id="save-energy-btn" class="btn-primary" style="width:100%; margin-top:1rem;">Save Settings</button>
         </div>
     </div>
 
     <!-- Tax Modal -->
     <div id="tax-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <h3 style="color: #EF4444;"><i class="ph ph-warning"></i> Procrastination Tax</h3>
-            <p>You are postponing this task. Why wasn't it done?</p>
-            <textarea id="tax-reflection" placeholder="Be honest. Why did you delay?" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 1rem;"></textarea>
-            <p class="helper-text" style="font-size: 0.8rem;">Strike <span id="tax-strike-count">1</span>/3. At 3 strikes, this task is deleted.</p>
-            <button id="pay-tax-btn" class="btn-primary" style="width: 100%; background-color: #EF4444;">Pay Tax & Postpone</button>
+            <h3 style="color: #EF4444;"><i class="ph ph-warning"></i> Delaying Task?</h3>
+            <p>Why are you moving this back to the inbox?</p>
+            <textarea id="tax-reflection" placeholder="Reason for delay..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 1rem;"></textarea>
+            <p class="helper-text" style="font-size: 0.8rem;">Delay count: <span id="tax-strike-count">1</span>/3. Too many delays will remove the task.</p>
+            <button id="pay-tax-btn" class="btn-primary" style="width: 100%; background-color: #EF4444;">Move to Inbox</button>
         </div>
     </div>
 
@@ -117,7 +254,7 @@
     <div id="hud-overlay" class="hud-overlay" style="display: none;">
         <div class="hud-content">
             <div class="hud-header">
-                <span class="hud-label">CURRENT MISSION</span>
+                <span class="hud-label">CURRENT TASK</span>
                 <button id="hud-close-btn" class="hud-close"><i class="ph ph-x"></i></button>
             </div>
             <h1 id="hud-task-text">No Active Task</h1>
@@ -125,7 +262,39 @@
                 <span id="hud-timer-display">25:00</span>
                 <button id="hud-timer-toggle"><i class="ph ph-play"></i></button>
             </div>
-            <button id="hud-complete-btn" class="btn-primary btn-hud-complete">Mission Complete</button>
+            <button id="hud-complete-btn" class="btn-primary btn-hud-complete">Task Done</button>
+        </div>
+    </div>
+
+    <!-- Vault Detail Modal -->
+    <div id="vault-detail-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 class="text-gradient">Task Debrief</h3>
+                <button id="close-vault-modal-btn" class="btn-secondary" style="padding: 4px 10px; border-radius: 8px;">Close</button>
+            </div>
+            <div id="vault-detail-content">
+                <!-- Details injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 3-Task Explanation Modal -->
+    <div id="explanation-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 class="text-gradient">The Power of Three</h3>
+                <button id="close-explanation-modal-btn" class="btn-secondary" style="padding: 4px 10px; border-radius: 8px;">Close</button>
+            </div>
+            <div>
+                <p>Limiting your daily priorities to just three tasks is a powerful productivity strategy based on the principle of "less is more."</p>
+                <ul style="list-style-position: inside; padding-left: 1rem; margin-top: 1rem;">
+                    <li style="margin-bottom: 0.5rem;"><strong>Reduces Overwhelm:</strong> A long to-do list is paralyzing. Three tasks feel achievable and keep you motivated.</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Forces Prioritization:</strong> You are forced to identify what truly matters, separating the 'urgent' from the 'important'.</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Encourages Deep Work:</strong> With fewer tasks, you can dedicate meaningful, focused time to each one, leading to higher quality outcomes.</li>
+                </ul>
+                <p style="margin-top: 1rem; font-style: italic;">By conquering three significant tasks daily, you build unstoppable momentum.</p>
+            </div>
         </div>
     </div>
 

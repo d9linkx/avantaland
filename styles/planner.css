@@ -122,17 +122,21 @@ body.victory-state {
 .section-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
     margin-bottom: 1rem;
+}
+
+.section-header h2 {
+    margin: 0;
 }
 
 .badge {
     background: #EFF6FF;
     color: var(--accent-focus);
-    padding: 4px 12px;
+    padding: 3px 10px;
     border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-size: 0.7rem;
+    font-weight: 600;
 }
 
 .helper-text {
@@ -158,7 +162,13 @@ body.victory-state {
     align-items: center;
     transition: all 0.3s ease;
     position: relative;
-    background: #FAFAFA;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.mission-slot:hover {
+    border-color: var(--accent-focus);
+    background: #fff;
+    box-shadow: var(--shadow-soft);
 }
 
 .mission-slot.filled {
@@ -176,13 +186,24 @@ body.victory-state {
 
 /* Slot Types */
 .mission-slot[data-type="revenue"] { border-color: rgba(16, 185, 129, 0.3); }
-.mission-slot[data-type="revenue"].filled { border-left: 6px solid var(--slot-revenue); border-color: var(--border-light); }
+.mission-slot[data-type="revenue"].filled { 
+    border-left: 6px solid var(--slot-revenue); 
+    border-color: var(--border-light); 
+    background-image: linear-gradient(to right, rgba(16, 185, 129, 0.05), transparent);
+}
 
 .mission-slot[data-type="operations"] { border-color: rgba(59, 130, 246, 0.3); }
-.mission-slot[data-type="operations"].filled { border-left: 6px solid var(--slot-ops); border-color: var(--border-light); }
+.mission-slot[data-type="operations"].filled { 
+    border-left: 6px solid var(--slot-ops); 
+    border-color: var(--border-light);
+    background-image: linear-gradient(to right, rgba(59, 130, 246, 0.05), transparent);
+}
 
 .mission-slot[data-type="development"] { border-color: rgba(139, 92, 246, 0.3); }
-.mission-slot[data-type="development"].filled { border-left: 6px solid var(--slot-dev); border-color: var(--border-light); }
+.mission-slot[data-type="development"].filled { 
+    border-left: 6px solid var(--slot-dev); border-color: var(--border-light);
+    background-image: linear-gradient(to right, rgba(139, 92, 246, 0.05), transparent);
+}
 
 .slot-label {
     font-size: 0.75rem;
@@ -191,6 +212,18 @@ body.victory-state {
     font-weight: 800;
     color: var(--text-muted);
     margin-bottom: 0.5rem;
+}
+
+.slot-empty-icon {
+    font-size: 2rem;
+    color: var(--border-light);
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.mission-slot:hover .slot-empty-icon {
+    color: var(--accent-focus);
+    transform: scale(1.1);
 }
 
 .task-meta {
@@ -213,11 +246,14 @@ body.victory-state {
     cursor: pointer;
     font-weight: 600;
     color: var(--text-dark);
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    opacity: 0.8;
 }
-.btn-fill-slot:hover {
-    background: var(--text-dark);
+.mission-slot:hover .btn-fill-slot {
+    opacity: 1;
+    background: var(--accent-focus);
     color: white;
+    border-color: var(--accent-focus);
     transform: translateY(-2px);
 }
 
@@ -355,13 +391,13 @@ body.victory-state {
 .hud-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.95);
+    background: var(--planner-bg);
     backdrop-filter: blur(10px);
     z-index: 2000;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--text-dark);
 }
 
 .hud-content {
@@ -373,7 +409,7 @@ body.victory-state {
 .hud-label {
     font-size: 0.9rem;
     letter-spacing: 2px;
-    color: #94A3B8;
+    color: var(--text-muted);
     font-weight: 800;
 }
 
@@ -396,8 +432,8 @@ body.victory-state {
 
 #hud-timer-toggle {
     background: none;
-    border: 2px solid rgba(255,255,255,0.2);
-    color: white;
+    border: 2px solid var(--border-light);
+    color: var(--text-dark);
     border-radius: 50%;
     width: 60px; height: 60px;
     font-size: 1.5rem;
@@ -406,8 +442,8 @@ body.victory-state {
 }
 
 #hud-timer-toggle:hover {
-    background: white;
-    color: black;
+    background: var(--text-dark);
+    color: var(--prime-bg);
 }
 
 .hud-close {
@@ -416,7 +452,7 @@ body.victory-state {
     right: 2rem;
     background: none;
     border: none;
-    color: white;
+    color: var(--text-dark);
     font-size: 2rem;
     cursor: pointer;
 }
