@@ -231,7 +231,7 @@ ul { list-style: none; }
 }
 
 .logo {
-    font-size: 1.7rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: #000000;
     display: flex;
@@ -249,7 +249,7 @@ ul { list-style: none; }
 }
 
 .logo img {
-    height: 42px;
+    height: 32px;
     width: auto;
     border-radius: 0;
     margin-bottom: 0;
