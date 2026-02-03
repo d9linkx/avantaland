@@ -535,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
             primeCountDisplay.style.color = "#10B981";
         } else {
             document.body.classList.remove('victory-state');
-            primeCountDisplay.innerText = `${activeTasks.length}/3 Tasks Selected`;
+            primeCountDisplay.innerText = `${visibleInSlots.length}/3 Tasks Selected`;
             primeCountDisplay.style.color = "#2979FF";
         }
     }
