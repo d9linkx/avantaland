@@ -9,12 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DOM Elements ---
     const dateDisplay = document.getElementById('date-display');
-    const backlogList = document.getElementById('backlog-list');
     const vaultList = document.getElementById('vault-list');
     const primeCountDisplay = document.getElementById('prime-count');
-    const input = document.getElementById('new-task-input');
-    const addBtn = document.getElementById('add-task-btn');
-    const backlogSection = document.getElementById('backlog-section');
     const vaultSection = document.getElementById('vault-section');
     const energyHud = document.getElementById('energy-hud');
     
@@ -83,16 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAll();
 
     // --- Event Listeners ---
-    addBtn.addEventListener('click', handleAddTask);
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleAddTask();
-    });
-
     closeModalBtn.addEventListener('click', () => {
         modal.style.display = 'none';
         currentSlotSelection = null;
-        // Ensure inbox refreshes after closing the picker modal
-        try { refreshInbox(); } catch (e) {}
     });
 
     whyThreeTasksLink.addEventListener('click', () => {
@@ -101,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeExplanationModalBtn.addEventListener('click', () => {
         explanationModal.style.display = 'none';
-        try { refreshInbox(); } catch (e) {}
     });
 
     confirmCompleteBtn.addEventListener('click', () => {
@@ -113,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             saveTasks();
             // Play sound effect
+            renderAll();
             const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3');
             audio.volume = 0.5;
             audio.play().catch(e => {});
@@ -130,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (taskToDeleteId) {
             tasks = tasks.filter(t => t.id !== taskToDeleteId);
             saveTasks();
+            renderAll();
         }
         deleteConfirmModal.style.display = 'none';
         taskToDeleteId = null;
@@ -142,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('close-vault-modal-btn').addEventListener('click', () => {
         document.getElementById('vault-detail-modal').style.display = 'none';
-        try { refreshInbox(); } catch (e) {}
     });
 
     saveEnergyBtn.addEventListener('click', handleSaveEnergy);
@@ -251,48 +240,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(DATE_KEY, todayStr);
     }
 
-    function handleAddTask() {
-        const text = input.value.trim();
-        if (!text) return;
-
-        // Complexity Check: Ensure task is granular
-        if (text.length > 50) {
-            alert("Try to make this a smaller task. Keep it simple.");
-            return;
-        }
-
-        const newTask = {
-            id: Date.now(),
-            text: text,
-            status: 'backlog', // Always start in backlog
-            slot: null,
-            postponeCount: 0,
-            createdAt: new Date().toISOString()
-        };
-
-        tasks.unshift(newTask); // Add to top of backlog
-        saveTasks();
-        setTimeout(renderAll, 0); // Use a deferred, full render to ensure UI consistency
-        input.value = '';
-    }
-
     function saveTasks() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-        // Immediately re-render the UI after saving to ensure Inbox / other sections
-        // reflect changes without a full page reload.
-        try {
-            console.debug('[planner] saveTasks called — tasks.length =', tasks.length);
-            // Use requestAnimationFrame to avoid potential reflow/race with event handlers
-            // Dispatch a small event so other listeners (including other windows) can react
-            try { window.dispatchEvent(new CustomEvent('planner:change', { detail: { count: tasks.length } })); } catch (e) {}
-            requestAnimationFrame(() => {
-                renderAll();
-                // Also ensure backlog is refreshed and visible
-                try { refreshInbox(); } catch (e) {}
-            });
-        } catch (e) {
-            // renderAll may not be defined yet during initialization; ignore in that case
-        }
     }
 
     // Listen for storage events (other tabs/windows) and sync UI immediately
@@ -307,11 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Listen for internal planner change events and refresh the inbox quickly
-    window.addEventListener('planner:change', () => {
-        try { refreshInbox(); } catch (e) {}
-    });
-
     function renderAll() {
         // Rehydrate tasks from localStorage to ensure we're rendering the latest
         // data (covers cases where other code or flows wrote directly to storage).
@@ -323,7 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderSlots();
-        renderBacklog();
         renderVault();
         updateStats();
     }
@@ -335,17 +278,19 @@ document.addEventListener('DOMContentLoaded', () => {
             operations: 'Admin & Chores',
             development: 'Learning & Growth'
         };
-        let completedCount = 0;
+
+        const activeTasks = tasks.filter(t => t.status === 'active');
+        const visibleInSlots = activeTasks.filter(t => !t.completed);
+        const completedCount = activeTasks.length - visibleInSlots.length;
 
         slotTypes.forEach(type => {
             const container = document.getElementById(`slot-${type}`);
-            const task = tasks.find(t => t.status === 'active' && t.slot === type);
+            const task = visibleInSlots.find(t => t.slot === type); // Find from visible tasks
             
             container.innerHTML = ''; // Clear
             container.className = `mission-slot`; // Reset class
             container.dataset.type = type; // Ensure type attr
 
-            // Add Label
             const label = document.createElement('div');
             label.className = 'slot-label';
             label.innerText = slotLabels[type] || type.toUpperCase();
@@ -353,10 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (task) {
                 container.classList.add('filled');
-                if (task.completed) {
-                    container.classList.add('completed');
-                    completedCount++;
-                }
 
                 // Energy Mismatch Warning
                 if (task.weight === 'deep' && document.body.classList.contains('trough-mode')) {
@@ -369,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                         <span style="font-weight:600; font-size:1.1rem;">${task.text}</span>
                         <div class="task-actions">
-                        <button onclick="window.plannerActions.complete(${task.id})" title="Complete"><i class="ph ph-check-circle"></i></button>
+                            <button onclick="window.plannerActions.complete(${task.id})" title="Complete"><i class="ph ph-check-circle"></i></button>
                             <button onclick="window.plannerActions.demote(${task.id})" title="Move to Inbox"><i class="ph ph-arrow-u-up-left"></i></button>
                         </div>
                     </div>
@@ -377,18 +318,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 container.appendChild(content);
             } else {
-                // Empty State with Icon
                 const slotIcons = {
                     revenue: 'ph-briefcase',
                     operations: 'ph-list-checks',
                     development: 'ph-brain'
                 };
                 const iconClass = slotIcons[type] || 'ph-plus-circle';
-
                 const icon = document.createElement('i');
                 icon.className = `ph ${iconClass} slot-empty-icon`;
                 container.appendChild(icon);
-
                 const btn = document.createElement('button');
                 btn.className = 'btn-fill-slot';
                 btn.innerText = '+ Select Task';
@@ -398,76 +336,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Visual Momentum / Victory State
-        if (completedCount === 3) {
+        if (completedCount >= 3 && visibleInSlots.length === 0) {
             document.body.classList.add('victory-state');
             primeCountDisplay.innerText = "All Done!";
             primeCountDisplay.style.color = "#10B981";
         } else {
             document.body.classList.remove('victory-state');
-            primeCountDisplay.innerText = `${visibleInSlots.length}/3 Tasks Selected`;
+            primeCountDisplay.innerText = `${activeTasks.length}/3 Tasks Selected`;
             primeCountDisplay.style.color = "#2979FF";
-        }
-    }
-
-    function renderBacklog() {
-        const backlogEl = document.getElementById('backlog-list');
-        if (!backlogEl) {
-            console.warn('[planner] renderBacklog: backlog-list element not found');
-            return;
-        }
-
-        backlogEl.innerHTML = '';
-        const backlogTasks = tasks.filter(t => t.status === 'backlog');
-        console.debug('[planner] renderBacklog — backlogTasks.length =', backlogTasks.length);
-
-        if (backlogTasks.length === 0) {
-            backlogEl.innerHTML = `<div style="text-align:center; color:#94a3b8; padding: 1rem;">Inbox is empty. Add a task above.</div>`;
-        } else {
-            backlogTasks.forEach(task => {
-                const el = document.createElement('div');
-                el.className = 'task-item fade-in';
-                // Add data-task-id to the span for easy selection during edit
-                el.innerHTML = `
-                    <span class="task-text" data-task-id="${task.id}">${task.postponeCount > 0 ? `<span style="color:#EF4444; font-weight:bold;">[Delayed ${task.postponeCount}x]</span> ` : ''}${task.text}</span>
-                    <div class="task-actions">
-                        <button onclick="window.plannerActions.edit(${task.id}, this)" title="Edit"><i class="ph ph-pencil-simple"></i></button>
-                        <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
-                    </div>
-                `;
-                backlogEl.appendChild(el);
-            });
-        }
-    }
-
-    // Force-refresh the inbox/backlog section. This re-reads storage then re-renders
-    // the backlog area and makes sure it's visible. Use this when UI changes come
-    // from modal interactions or other non-standard flows.
-    function refreshInbox() {
-        try {
-            const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            if (Array.isArray(stored)) tasks = stored;
-        } catch (e) {}
-
-        // Re-render backlog specifically
-        try {
-            renderBacklog();
-            const backlogSec = document.getElementById('backlog-section') || backlogSection;
-            const backlogEl = document.getElementById('backlog-list');
-            if (backlogSec) backlogSec.style.display = '';
-            // Force a reflow so the browser paints the updated backlog immediately
-            if (backlogEl) void backlogEl.offsetHeight;
-        } catch (e) {
-            console.warn('[planner] refreshInbox failed', e);
         }
     }
 
     function renderVault() {
         vaultList.innerHTML = '';
-        // Show completed today and "Cringe Log" (deleted via tax)
         const vaultTasks = tasks.filter(t => (t.status === 'active' && t.completed) || t.status === 'cringe');
         
         if (vaultTasks.length === 0) {
-            vaultList.innerHTML = `<div style="text-align:center; color:#94a3b8; padding: 1rem;">No completed tasks yet.</div>`;
+            vaultList.innerHTML = `
+                <div class="empty-state-illustration" style="text-align: center; padding: 2rem 0;">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15L12 18" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/><path d="M12 6V12" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#CBD5E1" stroke-width="1.5"/></svg>
+                    <p style="color: var(--text-muted); font-weight: 600; margin-top: 1rem;">No history yet.</p>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Complete a priority task to see it here.</p>
+                </div>`;
         } else {
             vaultTasks.forEach(task => {
                 const el = document.createElement('div');
@@ -489,32 +379,45 @@ document.addEventListener('DOMContentLoaded', () => {
     function openTaskPicker(slotType) {
         currentSlotSelection = slotType;
         modalSlotName.innerText = slotType.toUpperCase();
-        modalList.innerHTML = '';
+        modalList.innerHTML = `
+            <div class="input-group" style="margin-bottom: 1rem;">
+                <input type="text" id="new-slot-task-input" placeholder="Enter new task description..." autocomplete="off" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-light);">
+            </div>
+            <p style="margin-bottom:1rem; font-size:0.9rem;">Select its cognitive weight:</p>
+            <div class="weight-selection">
+                <button class="btn-weight" id="add-deep-task-btn">
+                    <i class="ph ph-lightning"></i> High Focus
+                </button>
+                <button class="btn-weight" id="add-shallow-task-btn">
+                    <i class="ph ph-coffee"></i> Low Focus
+                </button>
+            </div>
+        `;
+        
+        const input = modalList.querySelector('#new-slot-task-input');
+        const addDeepBtn = modalList.querySelector('#add-deep-task-btn');
+        const addShallowBtn = modalList.querySelector('#add-shallow-task-btn');
 
-        const backlogTasks = tasks.filter(t => t.status === 'backlog');
-        
-        if (backlogTasks.length === 0) {
-            modalList.innerHTML = '<p style="text-align:center; color:#64748B;">Backlog is empty. Add tasks first.</p>';
-        } else {
-            modalList.innerHTML = '<p style="margin-bottom:1rem; font-size:0.9rem;">Select a task and its cognitive weight:</p>';
-            backlogTasks.forEach(task => {
-                const div = document.createElement('div');
-                div.className = 'modal-task-item';
-                div.innerHTML = `
-                    <div style="margin-bottom:8px; font-weight:600;">${task.text}</div>
-                    <div class="weight-selection">
-                        <button class="btn-weight" onclick="window.plannerActions.promote(${task.id}, '${currentSlotSelection}', 'deep')">
-                            <i class="ph ph-lightning"></i> Deep
-                        </button>
-                        <button class="btn-weight" onclick="window.plannerActions.promote(${task.id}, '${currentSlotSelection}', 'shallow')">
-                            <i class="ph ph-coffee"></i> Shallow
-                        </button>
-                    </div>
-                `;
-                modalList.appendChild(div);
-            });
-        }
-        
+        const addTaskToSlot = (weight) => {
+            const text = input.value.trim();
+            if (!text) {
+                alert('Please enter a task.');
+                return;
+            }
+            const newTask = {
+                id: Date.now(),
+                text: text,
+                status: 'backlog',
+                slot: null,
+                postponeCount: 0,
+                createdAt: new Date().toISOString()
+            };
+            tasks.push(newTask);
+            window.plannerActions.promote(newTask.id, slotType, weight);
+        };
+
+        addDeepBtn.onclick = () => addTaskToSlot('deep');
+        addShallowBtn.onclick = () => addTaskToSlot('shallow');
         modal.style.display = 'flex';
     }
 
@@ -611,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.style.display = 'none';
             }
             saveTasks();
-            renderAll();
+            setTimeout(renderAll, 0);
         },
         edit: (id, buttonEl) => {
             const taskItem = buttonEl.closest('.task-item');
@@ -634,7 +537,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newText = input.value.trim();
                 if (newText && newText !== originalText) {
                     task.text = newText;
-                    saveTasks();
                 }
                 // Defer the render call slightly. This prevents a potential race condition in some browsers
                 // where the 'blur' event's target element is destroyed by the render function
