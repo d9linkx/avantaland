@@ -459,17 +459,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     startTimeDisplay = `<span class="task-start-time">Starts at ${task.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
                 }
 
-                const displayText = task.text.length > 40 ? task.text.substring(0, 40) + '...' : task.text;
-
                 const content = document.createElement('div');
                 content.style.width = '100%';
                 content.innerHTML = `
-                    <div class="task-header-row" style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
                         <span class="slot-label" style="margin:0;">${slotLabels[type] || 'Task'}</span>
                         ${iconHtml}
                     </div>
-                    <div class="task-main-row" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                        <span data-task-id="${task.id}" style="font-weight:600; font-size:1.1rem; flex-grow: 1; margin-right: 1rem;">${displayText}</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <span data-task-id="${task.id}" style="font-weight:600; font-size:1.1rem; flex-grow: 1; margin-right: 1rem;">${task.text}</span>
+                        <div class="task-actions">
+                            <button onclick="window.plannerActions.complete(${task.id})" title="Complete" class="action-btn-complete"><i class="ph ph-check-circle"></i></button>
+                            <button onclick="window.plannerActions.edit(${task.id}, this)" title="Edit"><i class="ph ph-pencil-simple"></i></button>
+                            <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
+                        </div>
                     </div>
                     <div class="task-meta-controls" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 1rem;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -485,91 +488,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="task-actions" style="display: flex; align-items: center; gap: 0.75rem;">
                             ${startTimeDisplay}
-                            <!-- Skip button removed; replaced with Start/Pause/Resume control -->
+                            <button class="btn-skip-task" onclick="window.plannerActions.skipTask(${task.id})" title="Skip Task"><i class="ph ph-fast-forward"></i></button>
                             <button class="btn-start-task ${task.isOngoing && mainTimerInterval ? 'paused' : ''}" onclick="window.plannerActions.playPause(${task.id})">
                                 ${isTopTask ? (task.isOngoing ? (mainTimerInterval ? 'Pause' : 'Resume') : 'Start') : 'Queued'}
                             </button>
                         </div>
                     </div>
-                    <div class="task-actions" style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.05);">
-                        <button onclick="window.plannerActions.edit(${task.id})" title="Edit"><i class="ph ph-pencil-simple"></i></button>
-                        <button onclick="window.plannerActions.remove(${task.id})" title="Delete"><i class="ph ph-trash"></i></button>
-                        <button onclick="window.plannerActions.complete(${task.id})" title="Complete" class="action-btn-complete"><i class="ph ph-check-circle"></i></button>
-                    </div>
                 `;
                 container.appendChild(content);
-
-                // --- Drag & Drop: allow reordering of slots to change the sequence ---
-                container.addEventListener('dragstart', (ev) => {
-                    ev.dataTransfer.setData('text/plain', type);
-                    ev.dataTransfer.effectAllowed = 'move';
-                    container.classList.add('dragging');
-                });
-
-                container.addEventListener('dragover', (ev) => {
-                    ev.preventDefault();
-                    ev.dataTransfer.dropEffect = 'move';
-                    container.classList.add('drag-over');
-                });
-
-                container.addEventListener('dragleave', () => {
-                    container.classList.remove('drag-over');
-                });
-
-                container.addEventListener('drop', (ev) => {
-                    ev.preventDefault();
-                    container.classList.remove('drag-over');
-                    const fromType = ev.dataTransfer.getData('text/plain');
-                    const toType = type;
-                    if (!fromType || fromType === toType) return;
-                    const fromIdx = slotOrder.indexOf(fromType);
-                    const toIdx = slotOrder.indexOf(toType);
-                    if (fromIdx > -1 && toIdx > -1) {
-                        // Remove and insert before target
-                        slotOrder.splice(fromIdx, 1);
-                        slotOrder.splice(toIdx, 0, fromType);
-                        saveSlotOrder();
-                        saveTasks();
-                        renderAll();
-                    }
-                });
-
-                container.addEventListener('dragend', () => {
-                    container.classList.remove('dragging');
-                    document.querySelectorAll('.mission-slot.drag-over').forEach(el => el.classList.remove('drag-over'));
-                });
-
-                // Touch fallback: simple touch reorder by picking drop target at touchend
-                container.addEventListener('touchstart', (ev) => {
-                    container._touchDragging = true;
-                    container.classList.add('dragging');
-                    container._touchType = type;
-                }, { passive: true });
-
-                container.addEventListener('touchend', (ev) => {
-                    if (!container._touchDragging) return;
-                    container._touchDragging = false;
-                    container.classList.remove('dragging');
-                    const touch = ev.changedTouches && ev.changedTouches[0];
-                    if (!touch) return;
-                    const el = document.elementFromPoint(touch.clientX, touch.clientY);
-                    const targetSlot = el && el.closest && el.closest('.mission-slot');
-                    if (targetSlot && targetSlot.dataset && targetSlot.dataset.type) {
-                        const fromType = container._touchType;
-                        const toType = targetSlot.dataset.type;
-                        if (fromType && toType && fromType !== toType) {
-                            const fromIdx = slotOrder.indexOf(fromType);
-                            const toIdx = slotOrder.indexOf(toType);
-                            if (fromIdx > -1 && toIdx > -1) {
-                                slotOrder.splice(fromIdx, 1);
-                                slotOrder.splice(toIdx, 0, fromType);
-                                saveSlotOrder();
-                                saveTasks();
-                                renderAll();
-                            }
-                        }
-                    }
-                });
             } else {
                 // Empty Slot
                 const label = document.createElement('div');
@@ -603,17 +529,6 @@ document.addEventListener('DOMContentLoaded', () => {
             primeCountDisplay.innerText = `${activeTasks.length}/3 Tasks Selected`;
             primeCountDisplay.style.color = "#2979FF";
         }
-
-        // Header pulse: when in peak energy and the active/top task is deep work
-        try {
-            const headerEl = document.querySelector('.planner-header');
-            const topTask = tasks.find(t => t.slot === slotOrder[0] && !t.completed);
-            if (headerEl && document.body.classList.contains('peak-mode') && topTask && topTask.weight === 'deep') {
-                headerEl.classList.add('header-pulse');
-            } else if (headerEl) {
-                headerEl.classList.remove('header-pulse');
-            }
-        } catch (e) {}
     }
 
     function renderTimeGaps(visibleTasks) {
@@ -796,19 +711,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         finishedTask.completed = true;
                         finishedTask.completedAt = new Date().toISOString();
                         finishedTask.isOngoing = false;
-                        // Remove it from the active slot so it moves to the vault area
-                        finishedTask.slot = null;
-                        // Rotate the sequence: move this slot type to the end so the next slot becomes top
-                        const finishedSlot = finishedTask.slot;
-                        const idx = slotOrder.indexOf(finishedSlot);
-                        if (idx > -1) {
-                            slotOrder.splice(idx, 1);
-                            slotOrder.push(finishedSlot);
-                            saveSlotOrder();
-                        }
                         saveTasks();
-                        // Re-render to show completion and updated sequence. Do not auto-start next; allow user to start it.
-                        renderAll();
+                        renderAll(); // Rerender to show completion and shift
+                        // Auto-start next task
+                        setTimeout(() => {
+                            const newTopTask = tasks.find(t => t.slot === slotOrder[0] && !t.completed);
+                            if (newTopTask) window.plannerActions.playPause(newTopTask.id, true);
+                        }, 500);
                     }
                 }
             }, 1000);
