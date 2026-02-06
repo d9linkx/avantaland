@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authMessage.textContent = "";
 
         try {
-            const SCRIPT_URL = CONFIG.GOOGLE_SCRIPT_URL_APP;
+            const SCRIPT_URL = CONFIG.GOOGLE_SCRIPT_DASHBOARD_URL;
             const response = await fetch(`${SCRIPT_URL}?action=checkEmail&email=${encodeURIComponent(email)}`);
             const result = await response.json();
 
