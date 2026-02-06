@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get the FREE Product Test | Avantaland Academy</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <main>
+        <section class="hero" id="get-audit-form">
+            <div class="container fade-in text-center">
+                <h1>Congratulations! <span class="text-gradient">Please create your business account</span></h1>
+                <p>Use this email to login to your business dashboard any time.</p>
+                <form name="submit-to-google-sheet" class="signup-form form-narrow">
+                    <input type="text" name="firstName" placeholder="First Name" required>
+                    <input type="email" name="email" placeholder="Email Address" required>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+                <div class="hero-social-proof" style="justify-content: center; margin-top: 1.5rem;"> <div class="avatars"> <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Business Owner"> </div> <div class="social-text">Trusted by <span>100+</span> business owners</div> </div>
+                <div id="form-message" style="margin-top: 1rem; display: none; font-weight: 600;"></div>
+            </div>
+        </section>
+        </main>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <script src="scripts/script.js"></script>
+    <script src="scripts/config.js"></script>
+    <script>
+        const scriptURL = CONFIG.GOOGLE_SCRIPT_DASHBOARD_URL;
+        const form = document.forms['submit-to-google-sheet'];
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const msg = document.getElementById('form-message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = 'Submitting...';
+            submitBtn.disabled = true;
+            msg.style.display = "none";
+
+            try {
+                const response = await fetch(scriptURL, { method: 'POST', body: new FormData(form)});
+                const data = await response.json(); // Assumes the script returns JSON
+
+                if (data.result === 'success') {
+                    const pingSound = new Audio('https://assets.mixkit.co/active_storage/sfx/1628/1628-preview.mp3');
+                    pingSound.play().catch(e => console.log("Audio play failed:", e));
+
+                    // Hide form and social proof for a clean loading screen
+                    form.style.display = 'none';
+                    document.querySelector('.hero-social-proof').style.display = 'none';
+
+                    msg.innerHTML = "Saved! You can now login to your dashboard in...";
+                    msg.style.color = "green";
+                    msg.style.display = "block";
+
+                    let countdown = 3;
+                    const countdownInterval = setInterval(() => {
+                        msg.innerHTML = `Saved! You can now login to your dashboard in... <span style="font-weight: 800; font-size: 1.2em;">${countdown}</span>...`;
+                        countdown--;
+                        if (countdown < 0) {
+                            clearInterval(countdownInterval);
+                            const email = form.querySelector('input[name="email"]').value;
+                            window.location.href = `onboardingdash.html?email=${encodeURIComponent(email)}`;
+                        }
+                    }, 1000);
+                } else {
+                    msg.innerHTML = data.message;
+                    msg.style.color = "red";
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                msg.innerHTML = "Error! An unexpected issue occurred. Please try again.";
+                msg.style.color = "red";
+                console.error('Error!', error.message);
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            } finally {
+                // Only show message if the form is still visible (i.e., on error)
+                if (form.style.display !== 'none') {
+                    msg.style.display = "block";
+                }
+            }
+        });
+    </script>
+</body>
+</html>
