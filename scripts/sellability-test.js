@@ -550,9 +550,8 @@ const switchScreen = (screenName) => {
         
         ctaButton.addEventListener('click', (e) => {
             e.preventDefault();
-            // Redirect to Biz Lab with email
-            const email = testEmailInput.value.trim();
-            window.location.href = `new-dashboard.html?email=${encodeURIComponent(email)}`;
+            // Redirect to selar to buy
+            window.location.href = 'https://selar.co/d811r7e3z9';
         });
 
         // --- Add Retake Link ---
