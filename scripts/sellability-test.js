@@ -546,13 +546,13 @@ const switchScreen = (screenName) => {
 
         ctaButton.innerHTML = `&gt; [ Unlock the Lab + 33 Truths ($6.99) ]`;
         ctaButton.removeAttribute('target'); // Remove _blank if it was there
-        ctaButton.href = '#'; // Prevent default navigation initially
+        ctaButton.href = 'https://selar.co/d811r7e3z9';
         
-        ctaButton.addEventListener('click', (e) => {
+        ctaButton.onclick = (e) => {
             e.preventDefault();
             // Redirect to selar to buy
             window.location.href = 'https://selar.co/d811r7e3z9';
-        });
+        };
 
         // --- Add Retake Link ---
         const oldRetakeLink = document.getElementById('retake-test-link');
