@@ -94,4 +94,83 @@ function initializeTruthPage(truthIndex) {
             markAsCompletedUI();
         });
     }
+
+    // --- 4. Audio Feature (Text-to-Speech) ---
+    setupAudioFeature(truthIndex);
+}
+
+function setupAudioFeature(truthIndex) {
+    const actionBar = document.querySelector('.action-bar');
+    if (!actionBar) return;
+
+    // Create Listen Button
+    const listenBtn = document.createElement('button');
+    listenBtn.id = 'listen-btn';
+    listenBtn.className = 'btn-reveal'; 
+    listenBtn.innerHTML = '<i class="ph ph-speaker-high"></i> Listen';
+    
+    // Insert into the action bar
+    actionBar.appendChild(listenBtn);
+
+    let isSpeaking = false;
+    // REPLACE TTS with Audio File
+    // Assumes files are named 'truth-1.mp3', 'truth-2.mp3' inside an 'audio' folder
+    const voiceAudio = new Audio(`audio/truth-${truthIndex}.mp3`);
+
+    // --- Audio Assets ---
+    // 1. Attention Grabber (Intro Sound)
+    const introSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+    introSound.volume = 0.4;
+
+    // 2. Background Music (Soft Ambient)
+    // Using a royalty-free placeholder. You can replace this URL with your own hosted 'story-ambient.mp3'
+    const bgMusic = new Audio('https://assets.mixkit.co/music/preview/mixkit-dreaming-big-31.mp3');
+    bgMusic.loop = true;
+    bgMusic.volume = 0.1; // Very soft (10% volume)
+
+    // Sync background music with voice
+    voiceAudio.addEventListener('ended', () => {
+        isSpeaking = false;
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+        listenBtn.innerHTML = '<i class="ph ph-speaker-high"></i> Listen';
+        listenBtn.classList.remove('speaking');
+    });
+
+    listenBtn.addEventListener('click', () => {
+        if (isSpeaking) {
+            // Stop Audio
+            voiceAudio.pause();
+            voiceAudio.currentTime = 0; // Reset to start
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            isSpeaking = false;
+            listenBtn.innerHTML = '<i class="ph ph-speaker-high"></i> Listen';
+            listenBtn.classList.remove('speaking');
+        } else {
+            // Start Audio
+            
+            // 1. Play Intro
+            introSound.play().catch(() => {});
+
+            // 2. Play Voice File
+            voiceAudio.play().catch(e => alert("Audio file not found. Please ensure 'audio/truth-" + truthIndex + ".mp3' exists."));
+            
+            isSpeaking = true;
+            
+            // Start music when speech starts
+            bgMusic.play().catch(e => console.warn("Background music autoplay blocked", e));
+            
+            listenBtn.innerHTML = '<i class="ph ph-stop-circle"></i> Stop';
+            listenBtn.classList.add('speaking');
+        }
+    });
+
+    // Stop audio if user leaves the page
+    window.addEventListener('beforeunload', () => {
+        if (isSpeaking) {
+            voiceAudio.pause();
+            bgMusic.pause();
+        }
+    });
 }
