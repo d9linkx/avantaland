@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const percentage = Math.round((completedCount / total) * 100);
     
     // Feature 5: Rank System
-    let rank = "Novice";
+    let rank = "Inexperienced";
     if (percentage > 20) rank = "Builder";
     if (percentage > 50) rank = "Operator";
     if (percentage > 80) rank = "Architect";
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Feature 4: Reset Progress
     if (btnReset) {
         btnReset.addEventListener('click', () => {
-            if (confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
+            if (confirm("Are you sure you want to reset your progress and start all over again? This cannot be undone.")) {
                 localStorage.removeItem('bizLabProgress');
                 location.reload();
             }
@@ -144,16 +144,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 3000);
 
-    const proceedBtn = document.getElementById('welcome-proceed-btn');
-    const dontShowCheckbox = document.getElementById('dont-show-welcome');
     const welcomeModal = document.getElementById('welcome-modal');
+    const nextBtn = document.getElementById('onboarding-next-btn');
+    const backBtn = document.getElementById('onboarding-back-btn');
+    const steps = document.querySelectorAll('.onboarding-step');
+    const dots = document.querySelectorAll('.step-dot');
+    const dontShowCheckbox = document.getElementById('dont-show-welcome');
+    let currentStep = 0;
 
-    if (proceedBtn) {
-        proceedBtn.addEventListener('click', () => {
-            if (dontShowCheckbox && dontShowCheckbox.checked) {
-                localStorage.setItem('avantaland_hide_welcome', 'true');
+    const updateModal = () => {
+        steps.forEach((step, index) => {
+            step.classList.toggle('active', index === currentStep);
+        });
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentStep);
+        });
+        
+        backBtn.style.visibility = currentStep === 0 ? 'hidden' : 'visible';
+        nextBtn.innerText = currentStep === steps.length - 1 ? 'Start >' : 'Next';
+    };
+
+    if (nextBtn && backBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                updateModal();
+            } else {
+                if (dontShowCheckbox && dontShowCheckbox.checked) {
+                    localStorage.setItem('avantaland_hide_welcome', 'true');
+                }
+                if (welcomeModal) welcomeModal.style.display = 'none';
             }
-            if (welcomeModal) welcomeModal.style.display = 'none';
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateModal();
+            }
         });
     }
 });
