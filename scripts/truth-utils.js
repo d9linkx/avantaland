@@ -3,6 +3,15 @@ function initializeTruthPage(truthIndex) {
     const checklistHeading = document.querySelector('.truth-checklist h3');
     if (checklistHeading) {
         checklistHeading.innerText = 'How to fix this';
+        checklistHeading.style.marginBottom = '0.5rem';
+
+        const explanation = document.createElement('p');
+        explanation.innerText = "(Only tick these off when you have actually done them)";
+        explanation.style.fontSize = "0.85rem";
+        explanation.style.color = "#64748B";
+        explanation.style.marginTop = "0";
+        explanation.style.marginBottom = "1.5rem";
+        checklistHeading.after(explanation);
     }
 
     const revealBtn = document.getElementById('reveal-btn');
