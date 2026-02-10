@@ -80,10 +80,13 @@ function initializeTruthPage(truthIndex) {
 
     // Reveal Logic
     if (revealBtn) {
+        // Set initial state to ensure a consistent icon on load
+        revealBtn.innerHTML = '<i class="ph ph-caret-down"></i> Read Full Truth';
+
         revealBtn.addEventListener('click', () => {
             const isHidden = fullContent.style.display === 'none';
             fullContent.style.display = isHidden ? 'block' : 'none';
-            revealBtn.innerHTML = isHidden ? 'Hide Full Truth' : '<i class="ph ph-book-open-text"></i> Read Full Truth';
+            revealBtn.innerHTML = isHidden ? '<i class="ph ph-caret-up"></i> Hide Full Truth' : '<i class="ph ph-caret-down"></i> Read Full Truth';
         });
     }
 
