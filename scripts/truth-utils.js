@@ -1,4 +1,10 @@
 function initializeTruthPage(truthIndex) {
+    // Dynamically find and update the checklist heading.
+    const checklistHeading = document.querySelector('.truth-checklist h3');
+    if (checklistHeading) {
+        checklistHeading.innerText = 'How to fix this';
+    }
+
     const revealBtn = document.getElementById('reveal-btn');
     const completeBtn = document.getElementById('mark-complete-btn');
     const fullContent = document.getElementById('full-truth-content');
