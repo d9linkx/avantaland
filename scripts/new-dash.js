@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         executorCard.innerHTML = `
             <div class="executor-header">
-                <h3>Today's Big 3</h3>
+                <h3>My Top 3 Goals Today</h3>
             </div>
             <div class="executor-list">
                 ${tasksHtml}
