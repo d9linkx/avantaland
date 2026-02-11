@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `).join('');
         } else {
-            tasksHtml = `<p class="executor-empty">No urgent tasks set for today.</p>`;
+            tasksHtml = `<p class="executor-empty">No plans for today? Set a today goal now.</p>`;
         }
 
         executorCard.innerHTML = `
@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- Section A: The Big 3 -->
                 <div class="planner-section section-big-3">
-                    <h3><i class="ph ph-star-fill" style="color: var(--brand-yellow);"></i> The Big 3 (Non-Negotiables)</h3>
+                    <h3><i class="ph ph-star-fill" style="color: var(--brand-yellow);"></i> Unleash the power of 3</h3>
                     <div class="planner-task-list" id="list-big-3" data-section="big3"></div>
                 </div>
 
