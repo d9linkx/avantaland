@@ -84,25 +84,19 @@ document.addEventListener('DOMContentLoaded', () => {
             saveState();
         });
 
-        prevHackButton.addEventListener('click', () => {
-            if (currentState.currentHackIndex > 0) {
-                displayHack(currentState.currentHackIndex - 1);
-            }
-        });
-
-        nextHackButton.addEventListener('click', () => {
-            if (currentState.currentHackIndex < truthsData.length - 1) {
-                displayHack(currentState.currentHackIndex + 1);
-            }
-        });
-
-        masteryToggleButton.addEventListener('click', toggleMastery);
+        // Note: Event listeners for dynamically loaded content (like next/prev truth buttons)
+        // are now handled within the displayHack function to ensure they are attached
+        // after the elements are added to the DOM.
     }
 
     // --- Rendering Functions ---
 
     function renderHackNavigator() {
-        hackListContainer.innerHTML = '';
+        hackListContainer.innerHTML = `
+            <div class="logo-container" style="padding: 1.5rem 1rem 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem;">
+                <img src="assets/logo-dark.svg" alt="Avantaland Logo" style="height: 30px;">
+            </div>
+        `;
         truthsData.forEach((truth, index) => {
             const li = document.createElement('li');
             li.className = 'hack-list-item';
@@ -199,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="btn-action btn-listen"><i class="ph ph-speaker-high"></i> Listen</button>
             </div>
             <div class="stage-nav-bottom">
+                <button id="prev-hack-btn" class="btn-prev-truth" ${index === 0 ? 'disabled' : ''}><i class="ph ph-arrow-left"></i> Previous Truth</button>
                 <button id="next-hack-btn" class="btn-next-truth" ${index === truthsData.length - 1 ? 'disabled' : ''}>Next Truth <i class="ph ph-arrow-right"></i></button>
             </div>
         `;
@@ -249,6 +244,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (completeBtn && !isMastered) {
                 completeBtn.disabled = !allChecked;
+                if (allChecked) {
+                    // Change text to indicate the next action is to complete the truth.
+                    completeBtn.innerHTML = `<i class="ph ph-check"></i> Complete`;
+                } else {
+                    // Revert to the default text if not all items are checked.
+                    completeBtn.innerHTML = `<i class="ph ph-check"></i> Mark as Completed`;
+                }
             }
         };
         // Initial check
@@ -263,6 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
         nextBtn.addEventListener('click', () => {
             if (index < truthsData.length - 1) {
                 displayHack(index + 1);
+            }
+        });
+
+        // Previous Truth Button
+        const prevBtn = learningStage.querySelector('#prev-hack-btn');
+        prevBtn.addEventListener('click', () => {
+            if (index > 0) {
+                displayHack(index - 1);
             }
         });
 
@@ -364,10 +374,19 @@ document.addEventListener('DOMContentLoaded', () => {
         currentState.progress[index] = true;
         saveState();
 
-        // Re-render everything that depends on progress
-        displayHack(index);
+        // Update persistent UI elements immediately
         renderHackNavigator();
         renderIntelligenceWing();
+
+        // After a short delay, advance to the next available truth
+        setTimeout(() => {
+            if (index < truthsData.length - 1) {
+                displayHack(index + 1);
+            } else {
+                // If it's the last truth, just re-render it in its completed state.
+                displayHack(index);
+            }
+        }, 500); // 500ms delay allows user to perceive the change in navigator/gauge
     }
 
     // Listen for updates from other tabs (sync-back)

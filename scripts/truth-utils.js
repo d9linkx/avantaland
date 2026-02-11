@@ -62,14 +62,15 @@ function initializeTruthPage(truthIndex) {
         if (isCompleted || !completeBtn) return;
         
         const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        completeBtn.disabled = !allChecked;
+
         if (allChecked) {
-            completeBtn.disabled = false;
-            completeBtn.innerHTML = 'Mark as Completed';
+            completeBtn.innerHTML = '<i class="ph ph-check"></i> Complete';
             completeBtn.style.opacity = '1';
             completeBtn.style.cursor = 'pointer';
         } else {
-            completeBtn.disabled = true;
-            completeBtn.innerHTML = 'Complete Checklist First';
+            // Consistent with dashboard: button is disabled but shows the goal.
+            completeBtn.innerHTML = '<i class="ph ph-check"></i> Mark as Completed';
             completeBtn.style.opacity = '0.5';
             completeBtn.style.cursor = 'not-allowed';
         }
