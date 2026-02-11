@@ -844,7 +844,7 @@ body.zen-dashboard-body {
         transition: all 0.3s ease;
     }
 
-    .mobile-logo {
+    img.mobile-logo {
         height: 28px;
         width: auto;
         margin-left: -10px;
