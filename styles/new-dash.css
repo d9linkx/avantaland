@@ -847,7 +847,6 @@ body.zen-dashboard-body {
     img.mobile-logo {
         height: 28px;
         width: auto;
-        margin-left: -10px;
     }
 
     .mobile-top-bar .logo {
@@ -1544,6 +1543,8 @@ input:checked + .slider:before { transform: translateX(20px); }
     background: #DBEAFE; /* Soft Electric Blue */
     border-radius: 28px;
     padding: 2rem;
+    margin-left: -4rem;
+    margin-right: -4rem;
     box-shadow: 0 10px 40px rgba(41, 121, 255, 0.15); /* Soft Blue Glow */
     position: relative;
     overflow: hidden;
@@ -1613,12 +1614,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     background: #FFFFFF;
     border-radius: 24px;
     padding: 1.5rem 2rem;
+    margin-left: -4rem;
+    margin-right: -4rem;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
 .executor-header h3 {
-    font-size: 1.2rem;
+    font-size: 1.7rem;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0 0 1rem 0;
@@ -1677,7 +1680,10 @@ input:checked + .slider:before { transform: translateX(20px); }
     }
     
     .master-card, .executor-card {
-        margin: 0 16px; /* Restore floating margin for mobile */
+        margin-top: -1rem;
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+        margin-bottom: 1rem;
         padding: 1.5rem;
         border-radius: 24px;
     }
@@ -1685,3 +1691,4 @@ input:checked + .slider:before { transform: translateX(20px); }
     .master-title { font-size: 1.5rem; }
     .btn-master-resume { width: 100%; }
 }
+

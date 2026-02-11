@@ -1052,6 +1052,96 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.className = 'mobile-overlay';
         document.body.appendChild(overlay);
 
+        // Inject CSS for Hacks Drawer
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .hacks-drawer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 30vh;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-radius: 24px 24px 0 0;
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+                z-index: 2000;
+                transform: translateY(100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: flex;
+                flex-direction: column;
+            }
+            .hacks-drawer.active {
+                transform: translateY(0);
+            }
+            .drawer-header {
+                padding: 1rem;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+            .search-container {
+                background: rgba(0,0,0,0.05);
+                border-radius: 12px;
+                padding: 0.5rem 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .search-container input {
+                border: none;
+                background: transparent;
+                width: 100%;
+                outline: none;
+                font-size: 1rem;
+                color: var(--text-primary);
+            }
+            .drawer-list {
+                overflow-y: auto;
+                flex: 1;
+                padding: 0.5rem 0;
+            }
+            .drawer-item {
+                padding: 0.75rem 1.5rem;
+                border-bottom: 1px solid rgba(41, 121, 255, 0.1);
+                font-size: 0.95rem;
+                color: var(--text-primary);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .drawer-item.active {
+                color: var(--brand-blue);
+                font-weight: 600;
+            }
+            .drawer-item.active::before {
+                content: '';
+                display: block;
+                width: 6px;
+                height: 6px;
+                background: var(--brand-yellow);
+                border-radius: 50%;
+            }
+            body.drawer-open {
+                overflow: hidden !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Create Hacks Drawer
+        const drawer = document.createElement('div');
+        drawer.className = 'hacks-drawer';
+        drawer.innerHTML = `
+            <div class="drawer-header">
+                <div class="search-container">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input type="text" placeholder="Find a hack..." id="hack-search-input">
+                </div>
+            </div>
+            <div class="drawer-list" id="hacks-drawer-list"></div>
+        `;
+        document.body.appendChild(drawer);
+
         // Toggle Logic
         const sidebar = document.querySelector('.hack-navigator');
         const overlayEl = document.querySelector('.mobile-overlay');
@@ -1073,6 +1163,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        const drawerList = drawer.querySelector('#hacks-drawer-list');
+        const searchInput = drawer.querySelector('#hack-search-input');
+
+        function renderDrawerItems(filter = '') {
+            drawerList.innerHTML = '';
+            truthsData.forEach((truth, index) => {
+                if (truth.title.toLowerCase().includes(filter.toLowerCase()) || String(index + 1).includes(filter)) {
+                    const item = document.createElement('div');
+                    item.className = `drawer-item ${currentState.currentHackIndex === index ? 'active' : ''}`;
+                    item.innerHTML = `${String(index + 1).padStart(2, '0')}. ${truth.title}`;
+                    item.addEventListener('click', () => {
+                        displayHack(index);
+                        toggleDrawer(false);
+                    });
+                    drawerList.appendChild(item);
+                }
+            });
+        }
+        renderDrawerItems();
+
+        searchInput.addEventListener('input', (e) => renderDrawerItems(e.target.value));
+
+        function toggleDrawer(show) {
+            if (show) {
+                drawer.classList.add('active');
+                overlayEl.classList.add('active');
+                document.body.classList.add('drawer-open');
+                renderDrawerItems(); // Re-render to show active state
+            } else {
+                drawer.classList.remove('active');
+                overlayEl.classList.remove('active');
+                document.body.classList.remove('drawer-open');
+            }
+        }
+
         navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 const target = item.dataset.target;
@@ -1081,9 +1206,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 setActiveNav(target);
 
                 if (target === 'hacks') {
-                    toggleSidebar(true);
+                    toggleSidebar(false);
+                    toggleDrawer(true);
                 } else {
                     toggleSidebar(false);
+                    toggleDrawer(false);
                     if (target === 'home') {
                         renderDashboardGrid();
                     } else if (target === 'planner') {
@@ -1099,6 +1226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         overlayEl.addEventListener('click', () => {
             toggleSidebar(false);
+            toggleDrawer(false);
             setActiveNav('home'); // Revert to home when closing sidebar via overlay
         });
 
