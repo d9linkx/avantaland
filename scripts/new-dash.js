@@ -56,12 +56,21 @@ document.addEventListener('DOMContentLoaded', () => {
             email: '',
             dreamResult: '',
             avatar: null
-        }
+        },
+        lastVisit: null
     };
+
+    let lastVisitTime = null;
 
     // --- Initialization ---
     function init() {
         loadState();
+        
+        // Capture last visit time before updating it
+        lastVisitTime = currentState.lastVisit;
+        currentState.lastVisit = Date.now();
+        saveState();
+
         renderHackNavigator();
         renderIntelligenceWing();
         renderDashboardGrid(); // Default to dashboard view
@@ -76,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentState.notes = localStorage.getItem('bizLabFeedbackNotes') || '';
             currentState.planner = JSON.parse(localStorage.getItem('bizLabPlanner')) || { tasks: [], timer: { timeLeft: 1500, isRunning: false } };
             currentState.profile = JSON.parse(localStorage.getItem('bizLabProfile')) || { name: 'Founder', email: '', dreamResult: '', avatar: null };
+            currentState.lastVisit = JSON.parse(localStorage.getItem('bizLabLastVisit')) || null;
         } catch (e) {
             console.error("Error loading state from localStorage", e);
         }
@@ -87,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('bizLabFeedbackNotes', currentState.notes);
         localStorage.setItem('bizLabPlanner', JSON.stringify(currentState.planner));
         localStorage.setItem('bizLabProfile', JSON.stringify(currentState.profile));
+        localStorage.setItem('bizLabLastVisit', JSON.stringify(currentState.lastVisit));
     }
 
     function setupEventListeners() {
@@ -142,61 +153,134 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderDashboardGrid() {
         learningStage.innerHTML = `
+            <div class="dashboard-header"></div>
             <div class="dashboard-grid"></div>
         `;
+        updateDashboardHeader();
+
         const gridContainer = learningStage.querySelector('.dashboard-grid');
 
         // --- Card 1: Next Hack ---
-        const nextHackIndex = findNextUncompletedHack();
-        const nextHack = truthsData[nextHackIndex];
-        const nextHackCard = createPowerCard(
-            'Next Hack',
-            `#${String(nextHackIndex + 1).padStart(2, '0')}: ${nextHack.title}`,
-            'ph-rocket-launch',
-            'icon-color-1'
-        );
-        nextHackCard.addEventListener('click', () => displayHack(nextHackIndex));
-        gridContainer.appendChild(nextHackCard);
-
-        // --- Card 2: Urgent Task (Planner) ---
-        const urgentTask = getUrgentPlannerTask();
-        const plannerCard = createPowerCard(
-            'Urgent Task',
-            urgentTask || 'No urgent tasks in planner.',
-            'ph-bell-ringing',
-            'icon-color-2',
-            null
-        );
-        plannerCard.addEventListener('click', renderPlanner);
-        gridContainer.appendChild(plannerCard);
-
-        // --- Card 3: Market Intelligence ---
-        const feedbackSnippet = currentState.notes.substring(0, 100) + (currentState.notes.length > 100 ? '...' : '');
-        const intelligenceCard = createPowerCard(
-            'Market Intelligence',
-            feedbackSnippet || 'No feedback notes yet. Use the right panel to add some.',
-            'ph-lightbulb',
-            'icon-color-3'
-        );
-        intelligenceCard.addEventListener('click', () => {
-            alert('Insights/Test Group feed coming soon!');
-        });
-        gridContainer.appendChild(intelligenceCard);
-
-        // --- Card 4: Vault Access ---
-        const vaultCard = createPowerCard(
-            'The Vault',
-            'Access resource library, templates, and downloads.',
-            'ph-archive',
-            'icon-color-4'
-        );
-        vaultCard.addEventListener('click', () => {
-            alert('Resource library coming soon!');
-        });
-        gridContainer.appendChild(vaultCard);
 
         // Restore default right sidebar
         renderIntelligenceWing();
+    }
+
+    async function updateDashboardHeader() {
+        const header = learningStage.querySelector('.dashboard-header');
+        if (!header) return;
+
+        // --- 1. Master Card Logic ---
+        const nextHackIndex = findNextUncompletedHack();
+        const nextHack = truthsData[nextHackIndex];
+        
+        // Calculate Progress
+        let completedTasks = 0;
+        let totalTasks = 0;
+        
+        // We need to fetch the truth HTML to count checkboxes
+        try {
+            const response = await fetch(`truth${nextHackIndex + 1}.html`);
+            if (response.ok) {
+                const text = await response.text();
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = text;
+                const checkboxes = tempDiv.querySelectorAll('input[type="checkbox"]');
+                totalTasks = checkboxes.length;
+                
+                // Count checked items from state
+                const checklistState = currentState.checklist[nextHackIndex] || [];
+                // We only count up to totalTasks to avoid index out of bounds if HTML changed
+                for(let i=0; i<totalTasks; i++) {
+                    if (checklistState[i]) completedTasks++;
+                }
+            }
+        } catch (e) {
+            console.warn("Could not fetch truth HTML for progress", e);
+        }
+
+        const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+        const tasksRemaining = totalTasks - completedTasks;
+
+        // Format Last Visit
+        const lastVisitStr = formatLastVisit(lastVisitTime);
+
+        // Master Card HTML
+        const masterCard = document.createElement('div');
+        masterCard.className = 'master-card';
+        
+        let actionText = `You're currently mastering Hack #${String(nextHackIndex + 1).padStart(2, '0')}. You have ${tasksRemaining} tasks remaining before you're ready for the next level.`;
+        if (tasksRemaining === 0 && totalTasks > 0) {
+             actionText = `Boom! Hack #${String(nextHackIndex + 1).padStart(2, '0')} is crushed. Ready to dominate the next one? The market is waiting.`;
+        } else if (totalTasks === 0) {
+             actionText = `Ready to start Hack #${String(nextHackIndex + 1).padStart(2, '0')}? The market is waiting.`;
+        }
+
+        masterCard.innerHTML = `
+            <div class="master-card-content">
+                <p class="master-hook">Welcome back. You were last here ${lastVisitStr}.</p>
+                <h3 class="master-title">Hack #${String(nextHackIndex + 1).padStart(2, '0')}</h3>
+                <p class="master-action">${actionText}</p>
+                <div class="master-progress-container">
+                    <div class="master-progress-bar" style="width: ${progressPercent}%"></div>
+                </div>
+                <button class="btn-master-resume">Resume <i class="ph ph-arrow-right"></i></button>
+            </div>
+        `;
+        
+        masterCard.querySelector('.btn-master-resume').addEventListener('click', () => displayHack(nextHackIndex));
+        header.appendChild(masterCard);
+
+        // --- 2. Daily Executor Card Logic ---
+        const plannerTasks = currentState.planner.tasks || [];
+        // Filter for Big 3 and not completed
+        const big3Tasks = plannerTasks.filter(t => t.section === 'big3' && !t.completed).slice(0, 2);
+
+        const executorCard = document.createElement('div');
+        executorCard.className = 'executor-card';
+        
+        let tasksHtml = '';
+        if (big3Tasks.length > 0) {
+            tasksHtml = big3Tasks.map(t => `
+                <div class="executor-task">
+                    <i class="ph-fill ph-check-circle executor-check"></i>
+                    <span>${t.text}</span>
+                </div>
+            `).join('');
+        } else {
+            tasksHtml = `<p class="executor-empty">No urgent tasks set for today.</p>`;
+        }
+
+        executorCard.innerHTML = `
+            <div class="executor-header">
+                <h3>Today's Big 3</h3>
+            </div>
+            <div class="executor-list">
+                ${tasksHtml}
+            </div>
+            <button class="btn-open-planner">Open Full Planner <i class="ph ph-arrow-right"></i></button>
+        `;
+
+        executorCard.querySelector('.btn-open-planner').addEventListener('click', renderPlanner);
+        header.appendChild(executorCard);
+    }
+
+    function formatLastVisit(timestamp) {
+        if (!timestamp) return 'for the first time';
+        const date = new Date(timestamp);
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        const timeStr = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        
+        if (date.toDateString() === now.toDateString()) {
+            return `Today at ${timeStr}`;
+        } else if (date.toDateString() === yesterday.toDateString()) {
+            return `Yesterday at ${timeStr}`;
+        } else {
+            return `${date.toLocaleDateString()} at ${timeStr}`;
+        }
     }
 
     function renderProfileRightSidebar() {
