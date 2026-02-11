@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings & Profile - Avantaland</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F9FAFB;
+            color: #1A202C;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+        .header {
+            margin-bottom: 3rem;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #718096;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #4A5568;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        .btn-save {
+            background: #2979FF;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn-danger {
+            background: #FFF5F5;
+            color: #C53030;
+            border: 1px solid #FEB2B2;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="new-dashboard.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to Dashboard</a>
+        <div class="header">
+            <h1>Settings & Profile</h1>
+            <p>Manage your account and preferences.</p>
+        </div>
+
+        <div class="card">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" value="Alex" disabled style="background: #F7FAFC; cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" value="alex@example.com" disabled style="background: #F7FAFC; cursor: not-allowed;">
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top: 0; color: #C53030;">Danger Zone</h3>
+            <p style="color: #718096; margin-bottom: 1.5rem;">Resetting your progress will clear all completed hacks and checklist items. This cannot be undone.</p>
+            <button class="btn-danger" onclick="if(confirm('Are you sure? This will wipe all your progress.')) { localStorage.clear(); alert('Progress reset.'); window.location.href='new-dashboard.html'; }">Reset All Progress</button>
+        </div>
+    </div>
+</body>
+</html>

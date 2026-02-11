@@ -13,691 +13,550 @@
     <style>
         /* --- ZenHR 3-Column Visual Language --- */
         :root {
-            --zen-bg: #F8FAFC;
-            --zen-surface: #FFFFFF;
-            --zen-text-primary: #1A202C;
-            --zen-text-secondary: #718096;
-            --zen-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-            --zen-radius: 24px;
-            --brand-color: #2979FF;
-            --green-dark: #2C7A7B;
-            --green-light: #E6FFFA;
-            --amber-dark: #B7791F;
-            --amber-light: #FFFBE6;
-            --gray-dark: #A0AEC0;
-            --gray-light: #F1F5F9;
+            --bg-main: #F9FAFB;
+            --bg-sidebar: #FFFFFF;
+            --text-primary: #1A202C;
+            --text-secondary: #718096;
+            --text-light: #A0AEC0;
+            --brand-blue: #2979FF;
+            --brand-blue-soft: #EBF8FF;
+            --border-color: #E2E8F0;
+            --shadow: 0 10px 40px rgba(0,0,0,0.03);
+            --radius: 24px;
+            --dot-green: #10B981;
+            --dot-yellow: #F59E0B;
+            --dot-gray: #CBD5E1;
         }
 
         body.zen-dashboard-body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--zen-bg);
-            color: var(--zen-text-primary);
+            background-color: var(--bg-main);
+            color: var(--text-primary);
             line-height: 1.5rem;
         }
 
         /* --- 3-Column Layout --- */
-        .zen-dashboard-container {
+        .workstation-container {
             display: grid;
-            grid-template-columns: 1.5fr 6fr 2.5fr; /* Approx 15% 60% 25% */
-            gap: 32px;
-            padding: 2rem;
-            height: calc(100vh - 80px); /* Adjust 80px based on actual header height */
+            grid-template-columns: 20% 55% 25%; /* Fixed percentages */
+            gap: 0;
+            min-height: 100vh;
         }
 
         /* --- Column 1: Left Sidebar --- */
-        .left-sidebar {
-            background: var(--zen-surface);
-            border-radius: var(--zen-radius);
-            box-shadow: var(--zen-shadow);
-            padding: 2rem 1.5rem;
+        .hack-navigator {
+            background: var(--bg-sidebar);
+            padding: 0;
             display: flex;
             flex-direction: column;
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
+            position: sticky;
+            top: 0;
         }
         .sidebar-logo {
-            padding: 0 0.5rem;
-            margin-bottom: 3rem;
+            padding: 2rem 1.5rem;
+            margin-bottom: 1rem;
         }
         .sidebar-logo img {
-            height: 30px;
-            filter: none; /* Override dark theme filter */
+            height: 28px;
+            width: auto;
         }
         .sidebar-nav {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0 1rem;
         }
-        .sidebar-nav .nav-item {
+        .nav-item {
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 1rem;
-            border-radius: 16px;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
             text-decoration: none;
-            color: var(--zen-text-secondary);
+            color: var(--text-secondary);
             font-weight: 600;
             transition: all 0.2s ease;
         }
-        .sidebar-nav .nav-item i {
-            font-size: 1.5rem;
-            color: var(--gray-dark);
-            transition: all 0.2s ease;
+        .nav-item:hover {
+            background: #F8FAFC;
+            color: var(--text-primary);
         }
-        .sidebar-nav .nav-item:hover {
-            background: var(--gray-light);
-            color: var(--zen-text-primary);
+        .nav-item.active {
+            background: var(--brand-blue-soft);
+            color: var(--brand-blue);
         }
-        .sidebar-nav .nav-item.active {
-            background: #EBF2FF;
-            color: var(--brand-color);
-        }
-        .sidebar-nav .nav-item.active i {
-            color: var(--brand-color);
+        .nav-item i {
+            font-size: 1.2rem;
         }
         .sidebar-profile {
             margin-top: auto;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 1rem;
-            border-top: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .sidebar-profile:hover {
+            background: #F8FAFC;
         }
         .profile-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--brand-color);
+            background: var(--brand-blue);
             color: white;
-            display: grid;
-            place-items: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 700;
         }
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
         .profile-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        .profile-role {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .hack-accordion summary {
+            font-weight: 700;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-primary);
+        }
+        .hack-accordion summary::-webkit-details-marker { display: none; }
+        .hack-accordion[open] summary .ph-caret-down { transform: rotate(180deg); }
+        .hack-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .hack-list-item {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            border-left: 4px solid transparent;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .hack-list-item:hover {
+            background: #F8FAFC;
+            color: var(--text-primary);
+        }
+        .hack-list-item.active {
+            background: var(--brand-blue-soft);
+            color: var(--brand-blue);
             font-weight: 600;
+            border-left-color: var(--brand-blue);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .status-dot.mastered { background: var(--dot-green); }
+        .status-dot.in-progress { background: var(--dot-yellow); }
+        .status-dot.locked { background: var(--dot-gray); }
+        .hack-title-nav {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* --- Column 2: Main Content Feed --- */
-        .main-content-feed {
-            overflow-y: auto;
-            padding-right: 1rem; /* For scrollbar */
+        .learning-stage {
+            padding: 4rem 5rem;
+            background: var(--bg-main);
         }
-        .main-content-feed::-webkit-scrollbar { width: 6px; }
-        .main-content-feed::-webkit-scrollbar-track { background: transparent; }
-        .main-content-feed::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 3px; }
-
-        .greeting-header {
+        .stage-nav-top {
+            margin-bottom: 1.5rem;
+        }
+        .stage-header {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
+            align-items: flex-start;
             margin-bottom: 2rem;
+            flex-direction: column;
         }
-        .greeting-header h1 {
+        .stage-header h1 {
             font-size: 2.5rem;
             font-weight: 800;
             margin: 0;
+            line-height: 1.3;
+            color: var(--text-primary);
+            max-width: 85%;
         }
-        .greeting-clock {
-            font-size: 2rem;
-            font-weight: 300; /* Thin font */
-            color: var(--zen-text-secondary);
+        .truth-number {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--brand-blue);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
-
-        .truth-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* Vertical scroll */
-            gap: 1.5rem;
+        .stage-body {
+            margin-top: 3rem;
+            animation: contentFadeIn 0.3s ease-in-out;
         }
-
-        .truth-card {
-            background: var(--zen-surface);
-            border-radius: var(--zen-radius);
-            box-shadow: var(--zen-shadow);
-            padding: 24px;
-            text-decoration: none;
+        @keyframes contentFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .executive-summary {
+            margin-bottom: 3rem;
+        }
+        .executive-summary h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        .strategy-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 800px;
+        }
+        .checklist-wrapper h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+        .checklist-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        .btn-mastery-toggle {
+            padding: 10px 20px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            background: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            white-space: nowrap;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow);
+        }
+        .btn-mastery-toggle:hover {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+            transform: translateY(-2px);
+        }
+        .btn-mastery-toggle.mastered {
+            background: var(--dot-green);
+            border-color: var(--dot-green);
+            color: white;
+            cursor: default;
+            box-shadow: none;
+        }
+        .checklist-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 1.5rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 24px;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
         }
-        .truth-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+        .checklist-item:hover {
+            transform: translateY(-2px);
         }
-        .truth-card-content {
-            flex-grow: 1;
+        .checklist-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            accent-color: var(--brand-blue);
+            cursor: pointer;
         }
-        .truth-title {
+        .checklist-item label {
+            font-size: 1rem;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        .stage-footer-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+        .btn-action {
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-complete {
+            background: var(--text-primary);
+            color: white;
+        }
+        .btn-complete.completed {
+            background: var(--dot-green);
+            cursor: default;
+        }
+        .btn-reveal, .btn-listen {
+            background: white;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .btn-back-dashboard {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            padding: 0;
+        }
+        .stage-nav-bottom {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .btn-next-truth {
+            background: none;
+            border: none;
+            color: var(--brand-blue);
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--zen-text-primary);
-            margin: 0 0 0.25rem 0;
         }
-        .truth-desc {
-            font-size: 0.9rem;
-            color: var(--zen-text-secondary);
-            margin: 0;
-        }
-        .pill-badge {
-            border-radius: 20px;
-            padding: 6px 14px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .truth-card.completed .pill-badge { background: var(--green-light); color: var(--green-dark); }
-        .truth-card.in-progress .pill-badge { background: var(--amber-light); color: var(--amber-dark); }
-        .truth-card.not-started .pill-badge { background: var(--gray-light); color: var(--gray-dark); }
-
-        .truth-card.completed { opacity: 0.7; }
-        .truth-card.completed .truth-title { text-decoration: line-through; }
 
         /* --- Column 3: Right Sidebar --- */
-        .right-sidebar {
+        .intelligence-wing {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-left: 1px solid rgba(0,0,0,0.05);
+            padding: 2rem;
             display: flex;
             flex-direction: column;
+            height: 100vh;
+            position: sticky;
+            top: 0;
             gap: 2rem;
         }
         .widget-card {
-            background: var(--zen-surface);
-            border-radius: var(--zen-radius);
-            box-shadow: var(--zen-shadow);
+            background: white;
+            border-radius: 24px;
             padding: 24px;
+            box-shadow: var(--shadow);
         }
         .widget-card h3 {
-            font-size: 1.2rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            margin: 0 0 1rem 0;
+            margin: 0 0 1.5rem 0;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Mastery Gauge Widget */
-        .progress-gauge {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background: conic-gradient(var(--brand-color) 0deg, #e2e8f0 0deg);
+        .progress-gauge-thin {
+            width: 150px;
+            height: 150px;
             position: relative;
             margin: 1rem auto;
         }
-        .progress-gauge::before {
-            content: '';
+        .progress-gauge-thin svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .progress-gauge-thin circle {
+            fill: none;
+            stroke-width: 6;
+        }
+        .progress-gauge-thin .track {
+            stroke: var(--border-color);
+        }
+        .progress-gauge-thin .progress {
+            stroke: var(--brand-blue);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.3s ease-in-out;
+        }
+        .progress-gauge-thin-value {
             position: absolute;
-            width: 80%;
-            height: 80%;
-            background: var(--zen-surface);
-            border-radius: 50%;
-        }
-        .progress-gauge-value {
-            position: relative;
-            font-size: 1.8rem;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
             font-weight: 800;
-        }
-        #mastery-subtext {
-            text-align: center;
-            color: var(--zen-text-secondary);
-            font-size: 0.9rem;
-            margin-top: 1rem;
+            color: var(--text-primary);
         }
 
         /* Brutal Truth Widget (Glassmorphism) */
-        .brutal-truth-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        .brutal-truth-card p {
+        .daily-pill-card p {
             font-size: 1.1rem;
             font-weight: 600;
             line-height: 1.6;
-            color: var(--zen-text-primary);
+            color: var(--text-primary);
+            font-style: italic;
         }
 
         /* Feedback Widget */
         .feedback-widget textarea {
             width: 100%;
-            min-height: 80px;
-            border: 1px solid var(--gray-light);
-            border-radius: 16px;
+            min-height: 100px;
+            border: none;
+            border-radius: 12px;
             padding: 1rem;
             font-family: inherit;
             font-size: 0.9rem;
             resize: vertical;
-            background: var(--zen-bg);
+            background: #F1F5F9;
+            color: var(--text-primary);
         }
-        .feedback-widget button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 1rem;
-            border-radius: 12px;
-            border: none;
-            background: var(--brand-color);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .feedback-widget button:hover {
-            background: #1E60CC;
+        .feedback-widget textarea:focus {
+            outline: 2px solid var(--brand-blue);
+            background: white;
         }
 
         /* --- Responsive Adjustments --- */
         @media (max-width: 1200px) {
-            .zen-dashboard-container {
-                grid-template-columns: 1fr;
-                height: auto;
+            .workstation-container {
+                grid-template-columns: 280px 1fr; /* Collapse to 2 columns */
             }
-            .left-sidebar, .right-sidebar {
-                display: none; /* Hide sidebars on smaller screens for simplicity */
-            }
-            .main-content-feed {
-                overflow-y: visible;
-                padding-right: 0;
-            }
+            .intelligence-wing { display: none; }
+            .learning-stage { padding: 3rem; }
         }
         @media (max-width: 768px) {
-            .zen-dashboard-container {
-                padding: 1rem;
-                gap: 1.5rem;
+            .workstation-container {
+                grid-template-columns: 1fr;
+                height: auto;
+                display: block;
             }
-            .greeting-header {
+            .hack-navigator { 
+                display: none; /* Hide sidebar on mobile by default */
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            } 
+            /* Add a class to show sidebar if needed via JS toggle later */
+            .hack-navigator.active { display: flex; }
+
+            .learning-stage { 
+                padding: 2rem 1.5rem; 
+                height: auto;
+                overflow-y: visible;
+            }
+            .stage-header h1 { font-size: 1.75rem; }
+            .stage-footer-actions {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-                margin-bottom: 1.5rem;
             }
-            .greeting-header h1 { font-size: 1.8rem; }
-            .greeting-clock { font-size: 1.5rem; }
-            .truth-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
+            .btn-action { width: 100%; justify-content: center; }
         }
 
         /* --- Hiding old elements --- */
-        .lab-header, .dashboard-controls, .progress-container, .greeting-widget, .info-sidebar, .action-center > h2, .action-center > p {
+        .lab-main, #header-placeholder {
             display: none !important;
-        }
-
-        /* --- Modal Styles (Untouched) --- */
-        /* Welcome Modal Styles */
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-        }
-        @keyframes modalPop {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .welcome-content h2 {
-            margin-top: 0;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-        .welcome-content p {
-            font-size: 13px;
-            line-height: 1.6;
-            color: #475569;
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-        .checkbox-wrapper {
-            margin-top: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 10px;
-            color: #64748B;
-            cursor: pointer;
-        }
-        .checkbox-wrapper input {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-        .checkbox-wrapper label {
-            cursor: pointer;
-            user-select: none;
-        }
-        /* Onboarding Steps Styles */
-        .onboarding-step {
-            text-align: center;
-            display: none;
-        }
-        .onboarding-step.active {
-            display: block;
-            animation: fadeInStep 0.4s ease-out;
-        }
-        .step-visual {
-            margin: 1.5rem 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .step-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #E2E8F0;
-            transition: all 0.3s ease;
-        }
-        .step-dot.active {
-            background: #2979FF;
-            width: 24px;
-            border-radius: 10px;
-        }
-        @keyframes fadeInStep {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body class="zen-dashboard-body">
     <div id="header-placeholder"></div>
 
-    <div class="zen-dashboard-container">
+    <div class="workstation-container">
         <!-- Column 1: Left Sidebar -->
-        <aside class="left-sidebar">
+        <aside class="hack-navigator">
             <div class="sidebar-logo">
                 <img src="images/logo.png" alt="Avantaland Logo">
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active"><i class="ph-fill ph-layout"></i><span>Dashboard</span></a>
-                <a href="#" class="nav-item"><i class="ph-fill ph-chart-line-up"></i><span>My Progress</span></a>
-                <a href="#" class="nav-item"><i class="ph-fill ph-star"></i><span>Testimonials</span></a>
-                <a href="#" class="nav-item"><i class="ph-fill ph-chats-circle"></i><span>Group Chat</span></a>
+                <a href="#" class="nav-item active"><i class="ph ph-layout"></i> Dashboard</a>
+                <a href="#" class="nav-item"><i class="ph ph-chart-line-up"></i> My Progress</a>
+                <a href="planner.html" class="nav-item"><i class="ph ph-calendar-check"></i> Planner</a>
+                <a href="#" class="nav-item"><i class="ph ph-star"></i> Testimonials</a>
+                <a href="#" class="nav-item"><i class="ph ph-chats-circle"></i> Group Chat</a>
             </nav>
-            <div class="sidebar-profile">
+            <details class="hack-accordion">
+                <summary>The 33 Sales Hacks <i class="ph ph-caret-down"></i></summary>
+                <ul class="hack-list">
+                    <!-- Hack list will be populated by JS -->
+                </ul>
+            </details>
+            <div class="sidebar-profile" onclick="window.location.href='settings.html'">
                 <div class="profile-avatar">A</div>
-                <span class="profile-name">Alex</span>
+                <div class="profile-info">
+                    <span class="profile-name">Alex</span>
+                    <span class="profile-role">Founder</span>
+                </div>
             </div>
         </aside>
 
         <!-- Column 2: Main Content -->
-        <main class="main-content-feed">
-            <div class="greeting-header">
-                <div class="greeting-text">
-                    <h1>Good morning, Alex</h1>
-                </div>
-                <div class="greeting-clock" id="live-clock"></div>
+        <main class="learning-stage">
+            <div class="stage-header">
+                <h1></h1>
+                <button class="btn-mastery-toggle">Mark as Mastered</button>
             </div>
-
-            <div class="action-center">
-                <div class="truth-grid">
-                    <a href="truth1.html" class="truth-card" data-category="foundation" data-id="0">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">You are unqualified; no amount of prep survives first contact</h3>
-                            <p class="truth-desc">Embrace the chaos of the real world. Your first plan will fail, and that's okay.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth2.html" class="truth-card" data-category="foundation" data-id="1">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Passion is a poverty trap; the market doesn't care how much you "love" your idea</h3>
-                            <p class="truth-desc">Solve a real, painful problem for a paying market, not just something you enjoy building.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth3.html" class="truth-card" data-category="foundation" data-id="2">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">If you can’t eat "No" for breakfast, you'll starve</h3>
-                            <p class="truth-desc">Rejection is data. Learn from it, don't let it define you. Every 'no' gets you closer to a 'yes'.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth4.html" class="truth-card" data-category="foundation" data-id="3">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">You will want to burn your own company to the ground at least 10 times</h3>
-                            <p class="truth-desc">Entrepreneurship is a rollercoaster of emotions. Resilience is your most valuable asset.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth5.html" class="truth-card" data-category="foundation" data-id="4">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Confidence is learned through small wins, not pep talks</h3>
-                            <p class="truth-desc">Take small, consistent actions. Momentum builds belief faster than any motivational speech.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth6.html" class="truth-card" data-category="foundation" data-id="5">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Expect chaos; it’s the default state of early businesses</h3>
-                            <p class="truth-desc">Your job is not to avoid chaos, but to navigate it. Create systems to manage the mess.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth7.html" class="truth-card" data-category="foundation" data-id="6">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Your first plan is almost always wrong; accept it</h3>
-                            <p class="truth-desc">The goal is not to have a perfect plan, but to adapt faster than your competition.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth8.html" class="truth-card" data-category="foundation" data-id="7">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Most people want to see you fail so they feel better about staying safe</h3>
-                            <p class="truth-desc">Don't seek validation from those who haven't taken the risk. Your results are the only reply needed.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth9.html" class="truth-card" data-category="foundation" data-id="8">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Your idea isn’t unique; someone else is already thinking it</h3>
-                            <p class="truth-desc">Success is not about the idea, it's about superior execution. Move faster and smarter.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth10.html" class="truth-card" data-category="foundation" data-id="9">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Validation kills ego: people will tell you it sucks. Listen</h3>
-                            <p class="truth-desc">Brutal feedback is a gift. It shows you the path to a product people will actually buy.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth11.html" class="truth-card" data-category="foundation" data-id="10">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Building something for yourself is tempting but dangerous</h3>
-                            <p class="truth-desc">You are not your customer. Build for a specific market, not your own preferences.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth12.html" class="truth-card" data-category="foundation" data-id="11">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">A small, obsessed niche is better than a large lukewarm market</h3>
-                            <p class="truth-desc">Find a small group with a big problem. Dominate that niche, then expand.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth13.html" class="truth-card" data-category="foundation" data-id="12">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Talking to users before coding is mandatory</h3>
-                            <p class="truth-desc">Don't waste months building something nobody wants. A conversation is cheaper than code.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth14.html" class="truth-card" data-category="foundation" data-id="13">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Surveys lie; prototypes don’t</h3>
-                            <p class="truth-desc">What people say and what they do are different. Watch their actions, not their words.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth15.html" class="truth-card" data-category="foundation" data-id="14">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Solve the bleeding wound today, not the itch they might have next year</h3>
-                            <p class="truth-desc">Focus on urgent, high-pain problems. People pay for painkillers, not vitamins.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth16.html" class="truth-card" data-category="foundation" data-id="15">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">If you aren’t embarrassed by the first version of your MVP, you shipped too late</h3>
-                            <p class="truth-desc">Perfection is the enemy of progress. Ship, learn, and iterate. Speed is your advantage.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth17.html" class="truth-card" data-category="scaling" data-id="16">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Features are distractions. Focus on outcomes</h3>
-                            <p class="truth-desc">Customers don't buy features, they buy results. What transformation are you selling?</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth18.html" class="truth-card" data-category="scaling" data-id="17">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">You’ll iterate more than you plan. Accept it</h3>
-                            <p class="truth-desc">The product is never "done." Continuous improvement is the path to market leadership.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth19.html" class="truth-card" data-category="defense" data-id="18">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Documentation is not sexy but will save you weeks</h3>
-                            <p class="truth-desc">Write it down. Your future self (and your team) will thank you. Clarity scales.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth20.html" class="truth-card" data-category="scaling" data-id="19">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Your first codebase will suck. Refactor later</h3>
-                            <p class="truth-desc">Prioritize speed and learning early on. You can't refactor a business that's already dead.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth21.html" class="truth-card" data-category="scaling" data-id="20">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">UX is the silent growth engine. Ignore at your peril</h3>
-                            <p class="truth-desc">A smooth user experience reduces friction and turns users into advocates.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth22.html" class="truth-card" data-category="scaling" data-id="21">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">A "good" product shipped today beats a "perfect" one that never exists</h3>
-                            <p class="truth-desc">The market rewards speed and responsiveness, not theoretical perfection.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth23.html" class="truth-card" data-category="foundation" data-id="22">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Your friends are liars; they love you, so they’ll let you go bankrupt with a smile</h3>
-                            <p class="truth-desc">Seek feedback from impartial strangers who have no reason to protect your feelings.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth24.html" class="truth-card" data-category="scaling" data-id="23">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Early adopters are gold; casual users are noise</h3>
-                            <p class="truth-desc">Listen to the users who feel the pain most acutely. They will guide your roadmap.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth25.html" class="truth-card" data-category="scaling" data-id="24">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">People don’t buy products. They buy what solves their problem</h3>
-                            <p class="truth-desc">Stop selling your product. Start selling the customer's desired future state.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth26.html" class="truth-card" data-category="scaling" data-id="25">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Marketing starts before product; awareness is traction</h3>
-                            <p class="truth-desc">Build an audience before you have something to sell. It's your unfair advantage.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth27.html" class="truth-card" data-category="scaling" data-id="26">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Feedback is a weapon; use it like a boss, or your competitors will</h3>
-                            <p class="truth-desc">Create tight feedback loops to out-learn and out-iterate everyone else in your market.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth28.html" class="truth-card" data-category="scaling" data-id="27">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">You can't "growth hack" a product that nobody wants</h3>
-                            <p class="truth-desc">Marketing can't fix a broken product. Nail the core value proposition first.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth29.html" class="truth-card" data-category="defense" data-id="28">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">You can’t do everything</h3>
-                            <p class="truth-desc">Focus is your superpower. Say 'no' to good ideas to make room for great ones.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth30.html" class="truth-card" data-category="defense" data-id="29">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Your network is your early advantage. Don’t build in isolation</h3>
-                            <p class="truth-desc">Leverage your connections for advice, introductions, and your first customers.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth31.html" class="truth-card" data-category="defense" data-id="30">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Hiring before revenue is a gamble; hire slow, fire fast</h3>
-                            <p class="truth-desc">The wrong hire can be fatal. Be incredibly selective and act decisively on mistakes.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth32.html" class="truth-card" data-category="defense" data-id="31">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">If your mentor only tells you what you want to hear, fire them</h3>
-                            <p class="truth-desc">A true mentor challenges you and holds you accountable, even when it's uncomfortable.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
-                    <a href="truth33.html" class="truth-card" data-category="defense" data-id="32">
-                        <div class="truth-card-content">
-                            <h3 class="truth-title">Money won't fix a broken engine; it just makes the crash more spectacular</h3>
-                            <p class="truth-desc">Ensure your business model is sound before you pour fuel on the fire.</p>
-                        </div>
-                        <span class="pill-badge"></span>
-                    </a>
+            <div class="stage-body">
+                <p class="strategy-text"></p>
+                <div class="checklist-wrapper">
+                    <h3>Action Plan</h3>
+                    <div class="strategy-content">
+                        <!-- Checklist will be populated by JS -->
+                    </div>
                 </div>
             </div>
         </main>
 
         <!-- Column 3: Right Sidebar -->
-        <aside class="right-sidebar">
+        <aside class="intelligence-wing">
             <div class="widget-card">
                 <h3>Mastery Gauge</h3>
-                <div class="progress-gauge">
-                    <div class="progress-gauge-value">0%</div>
+                <div class="progress-gauge-thin">
+                    <svg>
+                        <circle class="track" cx="75" cy="75" r="52"></circle>
+                        <circle class="progress" cx="75" cy="75" r="52"></circle>
+                    </svg>
+                    <div class="progress-gauge-thin-value">0%</div>
                 </div>
-                <p id="mastery-subtext">You have completed 0 of 33 truths.</p>
             </div>
-            <div class="widget-card brutal-truth-card">
+            <div class="widget-card daily-pill-card">
                 <h3>Brutal Truth of the Day</h3>
-                <p>"If you can’t eat 'No' for breakfast, you'll starve."</p>
+                <p></p>
             </div>
             <div class="widget-card feedback-widget">
                 <h3>Test Group Feedback</h3>
-                <textarea placeholder="Share a win or a challenge..."></textarea>
-                <button>Submit</button>
+                <textarea id="feedback-notes" placeholder="Share a win, a challenge, or a key insight..."></textarea>
             </div>
         </aside>
     </div>
