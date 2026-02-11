@@ -125,19 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nextHackCard.addEventListener('click', () => displayHack(nextHackIndex));
         gridContainer.appendChild(nextHackCard);
 
-        // --- Card 2: Urgent Task (Planner) ---
-        const urgentTask = getUrgentPlannerTask();
-        const plannerCard = createPowerCard(
-            'Urgent Task',
-            urgentTask || 'No urgent tasks in planner.',
-            'ph-bell-ringing',
-            'icon-color-2',
-            null
-        );
-        plannerCard.addEventListener('click', renderPlanner);
-        gridContainer.appendChild(plannerCard);
-
-        // --- Card 3: Market Intelligence ---
+        // --- Card 2: Market Intelligence ---
         const feedbackSnippet = currentState.notes.substring(0, 100) + (currentState.notes.length > 100 ? '...' : '');
         const intelligenceCard = createPowerCard(
             'Market Intelligence',
@@ -150,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         gridContainer.appendChild(intelligenceCard);
 
-        // --- Card 4: Vault Access ---
+        // --- Card 3: Vault Access ---
         const vaultCard = createPowerCard(
             'The Vault',
             'Access resource library, templates, and downloads.',
@@ -161,31 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Resource library coming soon!');
         });
         gridContainer.appendChild(vaultCard);
-    }
-
-    function renderPlanner() {
-        learningStage.innerHTML = `
-            <div style="display: flex; flex-direction: column; height: 100%;">
-                <div class="stage-nav-top" style="flex-shrink: 0; margin-bottom: 1rem;">
-                    <button class="btn-back-dashboard" id="back-to-dashboard-btn"><i class="ph ph-arrow-left"></i> Back to Dashboard</button>
-                </div>
-                <div style="flex-grow: 1; width: 100%; overflow: hidden; border-radius: 12px; border: 1px solid var(--border-color);">
-                    <iframe src="planner.html" style="width: 100%; height: 100%; border: none;"></iframe>
-                </div>
-            </div>
-        `;
-
-        const backBtn = learningStage.querySelector('#back-to-dashboard-btn');
-        if (backBtn) {
-            backBtn.addEventListener('click', () => {
-                const homeNav = document.querySelector('.mobile-nav-item[data-target="home"]');
-                if (homeNav && window.getComputedStyle(document.querySelector('.mobile-bottom-nav')).display !== 'none') {
-                    homeNav.click();
-                } else {
-                    renderDashboardGrid();
-                }
-            });
-        }
     }
 
     function renderHackNavigator() {
@@ -503,7 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mobileHeader = document.createElement('div');
         mobileHeader.className = 'mobile-top-bar';
         mobileHeader.innerHTML = `
-            <a href="index.html" class="logo"><img src="assets/logo-dark.svg" alt="Avantaland" class="mobile-logo"></a>
+            <a href="index.html" class="logo"><img src="images/avblack.png" alt="Avantaland Logo" class="mobile-logo"><span>Avantaland<span class="logo-academy">Academy</span></span></a>
         `;
 
         // Insert at top of container
@@ -520,10 +483,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="mobile-nav-item" data-target="hacks">
                 <i class="ph-duotone ph-list-dashes"></i>
                 <span>Hacks</span>
-            </button>
-            <button class="mobile-nav-item" data-target="planner">
-                <i class="ph-duotone ph-calendar-check"></i>
-                <span>Planner</span>
             </button>
             <button class="mobile-nav-item" data-target="community">
                 <i class="ph-duotone ph-users-three"></i>
@@ -575,8 +534,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     toggleSidebar(false);
                     if (target === 'home') {
                         renderDashboardGrid();
-                    } else if (target === 'planner') {
-                        renderPlanner();
                     } else if (target === 'community' || target === 'profile') {
                         alert(`${target.charAt(0).toUpperCase() + target.slice(1)} feature coming soon!`);
                     }
@@ -623,24 +580,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstUncompleted = truthsData.findIndex(truth => !currentState.progress[truth.id]);
         // If all are completed, it returns -1. Default to the last hack.
         return firstUncompleted !== -1 ? firstUncompleted : truthsData.length - 1;
-    }
-
-    function getUrgentPlannerTask() {
-        try {
-            const tasks = JSON.parse(localStorage.getItem('avantaland_planner_tasks')) || [];
-            const slotOrder = JSON.parse(localStorage.getItem('avantaland_planner_slotOrder')) || ['revenue', 'operations', 'development'];
-            
-            for (const slot of slotOrder) {
-                const task = tasks.find(t => t.slot === slot && t.status === 'active' && !t.completed);
-                if (task) {
-                    return task.text;
-                }
-            }
-            return null;
-        } catch (e) {
-            console.error("Could not load planner tasks.", e);
-            return 'Could not load planner tasks.';
-        }
     }
 
     init();

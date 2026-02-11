@@ -17,6 +17,10 @@
     --success-color: #10B981;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 /* --- Layout & Container --- */
 body.zen-dashboard-body {
     background-color: var(--bg-main);
@@ -797,14 +801,14 @@ body.zen-dashboard-body {
 /* Mobile & Tablet (1024px and down) - Hamburger Menu & Compact Grid */
 @media (max-width: 1024px) {
     .workstation-container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        overflow: hidden;
+        display: block;
+        height: auto;
+        overflow: visible;
     }
 
     body.zen-dashboard-body {
-        overflow: hidden; /* Keep body locked, scroll inside stage */
+        overflow: auto;
+        height: auto;
     }
 
     /* Mobile Header */
@@ -843,11 +847,12 @@ body.zen-dashboard-body {
     .mobile-logo {
         height: 28px;
         width: auto;
-        margin-left: 0;
+        margin-left: -10px;
     }
 
     .mobile-top-bar .logo {
         margin-left: 0;
+        flex: initial;
     }
 
     .hack-navigator {
@@ -897,10 +902,11 @@ body.zen-dashboard-body {
     }
 
     .learning-stage {
-        flex: 1;
+        height: auto;
+        overflow-y: visible;
         padding: 1rem;
-        overflow-y: auto;
         padding-bottom: 100px; /* Add space for bottom nav */
+        -webkit-overflow-scrolling: touch;
     }
 
     .stage-header h1 {
