@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderIntelligenceWing();
         renderDashboardGrid(); // Default to dashboard view
         setupMobileView(); // Initialize mobile UI
+        setupAveoDrawer(); // Initialize AI Agent
         setupEventListeners();
     }
 
@@ -145,6 +146,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
                 profileNavItem.classList.add('active');
                 renderProfile();
+            });
+        }
+
+        // Add listener for Community/Aveo nav item in Desktop Sidebar
+        const communityNavItem = Array.from(dashboardNavItems).find(item => item.textContent.includes('Community'));
+        if (communityNavItem) {
+            // Rename to Aveo 1 for consistency if possible, or just hijack click
+            communityNavItem.innerHTML = `<i class="ph-duotone ph-robot"></i> Aveo 1`;
+            communityNavItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleAveoDrawer(true);
             });
         }
     }
@@ -340,6 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="quick-add-container">
                     <input type="text" class="quick-add-input" placeholder="Any plans? (type and press Enter)" id="planner-quick-add">
+                    <div style="text-align: right; margin-top: 0.5rem;">
+                        <a href="#" id="why-3-link" style="font-size: 0.85rem; color: var(--brand-blue); text-decoration: underline;">Why only 3?</a>
+                    </div>
                 </div>
 
                 <!-- Section A: The Big 3 -->
@@ -371,10 +386,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const quickAdd = document.getElementById('planner-quick-add');
         quickAdd.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && quickAdd.value.trim()) {
+                if (currentState.planner.tasks && currentState.planner.tasks.length >= 3) {
+                    alert("You can only set 3 main goals for the day. This forces you to prioritize what truly moves the needle.");
+                    return;
+                }
                 addPlannerTask(quickAdd.value.trim());
                 quickAdd.value = '';
             }
         });
+
+        const why3Link = document.getElementById('why-3-link');
+        if (why3Link) {
+            why3Link.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert("Limiting your daily focus to 3 key tasks forces prioritization and ensures you actually complete what matters most. It prevents overwhelm and builds momentum.");
+            });
+        }
 
         document.getElementById('btn-start-timer').addEventListener('click', togglePlannerTimer);
 
@@ -1048,9 +1075,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="ph-duotone ph-calendar-check"></i>
                 <span>Planner</span>
             </button>
-            <button class="mobile-nav-item" data-target="community">
-                <i class="ph-duotone ph-users-three"></i>
-                <span>Community</span>
+            <button class="mobile-nav-item" data-target="aveo">
+                <i class="ph-duotone ph-robot"></i>
+                <span>Aveo 1</span>
             </button>
             <button class="mobile-nav-item" data-target="profile">
                 <i class="ph-duotone ph-user-circle"></i>
@@ -1227,8 +1254,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderDashboardGrid();
                     } else if (target === 'planner') {
                         renderPlanner();
-                    } else if (target === 'profile') {
-                        renderProfile();
+                    } else if (target === 'aveo') {
+                        toggleAveoDrawer(true);
                     } else if (target === 'community' || target === 'profile') {
                         alert(`${target.charAt(0).toUpperCase() + target.slice(1)} feature coming soon!`);
                     }
@@ -1254,6 +1281,141 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+    }
+
+    // --- Aveo 1 AI Agent Logic ---
+    function setupAveoDrawer() {
+        if (document.querySelector('.aveo-drawer')) return;
+
+        const drawer = document.createElement('div');
+        drawer.className = 'aveo-drawer';
+        drawer.innerHTML = `
+            <div class="aveo-header">
+                <div class="aveo-identity">
+                    <div class="aveo-avatar"><i class="ph-duotone ph-robot"></i></div>
+                    <div>
+                        <h3>Aveo 1</h3>
+                        <span class="aveo-status">Online • 24/7 Mentor</span>
+                    </div>
+                </div>
+                <button class="aveo-close"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="aveo-messages" id="aveo-messages">
+                <div class="aveo-message ai">
+                    Founders don't sleep, but they do need strategy. I'm Aveo. What's the roadblock today?
+                </div>
+            </div>
+            <div class="aveo-chips">
+                <button class="aveo-chip">Explain this Truth</button>
+                <button class="aveo-chip">Give me a script</button>
+                <button class="aveo-chip">I'm feeling lazy</button>
+                <button class="aveo-chip">Roast my progress</button>
+            </div>
+            <div class="aveo-input-area">
+                <input type="text" class="aveo-input" placeholder="Ask Aveo anything..." id="aveo-input">
+                <button class="aveo-send" id="aveo-send"><i class="ph-fill ph-paper-plane-right"></i></button>
+            </div>
+        `;
+        document.body.appendChild(drawer);
+
+        // Event Listeners
+        drawer.querySelector('.aveo-close').addEventListener('click', () => toggleAveoDrawer(false));
+        
+        const input = drawer.querySelector('#aveo-input');
+        const sendBtn = drawer.querySelector('#aveo-send');
+        const chips = drawer.querySelectorAll('.aveo-chip');
+
+        const sendMessage = async (text) => {
+            if (!text.trim()) return;
+            
+            // Add User Message
+            addAveoMessage(text, 'user');
+            input.value = '';
+
+            // Show Typing Indicator (Mock)
+            const typingId = addAveoMessage('<i class="ph ph-dots-three-circle"></i> Thinking...', 'ai');
+
+            // Prepare Context
+            const currentTruth = truthsData[currentState.currentHackIndex];
+            const plannerStats = currentState.planner.tasks ? 
+                `${currentState.planner.tasks.filter(t => t.completed).length}/${currentState.planner.tasks.length} tasks done` : 'No tasks set';
+            
+            const systemContext = `
+                You are Aveo 1, a high-performance business mentor for the "Avantaland" methodology.
+                Your Persona: Direct, witty, high-energy, zero-BS. You are a peer, not a robot.
+                User Profile: ${currentState.profile.name}, Dream: ${currentState.profile.dreamResult || 'Not set'}.
+                Current Context: User is viewing Truth #${currentState.currentHackIndex + 1}: "${currentTruth.title}".
+                Planner Status: ${plannerStats}.
+                Goal: Push the user to execute. If they are lazy, call them out using their Dream Result as leverage.
+            `;
+
+            try {
+                // Call API (Assuming /api/chat or similar exists based on chat.js presence)
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: "system", content: systemContext },
+                            { role: "user", content: text }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Remove typing indicator
+                const typingMsg = document.getElementById(typingId);
+                if (typingMsg) typingMsg.remove();
+
+                if (data.choices && data.choices[0]) {
+                    addAveoMessage(data.choices[0].message.content, 'ai');
+                } else {
+                    // Fallback if API fails or is not set up
+                    addAveoMessage("I'm having trouble connecting to the mainframe. But here's a truth: Action cures fear. Go do something.", 'ai');
+                }
+            } catch (e) {
+                console.error(e);
+                const typingMsg = document.getElementById(typingId);
+                if (typingMsg) typingMsg.remove();
+                addAveoMessage("Connection offline. But you shouldn't be. Get back to work.", 'ai');
+            }
+        };
+
+        sendBtn.addEventListener('click', () => sendMessage(input.value));
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage(input.value);
+        });
+
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => sendMessage(chip.textContent));
+        });
+    }
+
+    function toggleAveoDrawer(show) {
+        const drawer = document.querySelector('.aveo-drawer');
+        const overlay = document.querySelector('.mobile-overlay'); // Reuse existing overlay
+        if (!drawer) return;
+
+        if (show) {
+            drawer.classList.add('active');
+            if (overlay) overlay.classList.add('active');
+        } else {
+            drawer.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+        }
+    }
+
+    function addAveoMessage(html, type) {
+        const container = document.getElementById('aveo-messages');
+        const msgDiv = document.createElement('div');
+        const id = 'msg-' + Date.now();
+        msgDiv.id = id;
+        msgDiv.className = `aveo-message ${type}`;
+        msgDiv.innerHTML = html;
+        container.appendChild(msgDiv);
+        container.scrollTop = container.scrollHeight;
+        return id;
     }
 
     // --- Helper Functions ---
