@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderHackNavigator();
         renderIntelligenceWing();
         renderDashboardGrid(); // Default to dashboard view
+        setupMobileView(); // Initialize mobile UI
         setupEventListeners();
     }
 
@@ -162,11 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderHackNavigator() {
-        hackListContainer.innerHTML = `
-            <div class="logo-container" style="padding: 1.5rem 1rem 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem;">
-                <img src="assets/logo-dark.svg" alt="Avantaland Logo" style="height: 30px;">
-            </div>
-        `;
+        hackListContainer.innerHTML = '';
         truthsData.forEach((truth, index) => {
             const li = document.createElement('li');
             li.className = 'hack-list-item';
@@ -469,6 +466,52 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('storage', (e) => {
         if (e.key === 'bizLabProgress') location.reload();
     });
+
+    // --- Mobile View Setup ---
+    function setupMobileView() {
+        const container = document.querySelector('.workstation-container');
+        // Avoid duplicates if re-run
+        if (!container || document.querySelector('.mobile-top-bar')) return;
+
+        // Create Mobile Header
+        const mobileHeader = document.createElement('div');
+        mobileHeader.className = 'mobile-top-bar';
+        mobileHeader.innerHTML = `
+            <button class="mobile-menu-btn"><i class="ph ph-list"></i></button>
+            <a href="index.html" class="logo"><img src="assets/logo-dark.svg" alt="Avantaland" class="mobile-logo"></a>
+        `;
+
+        // Insert at top of container
+        container.insertBefore(mobileHeader, container.firstChild);
+
+        // Create Overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'mobile-overlay';
+        document.body.appendChild(overlay);
+
+        // Toggle Logic
+        const menuBtn = mobileHeader.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.hack-navigator');
+        const overlayEl = document.querySelector('.mobile-overlay');
+
+        function toggleMenu() {
+            sidebar.classList.toggle('active');
+            overlayEl.classList.toggle('active');
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        overlayEl.addEventListener('click', toggleMenu);
+
+        // Close menu when clicking a link in sidebar (Event delegation)
+        sidebar.addEventListener('click', (e) => {
+            if (e.target.closest('.nav-item') || e.target.closest('.hack-list-item') || e.target.closest('.sidebar-profile')) {
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('active');
+                    overlayEl.classList.remove('active');
+                }
+            }
+        });
+    }
 
     // --- Helper Functions ---
     function createPowerCard(category, title, iconClass, colorClass, href = null) {
