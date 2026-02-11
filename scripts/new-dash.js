@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         card.className = 'power-card';
         card.innerHTML = `
-            <i class="ph ${iconClass} card-icon ${colorClass}"></i>
+        <i class="ph-duotone ${iconClass} card-icon ${colorClass}"></i>
             <p class="card-category">${category}</p>
             <h4>${title}</h4>
         `;

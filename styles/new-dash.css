@@ -541,6 +541,24 @@ body.zen-dashboard-body {
 .daily-pill-card {
     background: var(--brand-yellow-light);
     border-color: var(--brand-yellow);
+    border: 1px solid var(--brand-yellow);
+    border-left: 4px solid var(--brand-yellow);
+    position: relative;
+    overflow: hidden; /* To contain the large quote mark */
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.2);
+}
+
+.daily-pill-card::before {
+    content: '"';
+    position: absolute;
+    top: 0.5rem;
+    left: 1rem;
+    font-size: 5rem;
+    font-family: Georgia, serif;
+    color: var(--brand-yellow);
+    opacity: 0.2;
+    line-height: 1;
+    z-index: 0;
 }
 
 .daily-pill-card p {
@@ -549,7 +567,10 @@ body.zen-dashboard-body {
     line-height: 1.5;
     color: var(--brand-yellow-dark);
     font-style: normal;
+    font-style: italic;
     margin: 0;
+    position: relative; /* To ensure text is above the pseudo-element */
+    z-index: 1;
 }
 
 /* Feedback Widget */
@@ -603,7 +624,6 @@ body.zen-dashboard-body {
 }
 
 .power-card {
-    background: var(--bg-surface);
     border-radius: 24px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
     padding: 2rem;
@@ -613,15 +633,17 @@ body.zen-dashboard-body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    /* min-height is now handled by grid-auto-rows */
-    border: 1px solid transparent;
+    border: 2px solid transparent;
+    background: linear-gradient(var(--bg-surface), var(--bg-surface)) padding-box,
+                linear-gradient(to bottom right, rgba(0,98,255,0.1), rgba(255,215,0,0.1)) border-box;
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
     text-decoration: none;
 }
 
 .power-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-    border-color: rgba(0,0,0,0.02);
+    box-shadow: 0 20px 40px rgba(0, 98, 255, 0.12); /* Use colored glow shadow on hover */
 }
 
 .card-icon {
@@ -631,14 +653,15 @@ body.zen-dashboard-body {
     font-size: 2.5rem;
 }
 
-.icon-color-1 { color: var(--brand-blue); } /* Blue */
-.icon-color-2 { color: var(--brand-yellow); } /* Amber */
-.icon-color-3 { color: var(--success-color); } /* Emerald */
-.icon-color-4 { color: #8B5CF6; } /* Violet */
+/* Duo-tone Icon Colors */
+.icon-color-1 { color: var(--brand-blue); --ph-duotone-background: var(--brand-yellow); } /* Rocket: Blue/Yellow */
+.icon-color-2 { color: var(--brand-yellow); --ph-duotone-background: var(--brand-blue-light); } /* Bell: Yellow/Light Blue */
+.icon-color-3 { color: var(--success-color); --ph-duotone-background: var(--brand-yellow-light); } /* Lightbulb: Green/Light Yellow */
+.icon-color-4 { color: #8B5CF6; --ph-duotone-background: var(--brand-blue-light); } /* Archive: Violet/Light Blue */
 
 .card-category {
     font-size: 0.9rem;
-    color: #94A3B8;
+    color: var(--brand-blue);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
