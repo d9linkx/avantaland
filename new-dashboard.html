@@ -456,6 +456,9 @@
             .intelligence-wing { display: none; }
             .learning-stage { padding: 3rem; }
         }
+        @media (max-width: 992px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
         @media (max-width: 768px) {
             .workstation-container {
                 grid-template-columns: 1fr;
@@ -497,7 +500,7 @@
         <!-- Column 1: Left Sidebar -->
         <aside class="hack-navigator">
             <div class="sidebar-logo">
-                <img src="images/logo.png" alt="Avantaland Logo">
+                <a href="index.html" class="logo"><img src="images/avblack.png" alt="Avantaland Logo"><span>Avantaland<span class="logo-academy">Academy</span></span></a>
             </div>
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active"><i class="ph ph-layout"></i> Dashboard</a>

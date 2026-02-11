@@ -1,9 +1,26 @@
 /* styles/new-dash.css */
 
+/* --- Color & Theme Variables --- */
+:root {
+    --brand-blue: #2979FF;
+    --brand-blue-light: #EFF6FF;
+    --brand-blue-dark: #1E60CC;
+    --brand-yellow: #F59E0B;
+    --brand-yellow-light: #FEFCE8; /* Lighter yellow for backgrounds */
+    --brand-yellow-dark: #B45309; /* Darker yellow for text */
+    --bg-main: #F8FAFC; /* Was F9FAFB, slightly different */
+    --bg-surface: #FFFFFF;
+    --text-primary: #1E293B;
+    --text-secondary: #64748B;
+    --border-color: #E2E8F0;
+    --border-color-soft: #EDF2F7;
+    --success-color: #10B981;
+}
+
 /* --- Layout & Container --- */
 body.zen-dashboard-body {
-    background-color: #F9FAFB;
-    color: #1A202C;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
     font-family: 'Plus Jakarta Sans', sans-serif;
     height: 100vh;
     overflow: hidden; /* Prevent body scroll, individual columns scroll */
@@ -20,8 +37,8 @@ body.zen-dashboard-body {
 
 /* --- Left Sidebar (Hack Navigator) --- */
 .hack-navigator {
-    background: #FFFFFF;
-    border-right: 1px solid #E2E8F0;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border-color-soft);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -60,13 +77,13 @@ body.zen-dashboard-body {
 }
 
 .nav-item:hover {
-    background-color: #F1F5F9;
-    color: #1E293B;
+    background-color: #F8FAFC;
+    color: var(--text-primary);
 }
 
 .nav-item.active {
-    background-color: #EFF6FF;
-    color: #2979FF;
+    background-color: var(--brand-blue-light);
+    color: var(--brand-blue);
 }
 
 .nav-item i {
@@ -75,14 +92,14 @@ body.zen-dashboard-body {
 
 /* Accordion & Hack List */
 .hack-accordion {
-    border-top: 1px solid #E2E8F0;
+    border-top: 1px solid var(--border-color-soft);
 }
 
 .hack-accordion summary {
     list-style: none;
     padding: 1.5rem;
     font-weight: 700;
-    color: #1E293B;
+    color: var(--text-primary);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -116,13 +133,13 @@ body.zen-dashboard-body {
 
 .hack-list-item:hover {
     background-color: #F8FAFC;
-    color: #1E293B;
+    color: var(--text-primary);
 }
 
 .hack-list-item.active {
-    background-color: #EFF6FF;
-    color: #2979FF;
-    border-left-color: #2979FF;
+    background-color: var(--brand-blue-light);
+    color: var(--brand-blue);
+    border-left-color: var(--brand-blue);
     font-weight: 600;
 }
 
@@ -132,9 +149,8 @@ body.zen-dashboard-body {
     border-radius: 50%;
     flex-shrink: 0;
 }
-
-.status-dot.mastered { background-color: #10B981; }
-.status-dot.in-progress { background-color: #F59E0B; }
+.status-dot.mastered { background-color: var(--success-color); }
+.status-dot.in-progress { background-color: var(--brand-yellow); }
 .status-dot.locked { background-color: #CBD5E1; }
 
 .hack-title-nav {
@@ -147,7 +163,7 @@ body.zen-dashboard-body {
 .sidebar-profile {
     margin-top: auto;
     padding: 1.5rem;
-    border-top: 1px solid #E2E8F0;
+    border-top: 1px solid var(--border-color-soft);
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -163,7 +179,7 @@ body.zen-dashboard-body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #2979FF;
+    background-color: var(--brand-blue);
     color: white;
     display: flex;
     align-items: center;
@@ -179,7 +195,7 @@ body.zen-dashboard-body {
 
 .profile-name {
     font-weight: 700;
-    color: #1E293B;
+    color: var(--text-primary);
     font-size: 0.95rem;
 }
 
@@ -193,7 +209,7 @@ body.zen-dashboard-body {
     padding: 3rem 4rem;
     overflow-y: auto;
     height: 100%;
-    background-color: #F9FAFB;
+    background-color: var(--bg-main);
 }
 
 .stage-nav-top {
@@ -215,7 +231,7 @@ body.zen-dashboard-body {
 }
 
 .btn-back-dashboard:hover {
-    color: #2979FF;
+    color: var(--brand-blue);
 }
 
 .stage-header {
@@ -225,9 +241,9 @@ body.zen-dashboard-body {
 .truth-number {
     display: block;
     font-size: 0.8rem;
-    font-weight: 700;
-    color: #2563eb;
-    background: #dbeafe;
+    font-weight: 800;
+    color: var(--brand-yellow-dark);
+    background: var(--brand-yellow-light);
     padding: 0.4rem 1rem;
     border-radius: 99px;
     display: inline-block;
@@ -239,15 +255,15 @@ body.zen-dashboard-body {
 .stage-header h1 {
     font-size: 2.5rem;
     line-height: 1.2;
-    color: #1E293B;
+    color: var(--text-primary);
     margin: 0;
 }
 
 /* Content Styling */
 .executive-summary-container {
-    background: #f1f5f9;
-    border-left: 4px solid #2563eb;
-    padding: 1.5rem;
+    background: var(--brand-blue-light);
+    border-left: 4px solid var(--brand-blue);
+    padding: 1.5rem 2rem;
     border-radius: 0 8px 8px 0;
     margin-bottom: 2.5rem;
     border: none;
@@ -266,7 +282,7 @@ body.zen-dashboard-body {
 .executive-summary-container p,
 .truth-summary-box p {
     margin-bottom: 0;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 500;
     color: #334155;
 }
@@ -286,7 +302,7 @@ body.zen-dashboard-body {
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-bottom: 1rem;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-color-soft);
     padding-bottom: 0.5rem;
 }
 
@@ -309,7 +325,7 @@ body.zen-dashboard-body {
     gap: 1rem;
     padding: 1rem;
     background: #ffffff;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -317,18 +333,23 @@ body.zen-dashboard-body {
     box-shadow: none;
 }
 
+.checklist-item:has(input:checked), .fix-item:has(input:checked) {
+    background-color: var(--brand-blue-light);
+    border-color: var(--brand-blue);
+}
+
 .checklist-item:hover, .fix-item:hover {
     background: #f8fafc;
-    border-color: #cbd5e1;
+    border-color: #A0AEC0;
     transform: none;
     box-shadow: none;
 }
 
 .checklist-item input[type="checkbox"], .fix-item input[type="checkbox"] {
     margin-top: 0.3rem;
-    width: 1.2rem;
-    height: 1.2rem;
-    accent-color: #2979FF;
+    width: 1.15rem;
+    height: 1.15rem;
+    accent-color: var(--brand-blue);
     cursor: pointer;
 }
 
@@ -340,7 +361,7 @@ body.zen-dashboard-body {
 }
 
 .checklist-item label strong {
-    color: #1E293B;
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -348,7 +369,7 @@ body.zen-dashboard-body {
 #full-truth-container {
     margin-top: 2.5rem;
     padding-top: 2.5rem;
-    border-top: 1px solid #E2E8F0;
+    border-top: 1px solid var(--border-color);
     animation: fadeIn 0.5s ease;
 }
 
@@ -357,7 +378,7 @@ body.zen-dashboard-body {
 #full-truth-container h3 {
     margin-top: 1.5rem;
     margin-bottom: 1rem;
-    color: #1E293B;
+    color: var(--text-primary);
 }
 
 #full-truth-container p {
@@ -374,7 +395,7 @@ body.zen-dashboard-body {
     gap: 1rem;
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid #E2E8F0;
+    border-top: 1px solid var(--border-color);
 }
 
 .btn-action {
@@ -391,18 +412,18 @@ body.zen-dashboard-body {
 }
 
 .btn-complete {
-    background-color: #1E293B;
+    background-color: var(--brand-blue);
     color: white;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .btn-complete:hover:not(:disabled) {
-    background-color: #0F172A;
+    background-color: var(--brand-blue-dark);
     transform: translateY(-2px);
 }
 
 .btn-complete.completed {
-    background-color: #10B981;
+    background-color: var(--success-color);
     cursor: default;
     box-shadow: none;
 }
@@ -462,7 +483,7 @@ body.zen-dashboard-body {
 
 .widget-card {
     background: #FFFFFF;
-    border: 1px solid #E2E8F0;
+    border: 1px solid var(--border-color-soft);
     border-radius: 20px;
     padding: 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
@@ -498,11 +519,11 @@ body.zen-dashboard-body {
 }
 
 .progress-gauge-thin .track {
-    stroke: #F1F5F9;
+    stroke: var(--border-color-soft);
 }
 
 .progress-gauge-thin .progress {
-    stroke: #2979FF;
+    stroke: var(--brand-blue);
     transition: stroke-dashoffset 1s ease-in-out;
 }
 
@@ -513,16 +534,21 @@ body.zen-dashboard-body {
     transform: translate(-50%, -50%);
     font-size: 2rem;
     font-weight: 800;
-    color: #1E293B;
+    color: var(--text-primary);
 }
 
 /* Daily Pill */
+.daily-pill-card {
+    background: var(--brand-yellow-light);
+    border-color: var(--brand-yellow);
+}
+
 .daily-pill-card p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     line-height: 1.5;
-    color: #334155;
-    font-style: italic;
+    color: var(--brand-yellow-dark);
+    font-style: normal;
     margin: 0;
 }
 
@@ -531,7 +557,7 @@ body.zen-dashboard-body {
     width: 100%;
     min-height: 120px;
     padding: 1rem;
-    border: 1px solid #E2E8F0;
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     font-family: inherit;
     font-size: 0.95rem;
@@ -542,8 +568,90 @@ body.zen-dashboard-body {
 
 .feedback-widget textarea:focus {
     outline: none;
-    border-color: #2979FF;
+    border-color: var(--brand-blue);
     background-color: #FFFFFF;
+}
+
+/* --- Dashboard Grid (Power Cards) --- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(220px, auto); /* Define a minimum height for rows */
+    gap: 24px;
+    padding-bottom: 2rem;
+}
+
+/* Make cards span different areas for a more dynamic look */
+.dashboard-grid .power-card:nth-child(1) {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3; /* Tall card */
+}
+
+.dashboard-grid .power-card:nth-child(2) {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+.dashboard-grid .power-card:nth-child(3) {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+.dashboard-grid .power-card:nth-child(4) {
+    grid-column: 1 / 3; /* Wide card */
+    grid-row: 3 / 4;
+}
+
+.power-card {
+    background: var(--bg-surface);
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* min-height is now handled by grid-auto-rows */
+    border: 1px solid transparent;
+    text-decoration: none;
+}
+
+.power-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0,0,0,0.02);
+}
+
+.card-icon {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 2.5rem;
+}
+
+.icon-color-1 { color: var(--brand-blue); } /* Blue */
+.icon-color-2 { color: var(--brand-yellow); } /* Amber */
+.icon-color-3 { color: var(--success-color); } /* Emerald */
+.icon-color-4 { color: #8B5CF6; } /* Violet */
+
+.card-category {
+    font-size: 0.9rem;
+    color: #94A3B8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+    margin-top: 0;
+}
+
+.power-card h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.4;
 }
 
 /* --- Animations --- */
@@ -600,7 +708,7 @@ body.zen-dashboard-body {
     .hack-navigator {
         height: auto;
         border-right: none;
-        border-bottom: 1px solid #E2E8F0;
+        border-bottom: 1px solid var(--border-color);
         position: relative;
     }
 
@@ -633,5 +741,19 @@ body.zen-dashboard-body {
     .btn-action {
         width: 100%;
         justify-content: center;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto; /* Let rows size to content on mobile */
+    }
+
+    /* On mobile, reset the grid spans to stack them vertically */
+    .dashboard-grid .power-card:nth-child(1),
+    .dashboard-grid .power-card:nth-child(2),
+    .dashboard-grid .power-card:nth-child(3),
+    .dashboard-grid .power-card:nth-child(4) {
+        grid-column: auto;
+        grid-row: auto;
     }
 }

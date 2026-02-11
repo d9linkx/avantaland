@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadState();
         renderHackNavigator();
         renderIntelligenceWing();
-        displayHack(currentState.currentHackIndex);
+        renderDashboardGrid(); // Default to dashboard view
         setupEventListeners();
     }
 
@@ -84,12 +84,82 @@ document.addEventListener('DOMContentLoaded', () => {
             saveState();
         });
 
-        // Note: Event listeners for dynamically loaded content (like next/prev truth buttons)
-        // are now handled within the displayHack function to ensure they are attached
-        // after the elements are added to the DOM.
+        // Add listener for the main Dashboard nav item
+        const dashboardNavItems = document.querySelectorAll('.sidebar-nav .nav-item');
+        const dashboardNavItem = Array.from(dashboardNavItems).find(item => item.textContent.includes('Dashboard'));
+
+        if (dashboardNavItem) {
+            dashboardNavItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // De-activate other nav items and activate this one
+                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
+                dashboardNavItem.classList.add('active');
+                
+                // De-activate any active hack list item
+                document.querySelectorAll('.hack-list-item.active').forEach(item => item.classList.remove('active'));
+
+                renderDashboardGrid();
+            });
+        }
     }
 
     // --- Rendering Functions ---
+
+    function renderDashboardGrid() {
+        learningStage.innerHTML = `
+            <div class="dashboard-grid"></div>
+        `;
+        const gridContainer = learningStage.querySelector('.dashboard-grid');
+
+        // --- Card 1: Next Hack ---
+        const nextHackIndex = findNextUncompletedHack();
+        const nextHack = truthsData[nextHackIndex];
+        const nextHackCard = createPowerCard(
+            'Next Hack',
+            `#${String(nextHackIndex + 1).padStart(2, '0')}: ${nextHack.title}`,
+            'ph-rocket-launch',
+            'icon-color-1'
+        );
+        nextHackCard.addEventListener('click', () => displayHack(nextHackIndex));
+        gridContainer.appendChild(nextHackCard);
+
+        // --- Card 2: Urgent Task (Planner) ---
+        const urgentTask = getUrgentPlannerTask();
+        const plannerCard = createPowerCard(
+            'Urgent Task',
+            urgentTask || 'No urgent tasks in planner.',
+            'ph-bell-ringing',
+            'icon-color-2',
+            'planner.html' // Link to planner page
+        );
+        gridContainer.appendChild(plannerCard);
+
+        // --- Card 3: Market Intelligence ---
+        const feedbackSnippet = currentState.notes.substring(0, 100) + (currentState.notes.length > 100 ? '...' : '');
+        const intelligenceCard = createPowerCard(
+            'Market Intelligence',
+            feedbackSnippet || 'No feedback notes yet. Use the right panel to add some.',
+            'ph-lightbulb',
+            'icon-color-3'
+        );
+        intelligenceCard.addEventListener('click', () => {
+            alert('Insights/Test Group feed coming soon!');
+        });
+        gridContainer.appendChild(intelligenceCard);
+
+        // --- Card 4: Vault Access ---
+        const vaultCard = createPowerCard(
+            'The Vault',
+            'Access resource library, templates, and downloads.',
+            'ph-archive',
+            'icon-color-4'
+        );
+        vaultCard.addEventListener('click', () => {
+            alert('Resource library coming soon!');
+        });
+        gridContainer.appendChild(vaultCard);
+    }
 
     function renderHackNavigator() {
         hackListContainer.innerHTML = `
@@ -170,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         learningStage.innerHTML = `
             <div class="stage-nav-top">
-                <button class="btn-back-dashboard" onclick="location.reload()"><i class="ph ph-arrow-left"></i> Back to Dashboard</button>
+                <button class="btn-back-dashboard" id="back-to-dashboard-btn"><i class="ph ph-arrow-left"></i> Back to Dashboard</button>
             </div>
             <div class="stage-header">
                 <span class="truth-number">Truth #${index + 1}</span>
@@ -199,6 +269,12 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         // --- Event Listeners for New Elements ---
+
+        // Back to Dashboard Button
+        const backToDashBtn = learningStage.querySelector('#back-to-dashboard-btn');
+        if (backToDashBtn) {
+            backToDashBtn.addEventListener('click', renderDashboardGrid);
+        }
         
         // Checklist Rendering
         // We need to re-attach event listeners to the checkboxes that were just injected via innerHTML
@@ -393,6 +469,46 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('storage', (e) => {
         if (e.key === 'bizLabProgress') location.reload();
     });
+
+    // --- Helper Functions ---
+    function createPowerCard(category, title, iconClass, colorClass, href = null) {
+        const card = document.createElement(href ? 'a' : 'div');
+        if (href) {
+            card.href = href;
+        }
+        card.className = 'power-card';
+        card.innerHTML = `
+            <i class="ph ${iconClass} card-icon ${colorClass}"></i>
+            <p class="card-category">${category}</p>
+            <h4>${title}</h4>
+        `;
+        return card;
+    }
+
+    function findNextUncompletedHack() {
+        // Find the first index that is not marked as true in progress
+        const firstUncompleted = truthsData.findIndex(truth => !currentState.progress[truth.id]);
+        // If all are completed, it returns -1. Default to the last hack.
+        return firstUncompleted !== -1 ? firstUncompleted : truthsData.length - 1;
+    }
+
+    function getUrgentPlannerTask() {
+        try {
+            const tasks = JSON.parse(localStorage.getItem('avantaland_planner_tasks')) || [];
+            const slotOrder = JSON.parse(localStorage.getItem('avantaland_planner_slotOrder')) || ['revenue', 'operations', 'development'];
+            
+            for (const slot of slotOrder) {
+                const task = tasks.find(t => t.slot === slot && t.status === 'active' && !t.completed);
+                if (task) {
+                    return task.text;
+                }
+            }
+            return null;
+        } catch (e) {
+            console.error("Could not load planner tasks.", e);
+            return 'Could not load planner tasks.';
+        }
+    }
 
     init();
 });
