@@ -477,7 +477,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const mobileHeader = document.createElement('div');
         mobileHeader.className = 'mobile-top-bar';
         mobileHeader.innerHTML = `
-            <button class="mobile-menu-btn"><i class="ph ph-list"></i></button>
+            <button class="mobile-menu-btn">
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </button>
             <a href="index.html" class="logo"><img src="assets/logo-dark.svg" alt="Avantaland" class="mobile-logo"></a>
         `;
 
@@ -493,10 +496,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const menuBtn = mobileHeader.querySelector('.mobile-menu-btn');
         const sidebar = document.querySelector('.hack-navigator');
         const overlayEl = document.querySelector('.mobile-overlay');
+        const bars = menuBtn.querySelectorAll('.bar');
 
         function toggleMenu() {
             sidebar.classList.toggle('active');
             overlayEl.classList.toggle('active');
+            
+            if (sidebar.classList.contains('active')) {
+                bars[0].style.transform = 'rotate(45deg) translate(5px, 6px)';
+                bars[1].style.transform = 'rotate(-45deg) translate(5px, -6px)';
+            } else {
+                bars[0].style.transform = 'none';
+                bars[1].style.transform = 'none';
+            }
         }
 
         menuBtn.addEventListener('click', toggleMenu);
@@ -508,6 +520,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (window.innerWidth <= 1024) {
                     sidebar.classList.remove('active');
                     overlayEl.classList.remove('active');
+                    bars[0].style.transform = 'none';
+                    bars[1].style.transform = 'none';
                 }
             }
         });

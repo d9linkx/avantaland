@@ -746,19 +746,27 @@ body.zen-dashboard-body {
         background: var(--bg-surface);
         border-bottom: 1px solid var(--border-color);
         flex-shrink: 0;
-        z-index: 20;
+        z-index: 1001;
         width: 100%;
         box-sizing: border-box;
+        position: relative;
     }
 
     .mobile-menu-btn {
-        font-size: 1.75rem;
-        color: var(--text-primary);
         background: none;
         border: none;
         cursor: pointer;
         padding: 0;
         display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .bar {
+        width: 25px;
+        height: 2px;
+        background-color: var(--text-primary);
+        transition: all 0.3s ease;
     }
 
     .mobile-logo {
@@ -783,10 +791,13 @@ body.zen-dashboard-body {
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 4px 0 24px rgba(0,0,0,0.1);
         border-right: none;
+        display: flex;
+        flex-direction: column;
+        padding-top: 80px;
     }
 
     .hack-navigator.active {
-        transform: translateX(0);
+        transform: translateX(0) !important;
     }
 
     /* Overlay */
@@ -797,17 +808,17 @@ body.zen-dashboard-body {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(15, 23, 42, 0.6);
         z-index: 900;
         opacity: 0;
         visibility: hidden;
         transition: all 0.3s;
-        backdrop-filter: blur(2px);
+        pointer-events: none;
     }
 
     .mobile-overlay.active {
         opacity: 1;
         visibility: visible;
+        pointer-events: auto;
     }
 
     .sidebar-logo {
