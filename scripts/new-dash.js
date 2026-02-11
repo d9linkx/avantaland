@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `).join('');
         } else {
-            tasksHtml = `<p class="executor-empty">No plans for today? Set a today goal now.</p>`;
+            tasksHtml = `<p class="executor-empty">No plans for today?</p>`;
         }
 
         executorCard.innerHTML = `
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="executor-list">
                 ${tasksHtml}
             </div>
-            <button class="btn-open-planner">Open Full Planner <i class="ph ph-arrow-right"></i></button>
+            <button class="btn-open-planner">Go to tasks <i class="ph ph-arrow-right"></i></button>
         `;
 
         executorCard.querySelector('.btn-open-planner').addEventListener('click', renderPlanner);
