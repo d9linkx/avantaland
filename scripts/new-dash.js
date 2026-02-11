@@ -132,8 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
             urgentTask || 'No urgent tasks in planner.',
             'ph-bell-ringing',
             'icon-color-2',
-            'planner.html' // Link to planner page
+            null
         );
+        plannerCard.addEventListener('click', renderPlanner);
         gridContainer.appendChild(plannerCard);
 
         // --- Card 3: Market Intelligence ---
@@ -160,6 +161,31 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Resource library coming soon!');
         });
         gridContainer.appendChild(vaultCard);
+    }
+
+    function renderPlanner() {
+        learningStage.innerHTML = `
+            <div style="display: flex; flex-direction: column; height: 100%;">
+                <div class="stage-nav-top" style="flex-shrink: 0; margin-bottom: 1rem;">
+                    <button class="btn-back-dashboard" id="back-to-dashboard-btn"><i class="ph ph-arrow-left"></i> Back to Dashboard</button>
+                </div>
+                <div style="flex-grow: 1; width: 100%; overflow: hidden; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <iframe src="planner.html" style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+            </div>
+        `;
+
+        const backBtn = learningStage.querySelector('#back-to-dashboard-btn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                const homeNav = document.querySelector('.mobile-nav-item[data-target="home"]');
+                if (homeNav && window.getComputedStyle(document.querySelector('.mobile-bottom-nav')).display !== 'none') {
+                    homeNav.click();
+                } else {
+                    renderDashboardGrid();
+                }
+            });
+        }
     }
 
     function renderHackNavigator() {
@@ -477,15 +503,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const mobileHeader = document.createElement('div');
         mobileHeader.className = 'mobile-top-bar';
         mobileHeader.innerHTML = `
-            <button class="mobile-menu-btn">
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </button>
             <a href="index.html" class="logo"><img src="assets/logo-dark.svg" alt="Avantaland" class="mobile-logo"></a>
         `;
 
         // Insert at top of container
         container.insertBefore(mobileHeader, container.firstChild);
+
+        // Create Bottom Navigation
+        const bottomNav = document.createElement('div');
+        bottomNav.className = 'mobile-bottom-nav';
+        bottomNav.innerHTML = `
+            <button class="mobile-nav-item active" data-target="home">
+                <i class="ph-duotone ph-house"></i>
+                <span>Home</span>
+            </button>
+            <button class="mobile-nav-item" data-target="hacks">
+                <i class="ph-duotone ph-list-dashes"></i>
+                <span>Hacks</span>
+            </button>
+            <button class="mobile-nav-item" data-target="planner">
+                <i class="ph-duotone ph-calendar-check"></i>
+                <span>Planner</span>
+            </button>
+            <button class="mobile-nav-item" data-target="community">
+                <i class="ph-duotone ph-users-three"></i>
+                <span>Community</span>
+            </button>
+            <button class="mobile-nav-item" data-target="profile">
+                <i class="ph-duotone ph-user-circle"></i>
+                <span>Profile</span>
+            </button>
+        `;
+        document.body.appendChild(bottomNav);
 
         // Create Overlay
         const overlay = document.createElement('div');
@@ -493,35 +542,62 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(overlay);
 
         // Toggle Logic
-        const menuBtn = mobileHeader.querySelector('.mobile-menu-btn');
         const sidebar = document.querySelector('.hack-navigator');
         const overlayEl = document.querySelector('.mobile-overlay');
-        const bars = menuBtn.querySelectorAll('.bar');
+        const navItems = bottomNav.querySelectorAll('.mobile-nav-item');
 
-        function toggleMenu() {
-            sidebar.classList.toggle('active');
-            overlayEl.classList.toggle('active');
-            
-            if (sidebar.classList.contains('active')) {
-                bars[0].style.transform = 'rotate(45deg) translate(5px, 6px)';
-                bars[1].style.transform = 'rotate(-45deg) translate(5px, -6px)';
+        function setActiveNav(target) {
+            navItems.forEach(item => item.classList.remove('active'));
+            const activeItem = bottomNav.querySelector(`[data-target="${target}"]`);
+            if (activeItem) activeItem.classList.add('active');
+        }
+
+        function toggleSidebar(show) {
+            if (show) {
+                sidebar.classList.add('active');
+                overlayEl.classList.add('active');
             } else {
-                bars[0].style.transform = 'none';
-                bars[1].style.transform = 'none';
+                sidebar.classList.remove('active');
+                overlayEl.classList.remove('active');
             }
         }
 
-        menuBtn.addEventListener('click', toggleMenu);
-        overlayEl.addEventListener('click', toggleMenu);
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const target = item.dataset.target;
+                
+                e.preventDefault();
+                setActiveNav(target);
+
+                if (target === 'hacks') {
+                    toggleSidebar(true);
+                } else {
+                    toggleSidebar(false);
+                    if (target === 'home') {
+                        renderDashboardGrid();
+                    } else if (target === 'planner') {
+                        renderPlanner();
+                    } else if (target === 'community' || target === 'profile') {
+                        alert(`${target.charAt(0).toUpperCase() + target.slice(1)} feature coming soon!`);
+                    }
+                }
+            });
+        });
+        
+        overlayEl.addEventListener('click', () => {
+            toggleSidebar(false);
+            setActiveNav('home'); // Revert to home when closing sidebar via overlay
+        });
 
         // Close menu when clicking a link in sidebar (Event delegation)
         sidebar.addEventListener('click', (e) => {
             if (e.target.closest('.nav-item') || e.target.closest('.hack-list-item') || e.target.closest('.sidebar-profile')) {
                 if (window.innerWidth <= 1024) {
-                    sidebar.classList.remove('active');
-                    overlayEl.classList.remove('active');
-                    bars[0].style.transform = 'none';
-                    bars[1].style.transform = 'none';
+                    toggleSidebar(false);
+                    // Keep 'hacks' active or switch to home? 
+                    // Usually clicking a hack opens it in the view, so maybe switch to home/view state visually?
+                    // For now, let's leave it as is or switch to home to indicate content view.
+                    // setActiveNav('home'); 
                 }
             }
         });
