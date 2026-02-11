@@ -49,7 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
         progress: {},
         checklist: {},
         notes: '',
-        currentHackIndex: 0
+        currentHackIndex: 0,
+        planner: { tasks: [], timer: { timeLeft: 1500, isRunning: false } },
+        profile: {
+            name: 'Founder',
+            email: '',
+            dreamResult: '',
+            avatar: null
+        }
     };
 
     // --- Initialization ---
@@ -67,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
             currentState.progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
             currentState.checklist = JSON.parse(localStorage.getItem('bizLabChecklist')) || {};
             currentState.notes = localStorage.getItem('bizLabFeedbackNotes') || '';
+            currentState.planner = JSON.parse(localStorage.getItem('bizLabPlanner')) || { tasks: [], timer: { timeLeft: 1500, isRunning: false } };
+            currentState.profile = JSON.parse(localStorage.getItem('bizLabProfile')) || { name: 'Founder', email: '', dreamResult: '', avatar: null };
         } catch (e) {
             console.error("Error loading state from localStorage", e);
         }
@@ -76,6 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('bizLabProgress', JSON.stringify(currentState.progress));
         localStorage.setItem('bizLabChecklist', JSON.stringify(currentState.checklist));
         localStorage.setItem('bizLabFeedbackNotes', currentState.notes);
+        localStorage.setItem('bizLabPlanner', JSON.stringify(currentState.planner));
+        localStorage.setItem('bizLabProfile', JSON.stringify(currentState.profile));
     }
 
     function setupEventListeners() {
@@ -103,6 +114,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderDashboardGrid();
             });
         }
+
+        // Add listener for Planner nav item if it exists in sidebar
+        const plannerNavItem = Array.from(dashboardNavItems).find(item => item.textContent.includes('Planner'));
+        if (plannerNavItem) {
+            plannerNavItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
+                plannerNavItem.classList.add('active');
+                renderPlanner();
+            });
+        }
+
+        // Add listener for Profile nav item if it exists in sidebar
+        const profileNavItem = Array.from(dashboardNavItems).find(item => item.textContent.includes('Profile'));
+        if (profileNavItem) {
+            profileNavItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
+                profileNavItem.classList.add('active');
+                renderProfile();
+            });
+        }
     }
 
     // --- Rendering Functions ---
@@ -125,7 +158,19 @@ document.addEventListener('DOMContentLoaded', () => {
         nextHackCard.addEventListener('click', () => displayHack(nextHackIndex));
         gridContainer.appendChild(nextHackCard);
 
-        // --- Card 2: Market Intelligence ---
+        // --- Card 2: Urgent Task (Planner) ---
+        const urgentTask = getUrgentPlannerTask();
+        const plannerCard = createPowerCard(
+            'Urgent Task',
+            urgentTask || 'No urgent tasks in planner.',
+            'ph-bell-ringing',
+            'icon-color-2',
+            null
+        );
+        plannerCard.addEventListener('click', renderPlanner);
+        gridContainer.appendChild(plannerCard);
+
+        // --- Card 3: Market Intelligence ---
         const feedbackSnippet = currentState.notes.substring(0, 100) + (currentState.notes.length > 100 ? '...' : '');
         const intelligenceCard = createPowerCard(
             'Market Intelligence',
@@ -138,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         gridContainer.appendChild(intelligenceCard);
 
-        // --- Card 3: Vault Access ---
+        // --- Card 4: Vault Access ---
         const vaultCard = createPowerCard(
             'The Vault',
             'Access resource library, templates, and downloads.',
@@ -149,6 +194,425 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Resource library coming soon!');
         });
         gridContainer.appendChild(vaultCard);
+
+        // Restore default right sidebar
+        renderIntelligenceWing();
+    }
+
+    function renderProfileRightSidebar() {
+        const wing = document.querySelector('.intelligence-wing');
+        if (!wing) return;
+        
+        wing.innerHTML = `
+            <div class="widget-card">
+                <h3><i class="ph ph-cloud-check" style="color: var(--success-color);"></i> Data Health</h3>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem;">
+                    <div style="width: 12px; height: 12px; background: var(--success-color); border-radius: 50%; box-shadow: 0 0 8px var(--success-color);"></div>
+                    <span style="font-weight: 600; color: var(--text-primary);">Synced to Cloud</span>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Your progress is safe.</p>
+            </div>
+
+            <div class="widget-card" style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); color: white; border: none;">
+                <h3 style="color: #94A3B8; border-bottom-color: rgba(255,255,255,0.1);">Account Value</h3>
+                <div style="margin-top: 1rem;">
+                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--brand-yellow);">$11.00</div>
+                    <p style="font-size: 0.9rem; color: #CBD5E1; margin-top: 0.5rem; line-height: 1.5;">
+                        You joined at $3.<br>
+                        Current market value: $11.<br>
+                        <strong style="color: white;">Your founder status is locked.</strong>
+                    </p>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CEO Execution Planner Logic ---
+    let plannerTimerInterval = null;
+
+    function renderPlanner() {
+        // Load SortableJS dynamically if not present
+        if (!window.Sortable) {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js';
+            script.onload = () => initPlannerSortable();
+            document.head.appendChild(script);
+        }
+
+        const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        const tasks = currentState.planner.tasks || [];
+        const completedCount = tasks.filter(t => t.completed).length;
+        const progress = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+
+        learningStage.innerHTML = `
+            <div class="planner-container">
+                <div class="planner-header">
+                    <h1>Daily Focus <span class="date">${today}</span></h1>
+                    <div class="planner-progress-container">
+                        <div class="planner-progress-bar" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="planner-progress-text">Daily Goal Completion: ${progress}%</div>
+                </div>
+
+                <div class="quick-add-container">
+                    <input type="text" class="quick-add-input" placeholder="What's the next win? (Press Enter)" id="planner-quick-add">
+                </div>
+
+                <!-- Section A: The Big 3 -->
+                <div class="planner-section section-big-3">
+                    <h3><i class="ph ph-star-fill" style="color: var(--brand-yellow);"></i> The Big 3 (Non-Negotiables)</h3>
+                    <div class="planner-task-list" id="list-big-3" data-section="big3"></div>
+                </div>
+
+                <!-- Section B: Money Queue -->
+                <div class="planner-section section-money">
+                    <h3><i class="ph ph-currency-dollar-simple" style="color: var(--brand-blue);"></i> Money-Making Queue</h3>
+                    <div class="planner-task-list" id="list-money" data-section="money"></div>
+                </div>
+
+                <!-- Section C: Deep Work Timer -->
+                <div class="planner-section section-deep-work">
+                    <h3>Deep Work Timer</h3>
+                    <div class="timer-display" id="planner-timer-display">25:00</div>
+                    <button class="btn-timer" id="btn-start-timer">Start Session</button>
+                </div>
+            </div>
+        `;
+
+        renderPlannerTasks();
+        updateTimerDisplay();
+        if (window.Sortable) initPlannerSortable();
+
+        // Event Listeners
+        const quickAdd = document.getElementById('planner-quick-add');
+        quickAdd.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && quickAdd.value.trim()) {
+                addPlannerTask(quickAdd.value.trim());
+                quickAdd.value = '';
+            }
+        });
+
+        document.getElementById('btn-start-timer').addEventListener('click', togglePlannerTimer);
+
+        // Restore default right sidebar
+        renderIntelligenceWing();
+    }
+
+    function renderPlannerTasks() {
+        const big3List = document.getElementById('list-big-3');
+        const moneyList = document.getElementById('list-money');
+        if (!big3List || !moneyList) return;
+
+        big3List.innerHTML = '';
+        moneyList.innerHTML = '';
+
+        const tasks = currentState.planner.tasks || [];
+        
+        if (tasks.length === 0) {
+            moneyList.innerHTML = `<div style="text-align:center; color: var(--text-secondary); padding: 2rem;">
+                <i class="ph ph-rocket-launch" style="font-size: 2.5rem; margin-bottom: 1rem; display: block; color: var(--brand-blue); opacity: 0.5;"></i>
+                The market is waiting. What's the move today?
+            </div>`;
+        }
+
+        tasks.forEach(task => {
+            const el = document.createElement('div');
+            el.className = `planner-task ${task.completed ? 'completed' : ''}`;
+            el.dataset.id = task.id;
+            el.innerHTML = `
+                <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+                <span class="task-content">${task.text}</span>
+                ${task.valueTag ? `<span class="value-tag">${task.valueTag}</span>` : ''}
+                <i class="ph ph-dots-six-vertical" style="color: #CBD5E1; cursor: grab;"></i>
+            `;
+
+            el.querySelector('.task-checkbox').addEventListener('change', () => togglePlannerTask(task.id));
+            
+            if (task.section === 'big3') big3List.appendChild(el);
+            else moneyList.appendChild(el);
+        });
+    }
+
+    function addPlannerTask(text) {
+        // Check for value tag in text (e.g. "Call client $1000")
+        let valueTag = null;
+        const moneyMatch = text.match(/\$(\d+(?:,\d{3})*(?:k|m)?)/i);
+        if (moneyMatch) {
+            valueTag = moneyMatch[0] + ' Value';
+        }
+
+        const newTask = {
+            id: Date.now(),
+            text: text,
+            section: 'money', // Default to money queue
+            completed: false,
+            valueTag: valueTag
+        };
+        
+        if (!currentState.planner.tasks) currentState.planner.tasks = [];
+        currentState.planner.tasks.push(newTask);
+        saveState();
+        renderPlanner();
+    }
+
+    function togglePlannerTask(id) {
+        const task = currentState.planner.tasks.find(t => t.id === id);
+        if (task) {
+            task.completed = !task.completed;
+            saveState();
+            renderPlanner(); // Re-render to update progress bar
+        }
+    }
+
+    function initPlannerSortable() {
+        const containers = [document.getElementById('list-big-3'), document.getElementById('list-money')];
+        containers.forEach(container => {
+            if (!container) return;
+            new Sortable(container, {
+                group: 'planner',
+                animation: 150,
+                handle: '.planner-task', // Make whole card draggable or use handle
+                onEnd: function (evt) {
+                    const itemEl = evt.item;
+                    const newSection = evt.to.dataset.section;
+                    const taskId = parseInt(itemEl.dataset.id);
+                    
+                    const task = currentState.planner.tasks.find(t => t.id === taskId);
+                    if (task) {
+                        task.section = newSection;
+                        saveState();
+                        // Optional: Re-render to ensure clean state, but Sortable handles DOM
+                        // renderPlannerTasks(); 
+                    }
+                }
+            });
+        });
+    }
+
+    function togglePlannerTimer() {
+        const btn = document.getElementById('btn-start-timer');
+        if (plannerTimerInterval) {
+            clearInterval(plannerTimerInterval);
+            plannerTimerInterval = null;
+            btn.textContent = 'Resume Session';
+            btn.classList.remove('active');
+            currentState.planner.timer.isRunning = false;
+        } else {
+            plannerTimerInterval = setInterval(() => {
+                currentState.planner.timer.timeLeft--;
+                if (currentState.planner.timer.timeLeft <= 0) {
+                    clearInterval(plannerTimerInterval);
+                    plannerTimerInterval = null;
+                    currentState.planner.timer.timeLeft = 1500; // Reset
+                    currentState.planner.timer.isRunning = false;
+                    btn.textContent = 'Start Session';
+                    btn.classList.remove('active');
+                    alert("Deep Work Session Complete!");
+                }
+                updateTimerDisplay();
+                saveState();
+            }, 1000);
+            btn.textContent = 'Pause Session';
+            btn.classList.add('active');
+            currentState.planner.timer.isRunning = true;
+        }
+        saveState();
+    }
+
+    function updateTimerDisplay() {
+        const display = document.getElementById('planner-timer-display');
+        if (!display) return;
+        const time = currentState.planner.timer.timeLeft;
+        const m = Math.floor(time / 60).toString().padStart(2, '0');
+        const s = (time % 60).toString().padStart(2, '0');
+        display.textContent = `${m}:${s}`;
+    }
+
+    // --- Profile & Settings Logic ---
+    function renderProfile() {
+        const hacksMastered = Object.keys(currentState.progress).length;
+        // Mock data for days active/streak since we don't track login dates yet
+        const daysActive = 45; 
+        const dailyStreak = 5;
+
+        learningStage.innerHTML = `
+            <div class="profile-container">
+                <!-- 1. Profile Header -->
+                <div class="profile-header-card">
+                    <div class="profile-identity">
+                        <div class="avatar-wrapper">
+                            <img src="${currentState.profile.avatar || 'https://ui-avatars.com/api/?name=' + currentState.profile.name + '&background=2979FF&color=fff'}" alt="Profile" class="profile-avatar-large" id="profile-avatar-img">
+                            <button class="btn-edit-avatar" id="btn-upload-avatar"><i class="ph ph-pencil-simple"></i></button>
+                            <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="identity-info">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                                <h1>${currentState.profile.name}</h1>
+                                <span class="member-badge">Test Group Founder</span>
+                            </div>
+                            <div class="quick-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value">${hacksMastered}/33</span>
+                                    <span class="stat-label">Hacks Mastered</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="stat-value">${daysActive}</span>
+                                    <span class="stat-label">Days Active</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="stat-value">${dailyStreak}</span>
+                                    <span class="stat-label">Daily Streak</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Tabbed Navigation -->
+                <div class="profile-tabs">
+                    <button class="tab-btn active" data-tab="account">Account</button>
+                    <button class="tab-btn" data-tab="business">Business Profile</button>
+                    <button class="tab-btn" data-tab="preferences">Preferences</button>
+                </div>
+
+                <!-- 3. Functional Settings Cards -->
+                <div class="settings-content">
+                    <!-- Account Tab -->
+                    <div class="settings-tab active" id="tab-account">
+                        <div class="settings-card">
+                            <h3>Personal Information</h3>
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="input-name" value="${currentState.profile.name}" class="settings-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="input-email" value="${currentState.profile.email}" class="settings-input" placeholder="founder@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" value="********" class="settings-input" disabled>
+                                <button class="btn-text-link" style="margin-top: 0.5rem;">Change Password</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Business Profile Tab -->
+                    <div class="settings-tab" id="tab-business">
+                        <div class="settings-card">
+                            <h3>Your Dream Result</h3>
+                            <p class="helper-text">What is the single biggest outcome you are working toward?</p>
+                            <textarea id="input-dream" class="settings-textarea" placeholder="e.g. Build a $1M ARR SaaS company...">${currentState.profile.dreamResult}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Preferences Tab -->
+                    <div class="settings-tab" id="tab-preferences">
+                        <div class="settings-card">
+                            <h3>App Preferences</h3>
+                            <div class="toggle-row">
+                                <span>Daily Reminder</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-row">
+                                <span>Marketing Alerts</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-row">
+                                <span>Dark Mode</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggle-dark-mode">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <button class="btn-save-changes" id="btn-save-profile">Save Changes</button>
+                    <button class="btn-logout">Log Out</button>
+                </div>
+            </div>
+        `;
+
+        // Update Right Sidebar
+        renderProfileRightSidebar();
+
+        // Event Listeners
+        // Tabs
+        const tabs = learningStage.querySelectorAll('.tab-btn');
+        const contents = learningStage.querySelectorAll('.settings-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                learningStage.querySelector(`#tab-${tab.dataset.tab}`).classList.add('active');
+            });
+        });
+
+        // Image Upload
+        const uploadBtn = document.getElementById('btn-upload-avatar');
+        const fileInput = document.getElementById('avatar-upload-input');
+        const avatarImg = document.getElementById('profile-avatar-img');
+
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    avatarImg.src = e.target.result;
+                    currentState.profile.avatar = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Save Changes
+        document.getElementById('btn-save-profile').addEventListener('click', () => {
+            const nameInput = document.getElementById('input-name');
+            const emailInput = document.getElementById('input-email');
+            const dreamInput = document.getElementById('input-dream');
+
+            // Validation
+            if (!nameInput.value.trim()) {
+                alert("Name cannot be empty.");
+                return;
+            }
+            if (emailInput.value && !emailInput.value.includes('@')) {
+                alert("Please enter a valid email.");
+                return;
+            }
+
+            currentState.profile.name = nameInput.value.trim();
+            currentState.profile.email = emailInput.value.trim();
+            currentState.profile.dreamResult = dreamInput ? dreamInput.value.trim() : currentState.profile.dreamResult;
+            
+            saveState();
+            alert("Profile updated successfully!");
+            
+            // Update sidebar profile name if visible
+            const sidebarName = document.querySelector('.sidebar-profile .profile-name');
+            if (sidebarName) sidebarName.textContent = currentState.profile.name;
+        });
+
+        // Logout (Mock)
+        learningStage.querySelector('.btn-logout').addEventListener('click', () => {
+            if(confirm("Are you sure you want to log out?")) {
+                alert("Logged out.");
+                location.reload();
+            }
+        });
     }
 
     function renderHackNavigator() {
@@ -466,7 +930,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mobileHeader = document.createElement('div');
         mobileHeader.className = 'mobile-top-bar';
         mobileHeader.innerHTML = `
-            <a href="index.html" class="logo"><img src="images/avblack.png" alt="Avantaland Logo" class="mobile-logo"><span>Avantaland<span class="logo-academy">Academy</span></span></a>
+            <a href="index.html" class="logo"><img src="assets/logo-dark.svg" alt="Avantaland" class="mobile-logo"></a>
         `;
 
         // Insert at top of container
@@ -483,6 +947,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="mobile-nav-item" data-target="hacks">
                 <i class="ph-duotone ph-list-dashes"></i>
                 <span>Hacks</span>
+            </button>
+            <button class="mobile-nav-item" data-target="planner" id="mobile-nav-planner">
+                <i class="ph-duotone ph-calendar-check"></i>
+                <span>Planner</span>
             </button>
             <button class="mobile-nav-item" data-target="community">
                 <i class="ph-duotone ph-users-three"></i>
@@ -534,6 +1002,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     toggleSidebar(false);
                     if (target === 'home') {
                         renderDashboardGrid();
+                    } else if (target === 'planner') {
+                        renderPlanner();
+                    } else if (target === 'profile') {
+                        renderProfile();
                     } else if (target === 'community' || target === 'profile') {
                         alert(`${target.charAt(0).toUpperCase() + target.slice(1)} feature coming soon!`);
                     }
@@ -580,6 +1052,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstUncompleted = truthsData.findIndex(truth => !currentState.progress[truth.id]);
         // If all are completed, it returns -1. Default to the last hack.
         return firstUncompleted !== -1 ? firstUncompleted : truthsData.length - 1;
+    }
+
+    function getUrgentPlannerTask() {
+        try {
+            const tasks = JSON.parse(localStorage.getItem('avantaland_planner_tasks')) || [];
+            const slotOrder = JSON.parse(localStorage.getItem('avantaland_planner_slotOrder')) || ['revenue', 'operations', 'development'];
+            
+            for (const slot of slotOrder) {
+                const task = tasks.find(t => t.slot === slot && t.status === 'active' && !t.completed);
+                if (task) {
+                    return task.text;
+                }
+            }
+            return null;
+        } catch (e) {
+            console.error("Could not load planner tasks.", e);
+            return 'Could not load planner tasks.';
+        }
     }
 
     init();
