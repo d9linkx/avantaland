@@ -226,13 +226,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = checkbox.closest('.checklist-item') || checkbox.closest('.fix-item');
             if (card) {
                 card.addEventListener('click', (e) => {
-                    // Fix: Check if click target is the checkbox or inside a label to avoid double-toggling
-                    if (e.target === checkbox || e.target.closest('label')) return;
+                    // If clicking the checkbox directly, let it happen
+                    if (e.target === checkbox) return;
+
+                    // Prevent native label behavior to avoid double-toggling
+                    e.preventDefault();
 
                     if (!checkbox.disabled) {
                         checkbox.checked = !checkbox.checked;
-                        handleChecklistChange(index, checkIndex, checkbox.checked);
-                        updateCompleteButton();
+                        // Trigger change event to update state
+                        checkbox.dispatchEvent(new Event('change'));
                     }
                 });
             }
