@@ -925,7 +925,7 @@ body.zen-dashboard-body {
 }
 
 .planner-header h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
@@ -970,6 +970,7 @@ body.zen-dashboard-body {
     font-size: 1.1rem;
     transition: all 0.2s;
     background: var(--bg-surface);
+    font-style: italic;
     color: var(--text-primary);
 }
 

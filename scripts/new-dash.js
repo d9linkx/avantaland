@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div class="quick-add-container">
-                    <input type="text" class="quick-add-input" placeholder="What's the next win? (Press Enter)" id="planner-quick-add">
+                    <input type="text" class="quick-add-input" placeholder="Any plans? (type and press Enter)" id="planner-quick-add">
                 </div>
 
                 <!-- Section A: The Big 3 -->
@@ -763,7 +763,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Extract specific sections
                     summaryContent = tempDiv.querySelector('.truth-summary-box')?.innerHTML || summaryContent;
-                    checklistContent = tempDiv.querySelector('.truth-checklist')?.innerHTML || checklistContent;
+                    
+                    const checklistEl = tempDiv.querySelector('.truth-checklist');
+                    if (checklistEl) {
+                        const h3 = checklistEl.querySelector('h3');
+                        if (h3) {
+                            h3.textContent = 'To use this hack, do this:';
+                            const subtitle = document.createElement('p');
+                            subtitle.className = 'checklist-subtitle';
+                            subtitle.textContent = '(Only tick these off when you have actually done them)';
+                            h3.after(subtitle);
+                        }
+                        checklistContent = checklistEl.innerHTML;
+                    }
 
                     fullContentHTML = tempDiv.querySelector('#full-truth-content')?.innerHTML || '';
                 }
