@@ -211,7 +211,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- 2. Daily Executor Card Logic ---
         const plannerTasks = currentState.planner.tasks || [];
         // Filter for Big 3 and not completed
-        const big3Tasks = plannerTasks.filter(t => t.section === 'big3' && !t.completed).slice(0, 2);
+        const big3Tasks = plannerTasks.filter(t => t.section === 'big3' && !t.completed).slice(0, 3);
+
+        // Analyze Focus
+        const taskTexts = big3Tasks.map(t => t.text).join(' ').toLowerCase();
+        let focusType = "General Execution";
+        let motivation = "Clear these tasks to build momentum.";
+        
+        if (big3Tasks.length === 0) {
+            focusType = "Planning Mode";
+            motivation = "The day is open. Define your Big 3 to get started.";
+        } else if (taskTexts.match(/call|email|sell|close|\$|lead|prospect|client/)) {
+            focusType = "Revenue Focus";
+            motivation = "You're hunting today. Prioritize the tasks that bring in cash.";
+        } else if (taskTexts.match(/build|fix|code|design|write|create|launch|develop/)) {
+            focusType = "Product Focus";
+            motivation = "Deep work mode. You are building the asset.";
+        } else if (taskTexts.match(/plan|organize|meeting|review|hire|strategy/)) {
+            focusType = "Strategy Focus";
+            motivation = "Setting the stage for scale. Keep it efficient.";
+        }
 
         const executorCard = document.createElement('div');
         executorCard.className = 'executor-card';
@@ -230,8 +249,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         executorCard.innerHTML = `
             <div class="executor-header">
-                <h3>My Top 3 Goals Today</h3>
+                <h3>My Top 3 Goals</h3>
+                <span class="executor-focus-badge">${focusType}</span>
             </div>
+            <p class="executor-explanation">${motivation}</p>
             <div class="executor-list">
                 ${tasksHtml}
             </div>
