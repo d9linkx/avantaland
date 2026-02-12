@@ -816,7 +816,7 @@ body.zen-dashboard-body {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        justify-content: center; /* Center logo since hamburger is gone */
+        justify-content: flex-start; /* Align logo to left */
         padding: 1rem 1.5rem;
         background: var(--bg-surface);
         border-bottom: 1px solid var(--border-color);
