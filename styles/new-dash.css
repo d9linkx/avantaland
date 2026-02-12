@@ -980,6 +980,144 @@ body.zen-dashboard-body {
     box-shadow: 0 4px 12px rgba(41, 121, 255, 0.1);
 }
 
+    /* Make planner modules swipable on mobile/tablet */
+.planner-modules-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 1.25rem;
+        /* Add padding to allow cards to not stick to edges when scrolling */
+        padding: 0.75rem 1rem 2rem 1rem;
+        margin: 0 -1rem 2rem -1rem; /* Use negative margin to span full width inside padded parent */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        scroll-snap-type: x mandatory; /* Snap to cards */
+    }
+
+    /* Hide scrollbar for a cleaner look */
+    .planner-modules-grid::-webkit-scrollbar { display: none; }
+    .planner-modules-grid { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .planner-modules-grid .planner-card {
+        flex: 0 0 88%; /* Each card takes up 88% of the container width */
+        scroll-snap-align: center;
+        /* Ensure cards don't shrink if content is small */
+        min-width: 88%;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); /* Elevated look */
+        border: 1px solid rgba(0,0,0,0.05);
+}
+
+.planner-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.module-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.module-sub {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+/* Pipeline Pulse */
+.pipeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.pipeline-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: opacity 0.3s ease;
+    
+}
+
+.pipeline-row.dimmed {
+    opacity: 0.4;
+}
+
+.pipeline-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background: transparent;
+    border-radius: 0;
+}
+
+.pipeline-input:focus {
+    outline: none;
+    border-bottom-color: var(--brand-blue);
+}
+
+/* Yellow Toggle for Pipeline */
+.pipeline-toggle { position: relative; display: inline-block; width: 40px; height: 24px; flex-shrink: 0; }
+.pipeline-toggle input { opacity: 0; width: 0; height: 0; }
+.pipeline-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #E2E8F0; transition: .4s; border-radius: 24px; }
+.pipeline-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .pipeline-slider { background-color: #FFD700; } /* Vibrant Yellow */
+input:checked + .pipeline-slider:before { transform: translateX(16px); }
+
+/* Content Engine */
+.content-input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hook-input {
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    background: #F8FAFC;
+}
+
+.content-input-wrapper.logged .hook-input {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+    background: #F1F5F9;
+}
+
+.btn-log-hook {
+    background: #0062FF;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.content-input-wrapper.logged .btn-log-hook {
+    background: var(--success-color);
+    cursor: default;
+}
+
 .planner-section {
     border-radius: 24px;
     padding: 1.5rem;
@@ -1043,6 +1181,25 @@ body.zen-dashboard-body {
 
 .btn-timer:hover { transform: scale(1.05); }
 .btn-timer.active { background: var(--brand-blue); }
+
+/* Deep Work Stopwatch */
+.btn-stopwatch {
+    background: #F1F5F9;
+    border: none;
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-stopwatch:hover { background: #E2E8F0; color: var(--text-primary); }
+.btn-stopwatch.active { background: var(--text-primary); color: white; animation: pulse-soft 2s infinite; }
+
+@keyframes pulse-soft { 0% { box-shadow: 0 0 0 0 rgba(30, 41, 59, 0.2); } 70% { box-shadow: 0 0 0 6px rgba(30, 41, 59, 0); } 100% { box-shadow: 0 0 0 0 rgba(30, 41, 59, 0); } }
 
 /* Task Items */
 .planner-task {

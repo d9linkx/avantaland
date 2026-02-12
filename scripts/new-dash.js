@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let lastVisitTime = null;
+    let taskSystemInterval = null;
 
     // --- Initialization ---
     function init() {
@@ -78,6 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setupMobileView(); // Initialize mobile UI
         setupAveoDrawer(); // Initialize AI Agent
         setupEventListeners();
+
+        // Start the global task timer system
+        if (!taskSystemInterval) taskSystemInterval = setInterval(checkTaskSystem, 1000);
     }
 
     function loadState() {
@@ -85,7 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
             currentState.progress = JSON.parse(localStorage.getItem('bizLabProgress')) || {};
             currentState.checklist = JSON.parse(localStorage.getItem('bizLabChecklist')) || {};
             currentState.notes = localStorage.getItem('bizLabFeedbackNotes') || '';
-            currentState.planner = JSON.parse(localStorage.getItem('bizLabPlanner')) || { tasks: [], timer: { timeLeft: 1500, isRunning: false } };
+            
+            // Load Planner with defaults for new features
+            const defaultPlanner = { 
+                tasks: [], 
+                timer: { timeLeft: 1500, isRunning: false },
+                pipeline: [{id: 1, text: '', active: true}, {id: 2, text: '', active: true}, {id: 3, text: '', active: true}],
+                content: { text: '', logged: false }
+            };
+            currentState.planner = { ...defaultPlanner, ...JSON.parse(localStorage.getItem('bizLabPlanner') || '{}') };
+            
             currentState.profile = JSON.parse(localStorage.getItem('bizLabProfile')) || { name: 'Founder', email: '', dreamResult: '', avatar: null };
             currentState.lastVisit = JSON.parse(localStorage.getItem('bizLabLastVisit')) || null;
         } catch (e) {
@@ -301,8 +314,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="quick-add-container">
                     <input type="text" class="quick-add-input" placeholder="Any plans? (type and press Enter)" id="planner-quick-add">
-                    <div style="text-align: right; margin-top: 0.5rem;">
-                        <a href="#" id="why-3-link" style="font-size: 0.85rem; color: var(--brand-blue); text-decoration: underline;">Why only 3?</a>
+                </div>
+
+                <!-- New Modules Grid -->
+                <div class="planner-modules-grid">
+                    <!-- 1. Pipeline Pulse -->
+                    <div class="planner-card pipeline-card">
+                        <div class="module-header">
+                            <h3><i class="ph-duotone ph-pulse" style="color: #FFD700;"></i> Pipeline Pulse</h3>
+                            <span class="module-sub">Active Prospects</span>
+                        </div>
+                        <div class="pipeline-list">
+                            ${(currentState.planner.pipeline || []).map((lead, idx) => `
+                                <div class="pipeline-row ${!lead.active ? 'dimmed' : ''}">
+                                    <input type="text" class="pipeline-input" placeholder="Name or Company..." value="${lead.text}" data-idx="${idx}">
+                                    <label class="pipeline-toggle">
+                                        <input type="checkbox" ${!lead.active ? 'checked' : ''} data-idx="${idx}">
+                                        <span class="pipeline-slider"></span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 2. Content Engine -->
+                    <div class="planner-card content-card">
+                        <div class="module-header">
+                            <h3><i class="ph-duotone ph-megaphone" style="color: #0062FF;"></i> Content Engine</h3>
+                            <span class="module-sub">Daily Hook</span>
+                        </div>
+                        <div class="content-input-wrapper ${currentState.planner.content && currentState.planner.content.logged ? 'logged' : ''}">
+                            <input type="text" class="hook-input" id="hook-input" placeholder="One big idea..." value="${(currentState.planner.content && currentState.planner.content.text) || ''}" ${currentState.planner.content && currentState.planner.content.logged ? 'disabled' : ''}>
+                            <button class="btn-log-hook" id="btn-log-hook">
+                                ${currentState.planner.content && currentState.planner.content.logged ? '<i class="ph-bold ph-check"></i>' : 'Log'}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -310,19 +356,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="planner-section section-big-3">
                     <h3><i class="ph ph-star-fill" style="color: var(--brand-yellow);"></i> Unleash the power of 3</h3>
                     <div class="planner-task-list" id="list-big-3" data-section="big3"></div>
+                    <div style="text-align: left; margin-top: 0.5rem;">
+                        <a href="#" id="why-3-link" style="font-size: 0.85rem; color: #000000; text-decoration: underline;">Why only 3?</a>
+                    </div>
                 </div>
 
                 <!-- Section B: Money Queue -->
                 <div class="planner-section section-money">
                     <h3><i class="ph ph-currency-dollar-simple" style="color: var(--brand-blue);"></i> Money-Making Queue</h3>
                     <div class="planner-task-list" id="list-money" data-section="money"></div>
-                </div>
-
-                <!-- Section C: Deep Work Timer -->
-                <div class="planner-section section-deep-work">
-                    <h3>Deep Work Timer</h3>
-                    <div class="timer-display" id="planner-timer-display">25:00</div>
-                    <button class="btn-timer" id="btn-start-timer">Start Session</button>
                 </div>
             </div>
         `;
@@ -349,6 +391,35 @@ document.addEventListener('DOMContentLoaded', () => {
             why3Link.addEventListener('click', (e) => {
                 e.preventDefault();
                 alert("Limiting your daily focus to 3 key tasks forces prioritization and ensures you actually complete what matters most. It prevents overwhelm and builds momentum.");
+            });
+        }
+
+        // Pipeline Listeners
+        document.querySelectorAll('.pipeline-input').forEach(input => {
+            input.addEventListener('blur', (e) => {
+                const idx = e.target.dataset.idx;
+                currentState.planner.pipeline[idx].text = e.target.value;
+                saveState();
+            });
+        });
+        document.querySelectorAll('.pipeline-toggle input').forEach(toggle => {
+            toggle.addEventListener('change', (e) => {
+                const idx = e.target.dataset.idx;
+                currentState.planner.pipeline[idx].active = !e.target.checked; // Checked means "done" (inactive)
+                saveState();
+                renderPlanner(); // Re-render to apply dimming
+            });
+        });
+
+        // Content Engine Listeners
+        const hookInput = document.getElementById('hook-input');
+        const logBtn = document.getElementById('btn-log-hook');
+        if (logBtn) {
+            logBtn.addEventListener('click', () => {
+                if (!hookInput.value.trim()) return;
+                currentState.planner.content = { text: hookInput.value, logged: true };
+                saveState();
+                renderPlanner();
             });
         }
 
@@ -379,14 +450,84 @@ document.addEventListener('DOMContentLoaded', () => {
             const el = document.createElement('div');
             el.className = `planner-task ${task.completed ? 'completed' : ''}`;
             el.dataset.id = task.id;
+            
+            // Ensure defaults for existing tasks
+            if (typeof task.duration === 'undefined') task.duration = 30;
+            if (typeof task.timeLeft === 'undefined') task.timeLeft = task.duration * 60;
+            if (typeof task.elapsedTime === 'undefined') task.elapsedTime = 0;
+            if (typeof task.isStopwatchRunning === 'undefined') task.isStopwatchRunning = false;
+
             el.innerHTML = `
-                <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
-                <span class="task-content">${task.text}</span>
-                ${task.valueTag ? `<span class="value-tag">${task.valueTag}</span>` : ''}
-                <i class="ph ph-dots-six-vertical" style="color: #CBD5E1; cursor: grab;"></i>
+                <div style="display: flex; align-items: flex-start; gap: 1rem; width: 100%;">
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} style="margin-top: 4px;">
+                    <div style="flex: 1;">
+                        <div class="task-content" contenteditable="true" style="outline: none; border-bottom: 1px dashed transparent; padding-bottom: 2px; font-weight: 500;">${task.text}</div>
+                        <div class="task-meta-controls" style="display: flex; gap: 8px; margin-top: 8px; align-items: center; flex-wrap: wrap;">
+                            <input type="time" class="task-start-time" value="${task.startTime || ''}" title="Start Time" style="border: 1px solid #E2E8F0; border-radius: 6px; padding: 2px 6px; font-size: 0.8rem; color: #64748B; background: #F8FAFC;">
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <input type="number" class="task-duration" value="${task.duration}" min="1" title="Duration (min)" style="width: 50px; border: 1px solid #E2E8F0; border-radius: 6px; padding: 2px 6px; font-size: 0.8rem; color: #64748B; background: #F8FAFC;">
+                                <span style="font-size: 0.75rem; color: #94A3B8;">min</span>
+                            </div>
+                            
+                            ${task.section === 'big3' ? `
+                                <!-- Deep Work Stopwatch -->
+                                <div class="deep-work-stopwatch ${task.isStopwatchRunning ? 'running' : ''}" style="margin-left: auto; display: flex; align-items: center; gap: 6px;">
+                                    <button class="btn-stopwatch ${task.isStopwatchRunning ? 'active' : ''}" data-id="${task.id}" title="${task.isStopwatchRunning ? 'Pause Focus' : 'Start Focus'}">
+                                        <i class="ph-fill ${task.isStopwatchRunning ? 'ph-pause' : 'ph-play'}"></i>
+                                    </button>
+                                    <span class="stopwatch-time" style="font-family: monospace; font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">
+                                        ${task.completed ? formatDurationText(task.elapsedTime) : formatSeconds(task.elapsedTime)}
+                                    </span>
+                                </div>
+                            ` : `
+                                <span class="task-timer-display" style="font-family: monospace; font-weight: 700; color: ${task.isRunning ? 'var(--success-color)' : 'var(--brand-blue)'}; margin-left: auto; font-size: 0.9rem; background: #EFF6FF; padding: 2px 6px; border-radius: 4px;">
+                                    ${formatSeconds(task.timeLeft)}
+                                </span>
+                            `}
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                        <button class="btn-task-delete" style="background: none; border: none; color: #EF4444; cursor: pointer; opacity: 0.6; padding: 4px;"><i class="ph ph-trash"></i></button>
+                        <i class="ph ph-dots-six-vertical" style="color: #CBD5E1; cursor: grab;"></i>
+                    </div>
+                </div>
             `;
 
-            el.querySelector('.task-checkbox').addEventListener('change', () => togglePlannerTask(task.id));
+            el.querySelector('.task-checkbox').addEventListener('change', () => {
+                // If completing, stop the stopwatch
+                if (!task.completed && task.isStopwatchRunning) {
+                    task.isStopwatchRunning = false;
+                }
+                togglePlannerTask(task.id);
+            });
+            
+            el.querySelector('.btn-task-delete').addEventListener('click', () => deletePlannerTask(task.id));
+            
+            // Edit Text
+            const contentEl = el.querySelector('.task-content');
+            contentEl.addEventListener('blur', () => updatePlannerTask(task.id, { text: contentEl.innerText }));
+            contentEl.addEventListener('keydown', (e) => { if(e.key === 'Enter') { e.preventDefault(); contentEl.blur(); }});
+
+            // Edit Time
+            el.querySelector('.task-start-time').addEventListener('change', (e) => updatePlannerTask(task.id, { startTime: e.target.value }));
+            
+            // Edit Duration
+            el.querySelector('.task-duration').addEventListener('change', (e) => {
+                const newDuration = parseInt(e.target.value) || 1;
+                // Reset timer if duration changes and not running? Or just update duration reference?
+                // Let's reset timeLeft if not running.
+                const updates = { duration: newDuration };
+                if (!task.isRunning) updates.timeLeft = newDuration * 60;
+                updatePlannerTask(task.id, updates);
+                // Manually update display to avoid full re-render lag
+                if (!task.isRunning) el.querySelector('.task-timer-display').textContent = formatSeconds(newDuration * 60);
+            });
+            
+            // Stopwatch Toggle
+            const stopwatchBtn = el.querySelector('.btn-stopwatch');
+            if (stopwatchBtn) {
+                stopwatchBtn.addEventListener('click', () => toggleTaskStopwatch(task.id));
+            }
             
             if (task.section === 'big3') big3List.appendChild(el);
             else moneyList.appendChild(el);
@@ -406,7 +547,13 @@ document.addEventListener('DOMContentLoaded', () => {
             text: text,
             section: 'money', // Default to money queue
             completed: false,
-            valueTag: valueTag
+            valueTag: valueTag,
+            startTime: '', // HH:MM
+            duration: 30, // minutes
+            timeLeft: 30 * 60, // seconds
+            isRunning: false,
+            elapsedTime: 0,
+            isStopwatchRunning: false
         };
         
         if (!currentState.planner.tasks) currentState.planner.tasks = [];
@@ -421,6 +568,31 @@ document.addEventListener('DOMContentLoaded', () => {
             task.completed = !task.completed;
             saveState();
             renderPlanner(); // Re-render to update progress bar
+        }
+    }
+
+    function deletePlannerTask(id) {
+        if (confirm("Delete this task?")) {
+            currentState.planner.tasks = currentState.planner.tasks.filter(t => t.id !== id);
+            saveState();
+            renderPlanner();
+        }
+    }
+
+    function updatePlannerTask(id, updates) {
+        const task = currentState.planner.tasks.find(t => t.id === id);
+        if (task) {
+            Object.assign(task, updates);
+            saveState();
+        }
+    }
+
+    function toggleTaskStopwatch(id) {
+        const task = currentState.planner.tasks.find(t => t.id === id);
+        if (task && !task.completed) {
+            task.isStopwatchRunning = !task.isStopwatchRunning;
+            saveState();
+            renderPlannerTasks(); // Re-render to update icon state
         }
     }
 
@@ -446,6 +618,45 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
+        });
+    }
+
+    function checkTaskSystem() {
+        const now = new Date();
+        const currentTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); // HH:MM
+        let stateChanged = false;
+
+        if (!currentState.planner.tasks) return;
+
+        currentState.planner.tasks.forEach(task => {
+            // Auto-start logic
+            if (!task.completed && !task.isRunning && task.startTime === currentTime && task.timeLeft > 0) {
+                task.isRunning = true;
+                stateChanged = true;
+            }
+
+            // Timer logic
+            if (task.isRunning && !task.completed && task.timeLeft > 0) {
+                task.timeLeft--;
+                // Update DOM directly if visible to avoid re-render thrashing
+                const timerDisplay = document.querySelector(`.planner-task[data-id="${task.id}"] .task-timer-display`);
+                if (timerDisplay) {
+                    timerDisplay.textContent = formatSeconds(task.timeLeft);
+                }
+                // We don't save state every second to avoid IO thrashing, but we could if needed.
+                // For now, let's save only on start/stop or significant events, or rely on page unload.
+                // Actually, let's save periodically or rely on the user interaction updates.
+            }
+
+            // Stopwatch Logic (Counts UP)
+            if (task.isStopwatchRunning && !task.completed) {
+                task.elapsedTime = (task.elapsedTime || 0) + 1;
+                // Update DOM directly
+                const stopwatchDisplay = document.querySelector(`.planner-task[data-id="${task.id}"] .stopwatch-time`);
+                if (stopwatchDisplay) {
+                    stopwatchDisplay.textContent = formatSeconds(task.elapsedTime);
+                }
+            }
         });
     }
 
@@ -486,6 +697,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const m = Math.floor(time / 60).toString().padStart(2, '0');
         const s = (time % 60).toString().padStart(2, '0');
         display.textContent = `${m}:${s}`;
+    }
+
+    function formatSeconds(seconds) {
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const s = (seconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function formatDurationText(seconds) {
+        if (!seconds) return "0m";
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        if (h > 0) return `${h}h ${m}m`;
+        return `${m}m`;
     }
 
     // --- Profile & Settings Logic ---
