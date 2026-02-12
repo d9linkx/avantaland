@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let lastVisitTime = null;
     let taskSystemInterval = null;
+    const timerBeep = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
     // --- Initialization ---
     function init() {
@@ -307,7 +308,12 @@ document.addEventListener('DOMContentLoaded', () => {
         learningStage.innerHTML = `
             <div class="planner-container">
                 <div class="planner-header">
-                    <h1>Daily Focus <span class="date">${today}</span></h1>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h1>Daily Focus <span class="date">${today}</span></h1>
+                        <a href="#" id="nav-to-business" style="font-weight: 600; color: var(--brand-blue); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; font-size: 1rem;">
+                            Business <i class="ph-bold ph-arrow-right"></i>
+                        </a>
+                    </div>
                     <div class="planner-progress-container">
                         <div class="planner-progress-bar" style="width: ${progress}%"></div>
                     </div>
@@ -332,70 +338,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3><i class="ph ph-currency-dollar-simple" style="color: var(--brand-blue);"></i> Money-Making Queue</h3>
                     <div class="planner-task-list" id="list-money" data-section="money"></div>
                 </div>
-
-                <!-- New Modules Grid -->
-                <div class="planner-modules-grid">
-                    <!-- 1. Pipeline Pulse -->
-                    <div class="planner-card pipeline-card">
-                        <div class="module-header">
-                            <h3><i class="ph-duotone ph-pulse" style="color: #FFD700;"></i> Pipeline Pulse</h3>
-                            <span class="module-sub">Active Prospects</span>
-                        </div>
-                        <div class="pipeline-list">
-                            ${(currentState.planner.pipeline || []).map((lead, idx) => `
-                                <div class="pipeline-row ${!lead.active ? 'dimmed' : ''}">
-                                    <input type="text" class="pipeline-input" placeholder="Name or Company..." value="${lead.text}" data-idx="${idx}">
-                                    <label class="pipeline-toggle">
-                                        <input type="checkbox" ${!lead.active ? 'checked' : ''} data-idx="${idx}">
-                                        <span class="pipeline-slider"></span>
-                                    </label>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <!-- 2. Content Engine -->
-                    <div class="planner-card content-card">
-                        <div class="module-header">
-                            <h3><i class="ph-duotone ph-megaphone" style="color: #0062FF;"></i> Content Engine</h3>
-                            <span class="module-sub">Daily Hook</span>
-                        </div>
-                        <div class="content-input-wrapper ${currentState.planner.content && currentState.planner.content.logged ? 'logged' : ''}">
-                            <input type="text" class="hook-input" id="hook-input" placeholder="One big idea..." value="${(currentState.planner.content && currentState.planner.content.text) || ''}" ${currentState.planner.content && currentState.planner.content.logged ? 'disabled' : ''}>
-                            <button class="btn-log-hook" id="btn-log-hook">
-                                ${currentState.planner.content && currentState.planner.content.logged ? '<i class="ph-bold ph-check"></i>' : 'Log'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lead Pipeline -->
-                <div class="lead-pipeline-container">
-                    <div class="lead-bucket-wrapper">
-                        <div class="lead-bucket bucket-hunt" id="bucket-hunt" data-bucket="hunt"></div>
-                        <span class="bucket-label">The Hunt</span>
-                    </div>
-                    <div class="lead-bucket-wrapper">
-                        <div class="lead-bucket bucket-heat" id="bucket-heat" data-bucket="heat"></div>
-                        <span class="bucket-label">The Heat</span>
-                    </div>
-                    <div class="lead-bucket-wrapper">
-                        <div class="lead-bucket bucket-bag" id="bucket-bag" data-bucket="bag"></div>
-                        <span class="bucket-label">The Bag</span>
-                    </div>
-                    <button class="btn-add-lead" id="btn-add-lead" title="Add New Lead"><i class="ph ph-plus"></i></button>
-                </div>
-
             </div>
         `;
 
         renderPlannerTasks();
         updateTimerDisplay();
         if (window.Sortable) initPlannerSortable();
-
-        renderLeadTokens();
-        if (window.Sortable) initLeadBucketsSortable();
-
 
         // Event Listeners
         const quickAdd = document.getElementById('planner-quick-add');
@@ -418,39 +366,86 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Pipeline Listeners
-        document.querySelectorAll('.pipeline-input').forEach(input => {
-            input.addEventListener('blur', (e) => {
-                const idx = e.target.dataset.idx;
-                currentState.planner.pipeline[idx].text = e.target.value;
-                saveState();
-            });
+        document.getElementById('nav-to-business').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelector('.sidebar-nav .nav-item[data-target="business"]')?.classList.add('active');
+            renderBusinessDashboard();
         });
-        document.querySelectorAll('.pipeline-toggle input').forEach(toggle => {
-            toggle.addEventListener('change', (e) => {
-                const idx = e.target.dataset.idx;
-                currentState.planner.pipeline[idx].active = !e.target.checked; // Checked means "done" (inactive)
-                saveState();
-                renderPlanner(); // Re-render to apply dimming
-            });
-        });
-
-        // Content Engine Listeners
-        const hookInput = document.getElementById('hook-input');
-        const logBtn = document.getElementById('btn-log-hook');
-        if (logBtn) {
-            logBtn.addEventListener('click', () => {
-                if (!hookInput.value.trim()) return;
-                currentState.planner.content = { text: hookInput.value, logged: true };
-                saveState();
-                renderPlanner();
-            });
-        }
 
         document.getElementById('btn-start-timer').addEventListener('click', togglePlannerTimer);
 
         // Restore default right sidebar
         renderIntelligenceWing();
+    }
+
+    function renderBusinessDashboard() {
+        if (!window.Sortable) {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js';
+            script.onload = () => initLeadBucketsSortable();
+            document.head.appendChild(script);
+        }
+
+        learningStage.innerHTML = `
+            <div class="planner-container">
+                <div class="planner-header">
+                    <h1>Business & Sales Funnel</h1>
+                    <p style="color: var(--text-secondary);">Drag leads through the stages to track your revenue flow.</p>
+                </div>
+
+                <div class="funnel-container">
+                    <!-- Stage 1: The Hunt -->
+                    <div class="funnel-card card-hunt">
+                        <div class="card-header">
+                            <div class="header-icon"><i class="ph-duotone ph-binoculars"></i></div>
+                            <div class="header-info">
+                                <h3>The Hunt</h3>
+                                <span>Incoming Leads</span>
+                            </div>
+                            <div class="stage-count-badge" id="count-hunt">0</div>
+                        </div>
+                        <div class="lead-bucket" id="bucket-hunt" data-bucket="hunt"></div>
+                    </div>
+
+                    <!-- Stage 2: The Heat -->
+                    <div class="funnel-card card-heat">
+                        <div class="card-header">
+                            <div class="header-icon"><i class="ph-duotone ph-fire"></i></div>
+                            <div class="header-info">
+                                <h3>The Heat</h3>
+                                <span>Active Negotiations</span>
+                            </div>
+                            <div class="stage-count-badge" id="count-heat">0</div>
+                        </div>
+                        <div class="lead-bucket" id="bucket-heat" data-bucket="heat"></div>
+                    </div>
+
+                    <!-- Stage 3: The Bag -->
+                    <div class="funnel-card card-bag">
+                        <div class="card-header">
+                            <div class="header-icon"><i class="ph-duotone ph-check-circle"></i></div>
+                            <div class="header-info">
+                                <h3>The Bag</h3>
+                                <span>Closed Deals</span>
+                            </div>
+                            <div class="stage-count-badge" id="count-bag">0</div>
+                        </div>
+                        <div class="lead-bucket" id="bucket-bag" data-bucket="bag"></div>
+                    </div>
+                </div>
+
+                <button class="btn-add-lead-floating" id="btn-add-lead">
+                    <i class="ph-bold ph-plus"></i> New Lead
+                </button>
+            </div>
+        `;
+
+        renderLeadTokens();
+        if (window.Sortable) initLeadBucketsSortable();
+
+        const addLeadBtn = document.getElementById('btn-add-lead');
+        if (addLeadBtn) addLeadBtn.addEventListener('click', addLead);
     }
 
     function renderPlannerTasks() {
@@ -498,43 +493,57 @@ document.addEventListener('DOMContentLoaded', () => {
             el.dataset.id = task.id;
             
             // Ensure defaults for existing tasks
-            if (typeof task.duration === 'undefined') task.duration = 30;
-            if (typeof task.timeLeft === 'undefined') task.timeLeft = task.duration * 60;
+            if (typeof task.startTime === 'undefined') task.startTime = '';
+            if (typeof task.endTime === 'undefined') task.endTime = '';
             if (typeof task.elapsedTime === 'undefined') task.elapsedTime = 0;
             if (typeof task.isStopwatchRunning === 'undefined') task.isStopwatchRunning = false;
 
+            // Calculate initial timer display
+            let initialTimerText = "00:00";
+            if (task.startTime && task.endTime && !task.completed) {
+                const now = new Date();
+                const [sh, sm] = task.startTime.split(':').map(Number);
+                const startDate = new Date(); startDate.setHours(sh, sm, 0, 0);
+                const [eh, em] = task.endTime.split(':').map(Number);
+                const endDate = new Date(); endDate.setHours(eh, em, 0, 0);
+                
+                if (now < startDate) initialTimerText = formatSeconds(Math.floor((endDate - startDate) / 1000));
+                else if (now < endDate) initialTimerText = formatSeconds(Math.floor((endDate - now) / 1000));
+            }
+
             el.innerHTML = `
-                <div style="display: flex; align-items: flex-start; gap: 1rem; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap;">
                     <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} style="margin-top: 4px;">
-                    <div style="flex: 1;">
-                        <div class="task-content" contenteditable="true" style="outline: none; border-bottom: 1px dashed transparent; padding-bottom: 2px; font-weight: 500;">${task.text}</div>
-                        <div class="task-meta-controls" style="display: flex; gap: 8px; margin-top: 8px; align-items: center; flex-wrap: wrap;">
-                            <input type="time" class="task-start-time" value="${task.startTime || ''}" title="Start Time" style="border: 1px solid #E2E8F0; border-radius: 6px; padding: 2px 6px; font-size: 0.8rem; color: #64748B; background: #F8FAFC;">
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <input type="number" class="task-duration" value="${task.duration}" min="1" title="Duration (min)" style="width: 50px; border: 1px solid #E2E8F0; border-radius: 6px; padding: 2px 6px; font-size: 0.8rem; color: #64748B; background: #F8FAFC;">
-                                <span style="font-size: 0.75rem; color: #94A3B8;">min</span>
-                            </div>
-                            
-                            ${task.section === 'big3' ? `
-                                <!-- Deep Work Stopwatch -->
-                                <div class="deep-work-stopwatch ${task.isStopwatchRunning ? 'running' : ''}" style="margin-left: auto; display: flex; align-items: center; gap: 6px;">
-                                    <button class="btn-stopwatch ${task.isStopwatchRunning ? 'active' : ''}" data-id="${task.id}" title="${task.isStopwatchRunning ? 'Pause Focus' : 'Start Focus'}">
-                                        <i class="ph-fill ${task.isStopwatchRunning ? 'ph-pause' : 'ph-play'}"></i>
-                                    </button>
-                                    <span class="stopwatch-time" style="font-family: monospace; font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">
-                                        ${task.completed ? formatDurationText(task.elapsedTime) : formatSeconds(task.elapsedTime)}
-                                    </span>
-                                </div>
-                            ` : `
-                                <span class="task-timer-display" style="font-family: monospace; font-weight: 700; color: ${task.isRunning ? 'var(--success-color)' : 'var(--brand-blue)'}; margin-left: auto; font-size: 0.9rem; background: #EFF6FF; padding: 2px 6px; border-radius: 4px;">
-                                    ${formatSeconds(task.timeLeft)}
-                                </span>
-                            `}
+                    
+                    <div style="flex: 1; min-width: 200px;">
+                        <div class="task-content" style="font-weight: 500; margin-bottom: 4px;">${task.text}</div>
+                        <div class="task-meta-controls" style="display: flex; gap: 8px; align-items: center; font-size: 0.85rem; color: var(--text-secondary);">
+                            <span style="background: #F1F5F9; padding: 2px 8px; border-radius: 6px;"><i class="ph ph-clock"></i> ${task.startTime || '--:--'}</span>
+                            <span style="background: #F1F5F9; padding: 2px 8px; border-radius: 6px;"><i class="ph ph-clock-counter-clockwise"></i> ${task.endTime || '--:--'}</span>
                         </div>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
-                        <button class="btn-task-delete" style="background: none; border: none; color: #EF4444; cursor: pointer; opacity: 0.6; padding: 4px;"><i class="ph ph-trash"></i></button>
-                        <i class="ph ph-dots-six-vertical" style="color: #CBD5E1; cursor: grab;"></i>
+
+                    <div style="display: flex; align-items: center; gap: 12px; margin-left: auto;">
+                        ${task.section === 'big3' ? `
+                            <div class="deep-work-stopwatch ${task.isStopwatchRunning ? 'running' : ''}" style="display: flex; align-items: center; gap: 6px;">
+                                <button class="btn-stopwatch ${task.isStopwatchRunning ? 'active' : ''}" data-id="${task.id}">
+                                    <i class="ph-fill ${task.isStopwatchRunning ? 'ph-pause' : 'ph-play'}"></i>
+                                </button>
+                                <span class="stopwatch-time" style="font-family: monospace; font-weight: 600;">
+                                    ${task.completed ? formatDurationText(task.elapsedTime) : formatSeconds(task.elapsedTime)}
+                                </span>
+                            </div>
+                        ` : `
+                            <span class="task-timer-display" style="font-family: monospace; font-weight: 700; color: ${task.isRunning ? 'var(--success-color)' : 'var(--brand-blue)'}; background: #EFF6FF; padding: 4px 8px; border-radius: 6px;">
+                                ${initialTimerText}
+                            </span>
+                        `}
+                        
+                        <div class="task-actions" style="display: flex; gap: 4px;">
+                            <button class="btn-task-edit" style="background: none; border: none; color: #64748B; cursor: pointer; padding: 4px;"><i class="ph ph-pencil-simple"></i></button>
+                            <button class="btn-task-delete" style="background: none; border: none; color: #EF4444; cursor: pointer; padding: 4px;"><i class="ph ph-trash"></i></button>
+                            <i class="ph ph-dots-six-vertical" style="color: #CBD5E1; cursor: grab; padding: 4px;"></i>
+                        </div>
                     </div>
                 </div>
             `;
@@ -548,26 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             el.querySelector('.btn-task-delete').addEventListener('click', () => deletePlannerTask(task.id));
-            
-            // Edit Text
-            const contentEl = el.querySelector('.task-content');
-            contentEl.addEventListener('blur', () => updatePlannerTask(task.id, { text: contentEl.innerText }));
-            contentEl.addEventListener('keydown', (e) => { if(e.key === 'Enter') { e.preventDefault(); contentEl.blur(); }});
-
-            // Edit Time
-            el.querySelector('.task-start-time').addEventListener('change', (e) => updatePlannerTask(task.id, { startTime: e.target.value }));
-            
-            // Edit Duration
-            el.querySelector('.task-duration').addEventListener('change', (e) => {
-                const newDuration = parseInt(e.target.value) || 1;
-                // Reset timer if duration changes and not running? Or just update duration reference?
-                // Let's reset timeLeft if not running.
-                const updates = { duration: newDuration };
-                if (!task.isRunning) updates.timeLeft = newDuration * 60;
-                updatePlannerTask(task.id, updates);
-                // Manually update display to avoid full re-render lag
-                if (!task.isRunning) el.querySelector('.task-timer-display').textContent = formatSeconds(newDuration * 60);
-            });
+            el.querySelector('.btn-task-edit').addEventListener('click', () => openEditTaskModal(task.id));
             
             // Stopwatch Toggle
             const stopwatchBtn = el.querySelector('.btn-stopwatch');
@@ -583,21 +573,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderLeadTokens() {
         // Clear all buckets first
         document.querySelectorAll('.lead-bucket').forEach(bucket => bucket.innerHTML = '');
+        
+        // Reset counts
+        const counts = { hunt: 0, heat: 0, bag: 0 };
 
         const leads = currentState.planner.leads || [];
         leads.forEach(lead => {
+            if (counts[lead.bucket] !== undefined) counts[lead.bucket]++;
+            
             const bucketEl = document.getElementById(`bucket-${lead.bucket}`);
             if (bucketEl) {
                 const token = document.createElement('div');
-                token.className = 'lead-token';
-                if (lead.isCold) {
-                    token.classList.add('cold');
-                }
+                token.className = 'lead-token-card';
                 token.dataset.id = lead.id;
-                token.textContent = lead.initials;
-                token.title = lead.name;
+                token.innerHTML = `
+                    <div class="token-avatar">${lead.initials}</div>
+                    <div class="token-info">
+                        <span class="token-name">${lead.name}</span>
+                        <span class="token-time">Moved ${formatLastVisit(lead.lastMoved).replace('Today at ', '')}</span>
+                    </div>
+                    <i class="ph-bold ph-dots-six-vertical token-drag-handle"></i>
+                `;
                 bucketEl.appendChild(token);
             }
+        });
+
+        // Update badges
+        Object.keys(counts).forEach(key => {
+            const badge = document.getElementById(`count-${key}`);
+            if (badge) badge.textContent = counts[key];
         });
     }
 
@@ -619,7 +623,77 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentState.planner.leads) currentState.planner.leads = [];
         currentState.planner.leads.push(newLead);
         saveState();
-        renderLeadTokens(); // Just re-render the tokens, not the whole planner
+        renderLeadTokens();
+    }
+
+    function initLeadBucketsSortable() {
+        const buckets = document.querySelectorAll('.lead-bucket');
+        buckets.forEach(bucket => {
+            new Sortable(bucket, {
+                group: 'leads',
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                dragClass: 'sortable-drag',
+                delay: 100, // Slight delay to prevent accidental drags on touch
+                delayOnTouchOnly: true,
+                onEnd: function (evt) {
+                    const tokenEl = evt.item;
+                    const leadId = parseInt(tokenEl.dataset.id);
+                    const toBucket = evt.to.dataset.bucket;
+
+                    const lead = currentState.planner.leads.find(l => l.id === leadId);
+                    if (lead) {
+                        // Update State
+                        lead.bucket = toBucket;
+                        lead.lastMoved = Date.now();
+                        
+                        // Trigger Effects
+                        if (toBucket === 'bag') {
+                            triggerParticleExplosion();
+                            // Haptic feedback if available
+                            if (navigator.vibrate) navigator.vibrate([50, 50, 100]);
+                        }
+
+                        saveState();
+                        renderLeadTokens(); // Re-render to update counts and timestamps
+                    }
+                }
+            });
+        });
+    }
+
+    function triggerParticleExplosion() {
+        const container = document.createElement('div');
+        container.className = 'particle-explosion-container';
+        document.body.appendChild(container);
+        // Simple CSS animation trigger (styles in CSS)
+        setTimeout(() => container.remove(), 2000);
+    }
+
+    function checkTimeOverlap(newStart, newEnd, excludeId = null) {
+        if (!newStart || !newEnd) return false;
+        
+        const parseTime = (t) => {
+            const [h, m] = t.split(':').map(Number);
+            return h * 60 + m;
+        };
+
+        const newStartMin = parseTime(newStart);
+        const newEndMin = parseTime(newEnd);
+        
+        if (newEndMin <= newStartMin) return true; // Invalid range
+
+        const tasks = currentState.planner.tasks || [];
+        
+        for (const task of tasks) {
+            if (task.id === excludeId) continue;
+            if (task.completed) continue;
+            if (!task.startTime || !task.endTime) continue;
+            const taskStartMin = parseTime(task.startTime);
+            const taskEndMin = parseTime(task.endTime);
+            if (newStartMin < taskEndMin && taskStartMin < newEndMin) return true;
+        }
+        return false;
     }
 
     function addPlannerTask(text) {
@@ -643,9 +717,9 @@ document.addEventListener('DOMContentLoaded', () => {
             completed: false,
             valueTag: valueTag,
             startTime: '', // HH:MM
-            duration: 30, // minutes
-            timeLeft: 30 * 60, // seconds
+            endTime: '',   // HH:MM
             isRunning: false,
+            hasAlerted: false,
             elapsedTime: 0,
             isStopwatchRunning: false
         };
@@ -663,6 +737,56 @@ document.addEventListener('DOMContentLoaded', () => {
             saveState();
             renderPlanner(); // Re-render to update progress bar
         }
+    }
+
+    function openEditTaskModal(taskId) {
+        const task = currentState.planner.tasks.find(t => t.id === taskId);
+        if (!task) return;
+
+        const existing = document.getElementById('edit-task-modal');
+        if (existing) existing.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'edit-task-modal';
+        modal.className = 'custom-modal-overlay active';
+        modal.innerHTML = `
+            <div class="custom-modal" style="text-align: left;">
+                <h3>Edit Task</h3>
+                <div class="form-group">
+                    <label>Task Name</label>
+                    <input type="text" id="edit-task-text" class="settings-input" value="${task.text}">
+                </div>
+                <div class="form-group">
+                    <label>Start Time</label>
+                    <input type="time" id="edit-task-start" class="settings-input" value="${task.startTime || ''}">
+                </div>
+                <div class="form-group">
+                    <label>End Time</label>
+                    <input type="time" id="edit-task-end" class="settings-input" value="${task.endTime || ''}">
+                </div>
+                <div class="modal-actions" style="margin-top: 1.5rem;">
+                    <button class="btn-modal btn-cancel" id="btn-cancel-edit">Cancel</button>
+                    <button class="btn-modal btn-complete" id="btn-save-edit">Save Changes</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        modal.querySelector('#btn-cancel-edit').addEventListener('click', () => modal.remove());
+        modal.querySelector('#btn-save-edit').addEventListener('click', () => {
+            const newText = document.getElementById('edit-task-text').value.trim();
+            const newStart = document.getElementById('edit-task-start').value;
+            const newEnd = document.getElementById('edit-task-end').value;
+
+            if (!newText) return alert("Task name cannot be empty");
+            if (newStart && newEnd && newEnd <= newStart) return alert("End time must be after start time.");
+            if (newStart && newEnd && checkTimeOverlap(newStart, newEnd, taskId)) return alert("Time clash detected! This task overlaps with another active task.");
+
+            updatePlannerTask(taskId, { text: newText, startTime: newStart, endTime: newEnd, hasAlerted: false });
+            renderPlannerTasks();
+            modal.remove();
+        });
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
     }
 
     let taskToDeleteId = null;
@@ -721,83 +845,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function initLeadBucketsSortable() {
-        const buckets = document.querySelectorAll('.lead-bucket');
-        buckets.forEach(bucket => {
-            new Sortable(bucket, {
-                group: 'leads',
-                animation: 150,
-                delay: 200, // Long press to pick up (200ms)
-                delayOnTouchOnly: true, // Immediate drag on desktop
-                ghostClass: 'sortable-ghost',
-                dragClass: 'sortable-drag',
-                
-                // Physics: Magnet Pulse on Hover
-                onMove: function (evt) {
-                    // Remove pulse from all, add to current target
-                    document.querySelectorAll('.lead-bucket').forEach(b => b.classList.remove('bucket-pulse'));
-                    if (evt.to) {
-                        evt.to.classList.add('bucket-pulse');
-                    }
-                },
-                
-                onEnd: function (evt) {
-                    // Clean up pulse effect
-                    document.querySelectorAll('.lead-bucket').forEach(b => b.classList.remove('bucket-pulse'));
-
-                    const tokenEl = evt.item;
-                    const leadId = parseInt(tokenEl.dataset.id);
-                    const fromBucket = evt.from.dataset.bucket;
-                    const toBucket = evt.to.dataset.bucket;
-
-                    // --- Snap Back Logic ---
-                    if (fromBucket === 'hunt' && toBucket === 'bag') {
-                        evt.from.appendChild(tokenEl); // Visually move it back
-                        navigator.vibrate?.([50, 50, 50]); // Error vibration pattern
-                        tokenEl.classList.add('shake-error');
-                        setTimeout(() => tokenEl.classList.remove('shake-error'), 500);
-                        return; // Don't update state
-                    }
-
-                    const lead = currentState.planner.leads.find(l => l.id === leadId);
-                    if (lead) {
-                        lead.bucket = toBucket;
-                        lead.lastMoved = Date.now();
-                        lead.isCold = false; // Reset cold status on move
-                        navigator.vibrate?.(50); // Haptic feedback
-
-                        if (toBucket === 'heat') {
-                            // Trigger Aveo Script
-                            toggleAveoDrawer(true);
-                            addAveoMessage(`<strong>Aveo 1:</strong> Moving ${lead.name} to Heat? Good. Here is a quick follow-up script:<br><br><em>"Hi ${lead.name.split(' ')[0]}, just circling back on this. Are we still good to go, or should I prioritize other accounts this week?"</em>`, 'ai');
-                        }
-
-                        if (toBucket === 'bag') {
-                            currentState.planner.lastBaggedTimestamp = Date.now();
-                            triggerParticleExplosion();
-                            // Sync to "North Star" (Mastery Gauge visual update)
-                            const gauge = document.querySelector('.progress-gauge-thin .progress');
-                            if(gauge) { 
-                                gauge.style.transition = 'stroke 0.2s ease-in-out';
-                                gauge.style.stroke = 'var(--brand-yellow)'; 
-                                // Fill animation simulation
-                                const originalDash = gauge.style.strokeDashoffset;
-                                gauge.style.strokeDashoffset = '0';
-                                setTimeout(() => {
-                                    gauge.style.stroke = ''; // Reverts to stylesheet color
-                                    gauge.style.strokeDashoffset = originalDash; // Revert offset
-                                    setTimeout(() => gauge.style.transition = '', 200); // Remove transition override
-                                }, 1000); 
-                            }
-                        }
-                        saveState();
-                        renderLeadTokens();
-                    }
-                }
-            });
-        });
-    }
-
     function initPlannerSortable() {
         const containers = [document.getElementById('list-big-3'), document.getElementById('list-money')];
         containers.forEach(container => {
@@ -825,29 +872,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function checkTaskSystem() {
         const now = new Date();
-        const currentTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); // HH:MM
         let stateChanged = false;
 
         if (!currentState.planner.tasks) return;
 
         currentState.planner.tasks.forEach(task => {
-            // Auto-start logic
-            if (!task.completed && !task.isRunning && task.startTime === currentTime && task.timeLeft > 0) {
-                task.isRunning = true;
-                stateChanged = true;
-            }
+            // Real-time Countdown Logic
+            if (!task.startTime || !task.endTime || task.completed) return;
 
-            // Timer logic
-            if (task.isRunning && !task.completed && task.timeLeft > 0) {
-                task.timeLeft--;
-                // Update DOM directly if visible to avoid re-render thrashing
+            const [sh, sm] = task.startTime.split(':').map(Number);
+            const startDate = new Date();
+            startDate.setHours(sh, sm, 0, 0);
+
+            const [eh, em] = task.endTime.split(':').map(Number);
+            const endDate = new Date();
+            endDate.setHours(eh, em, 0, 0);
+
+            if (now >= startDate && now < endDate) {
+                // Task is active
+                task.isRunning = true;
+                const secondsRemaining = Math.floor((endDate - now) / 1000);
+                
                 const timerDisplay = document.querySelector(`.planner-task[data-id="${task.id}"] .task-timer-display`);
                 if (timerDisplay) {
-                    timerDisplay.textContent = formatSeconds(task.timeLeft);
+                    timerDisplay.textContent = formatSeconds(secondsRemaining);
+                    timerDisplay.style.color = 'var(--success-color)';
                 }
-                // We don't save state every second to avoid IO thrashing, but we could if needed.
-                // For now, let's save only on start/stop or significant events, or rely on page unload.
-                // Actually, let's save periodically or rely on the user interaction updates.
+            } else if (now >= endDate) {
+                // Task ended
+                if (task.isRunning || !task.hasAlerted) {
+                    task.isRunning = false;
+                    if (!task.hasAlerted) {
+                        task.hasAlerted = true;
+                        timerBeep.play().catch(e => console.error(e));
+                        alert(`Time is up for: ${task.text}`);
+                        saveState();
+                        renderPlannerTasks(); // Update UI to show 00:00 or ended state
+                    }
+                }
+                const timerDisplay = document.querySelector(`.planner-task[data-id="${task.id}"] .task-timer-display`);
+                if (timerDisplay) {
+                    timerDisplay.textContent = "00:00";
+                    timerDisplay.style.color = '#EF4444';
+                }
+            } else {
+                // Future task
+                task.isRunning = false;
+                const timerDisplay = document.querySelector(`.planner-task[data-id="${task.id}"] .task-timer-display`);
+                if (timerDisplay) {
+                    const durationSecs = Math.floor((endDate - startDate) / 1000);
+                    timerDisplay.textContent = formatSeconds(durationSecs);
+                    timerDisplay.style.color = 'var(--brand-blue)';
+                }
             }
 
             // Stopwatch Logic (Counts UP)
@@ -860,53 +936,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-
-        // --- Lead System Checks (Cooldown & Referee) ---
-        // We run this less frequently or just check timestamps here
-        checkLeadSystem();
-    }
-
-    function checkLeadSystem() {
-        const leads = currentState.planner.leads || [];
-        const heatLeads = [];
-        let stateChanged = false;
-
-        leads.forEach(lead => {
-            if (lead.bucket === 'heat') {
-                heatLeads.push(lead);
-                // Check for cold leads (24 hours)
-                const isNowCold = (Date.now() - lead.lastMoved) > (24 * 3600 * 1000);
-                if (lead.isCold !== isNowCold) {
-                    lead.isCold = isNowCold;
-                    stateChanged = true;
-                    // Update DOM directly
-                    const tokenEl = document.querySelector(`.lead-token[data-id="${lead.id}"]`);
-                    if (tokenEl) {
-                        tokenEl.classList.toggle('cold', isNowCold);
-                    }
-                }
-            }
-        });
-
-        if (stateChanged) saveState();
-
-        // Aveo Referee Mode (48 hours check)
-        // Only run this check once per session or infrequently to avoid spamming
-        if (heatLeads.length >= 3) {
-            const lastBagged = currentState.planner.lastBaggedTimestamp || 0;
-            const timeSinceBag = Date.now() - lastBagged;
-            const fortyEightHours = 48 * 3600 * 1000;
-
-            if (timeSinceBag > fortyEightHours) {
-                const lastRefereeAlert = JSON.parse(sessionStorage.getItem('lastRefereeAlert') || '0');
-                // Alert max once every 6 hours
-                if (Date.now() - lastRefereeAlert > 6 * 3600 * 1000) { 
-                    toggleAveoDrawer(true);
-                    addAveoMessage(`<strong>Aveo 1 (Referee Mode):</strong> Boss, your 'Heat' bucket is overflowing (${heatLeads.length} leads). You're busy, but you aren't closing. Move one of those to 'The Bag' in the next hour or we're losing money.`, 'ai');
-                    sessionStorage.setItem('lastRefereeAlert', JSON.stringify(Date.now()));
-                }
-            }
-        }
     }
 
     function togglePlannerTimer() {
@@ -960,30 +989,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const m = Math.floor((seconds % 3600) / 60);
         if (h > 0) return `${h}h ${m}m`;
         return `${m}m`;
-    }
-
-    function triggerParticleExplosion() {
-        const container = document.createElement('div');
-        container.className = 'particle-explosion-container';
-        document.body.appendChild(container);
-
-        for (let i = 0; i < 100; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.background = `hsl(${Math.random() * 50 + 40}, 100%, 50%)`; // Gold/Yellow tones
-            
-            const x = Math.random() * 100 - 50;
-            const y = Math.random() * 100 - 50;
-            const duration = Math.random() * 1 + 0.5;
-
-            particle.style.setProperty('--x', `${x}vw`);
-            particle.style.setProperty('--y', `${y}vh`);
-            particle.style.animation = `explode ${duration}s forwards`;
-            
-            container.appendChild(particle);
-        }
-
-        setTimeout(() => container.remove(), 2000);
     }
 
     // --- Profile & Settings Logic ---
@@ -1222,6 +1227,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="ph-duotone ph-calendar-check"></i>
                 <span>Planner</span>
             </a>
+            <a href="#" class="nav-item" data-target="business">
+                <i class="ph-duotone ph-briefcase"></i>
+                <span>Business</span>
+            </a>
             <a href="#" class="nav-item" data-target="aveo">
                 <i class="ph-duotone ph-robot"></i>
                 <span>Aveo 1</span>
@@ -1252,6 +1261,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } else if (target === 'planner') {
                     renderPlanner();
+                } else if (target === 'business') {
+                    renderBusinessDashboard();
                 } else if (target === 'aveo') {
                     toggleAveoDrawer(true);
                 } else if (target === 'profile') {
@@ -1579,6 +1590,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="ph-duotone ph-calendar-check"></i>
                 <span>Planner</span>
             </button>
+            <button class="mobile-nav-item" data-target="business">
+                <i class="ph-duotone ph-briefcase"></i>
+                <span>Business</span>
+            </button>
             <button class="mobile-nav-item" data-target="aveo">
                 <i class="ph-duotone ph-robot"></i>
                 <span>Aveo 1</span>
@@ -1758,6 +1773,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderDashboardGrid();
                     } else if (target === 'planner') {
                         renderPlanner();
+                    } else if (target === 'business') {
+                        renderBusinessDashboard();
                     } else if (target === 'aveo') {
                         toggleAveoDrawer(true);
                     } else if (target === 'community' || target === 'profile') {

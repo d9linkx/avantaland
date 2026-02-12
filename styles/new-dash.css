@@ -1150,6 +1150,131 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
     border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
+/* --- Funnel Dashboard --- */
+.funnel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 6rem;
+    margin-top: 1rem;
+}
+
+.funnel-card {
+    background: white;
+    border-radius: 24px;
+    padding: 1.5rem;
+    width: 100%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+    animation: slideUpFade 0.5s ease forwards;
+}
+
+/* Funnel Shape Logic (Max Widths) */
+.card-hunt { max-width: 800px; border-top: 4px solid #94A3B8; animation-delay: 0.1s; }
+.card-heat { max-width: 650px; border-top: 4px solid #2979FF; animation-delay: 0.2s; }
+.card-bag { max-width: 500px; border-top: 4px solid #F59E0B; background: linear-gradient(to bottom, #FFFCF0, #FFFFFF); animation-delay: 0.3s; }
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color-soft);
+    padding-bottom: 1rem;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--bg-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+
+.header-info h3 { margin: 0; font-size: 1.1rem; color: var(--text-primary); }
+.header-info span { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.stage-count-badge {
+    margin-left: auto;
+    background: var(--text-primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.lead-bucket {
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Lead Token Card */
+.lead-token-card {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: grab;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lead-token-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: white; }
+.lead-token-card:active { cursor: grabbing; }
+
+.token-avatar {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--brand-blue);
+}
+
+.token-info { flex: 1; display: flex; flex-direction: column; }
+.token-name { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); }
+.token-time { font-size: 0.75rem; color: var(--text-secondary); }
+.token-drag-handle { color: #CBD5E1; }
+
+.btn-add-lead-floating {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--text-primary);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    margin-bottom: 65px;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 100;
+}
+.btn-add-lead-floating:hover { transform: scale(1.05); }
+
 /* --- Lead Tracker (Buckets) --- */
 .lead-pipeline-container {
     display: flex;
@@ -1294,6 +1419,11 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
         width: 44px;
         height: 44px;
     }
+
+    .btn-add-lead-floating {
+        bottom: 100px; /* Position above the 80px bottom nav */
+        z-index: 1003; /* Ensure it sits on top of the nav */
+    }
 }
 
 /* Particle Explosion */
@@ -1379,6 +1509,157 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
 .btn-modal:hover { transform: scale(1.05); }
 .btn-cancel { background: #F1F5F9; color: var(--text-secondary); }
 .btn-confirm-delete { background: #EF4444; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+
+/* --- Business Funnel Dashboard --- */
+.funnel-visual-wrapper {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 0 4rem 0;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.funnel-step {
+    flex: 1;
+    opacity: 0;
+    animation: slideUpFade 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.step-1 { animation-delay: 0.1s; }
+.step-2 { animation-delay: 0.2s; }
+.step-3 { animation-delay: 0.3s; }
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.funnel-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 1.5rem;
+    height: 100%;
+    min-height: 300px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.funnel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -5px rgba(0,0,0,0.1);
+}
+
+/* Card Variants */
+.card-hunt { border-top: 4px solid #CBD5E1; }
+.card-heat { border-top: 4px solid var(--brand-blue); }
+.card-bag { border-top: 4px solid var(--brand-yellow); background: linear-gradient(to bottom, #FFFCF0, #FFFFFF); }
+
+.card-bg-icon {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    font-size: 8rem;
+    opacity: 0.05;
+    pointer-events: none;
+    color: var(--text-primary);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.funnel-card h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+
+.step-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: #F1F5F9;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.card-desc {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Override Bucket Style for Funnel Cards */
+.funnel-card .lead-bucket {
+    flex: 1;
+    width: 100%;
+    height: auto;
+    min-height: 150px;
+    border-radius: 16px;
+    background: rgba(241, 245, 249, 0.5);
+    border: 2px dashed var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1rem;
+    gap: 0.5rem;
+}
+
+.funnel-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #CBD5E1;
+    font-size: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+.btn-add-lead-floating {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--text-primary);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 100;
+}
+.btn-add-lead-floating:hover { transform: scale(1.05); }
+
+@media (max-width: 768px) {
+    .funnel-visual-wrapper {
+        flex-direction: column;
+        padding-bottom: 6rem;
+    }
+    .funnel-connector {
+        transform: rotate(90deg);
+        padding: 0.5rem 0;
+    }
+    .funnel-card {
+        min-height: 200px;
+    }
+}
 
 /* --- Lead Tracker (Buckets) --- */
 .lead-pipeline-container {
@@ -1643,6 +1924,12 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
 .btn-timer:hover { transform: scale(1.05); }
 .btn-timer.active { background: var(--brand-blue); }
 
+.btn-task-edit:hover {
+    color: var(--brand-blue) !important;
+    background: #EFF6FF !important;
+    border-radius: 4px;
+}
+
 /* Deep Work Stopwatch */
 .btn-stopwatch {
     background: #F1F5F9;
@@ -1674,6 +1961,7 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     cursor: grab;
     min-height: 60px; /* Ensure minimum height for touch */
+    flex-wrap: wrap; /* Responsive wrapping for desktop/mobile */
 }
 
 .planner-task:active { cursor: grabbing; }
