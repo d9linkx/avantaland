@@ -95,7 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 tasks: [], 
                 timer: { timeLeft: 1500, isRunning: false },
                 pipeline: [{id: 1, text: '', active: true}, {id: 2, text: '', active: true}, {id: 3, text: '', active: true}],
-                content: { text: '', logged: false }
+                content: { text: '', logged: false },
+                leads: [],
+                lastBaggedTimestamp: null
             };
             currentState.planner = { ...defaultPlanner, ...JSON.parse(localStorage.getItem('bizLabPlanner') || '{}') };
             
@@ -316,6 +318,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="text" class="quick-add-input" placeholder="Any plans? (type and press Enter)" id="planner-quick-add">
                 </div>
 
+                <!-- Section A: The Big 3 -->
+                <div class="planner-section section-big-3">
+                    <h3><i class="ph ph-star-fill" style="color: var(--brand-yellow);"></i> Unleash the power of 3</h3>
+                    <div class="planner-task-list" id="list-big-3" data-section="big3"></div>
+                    <div style="text-align: left; margin-top: 0.5rem;">
+                        <a href="#" id="why-3-link" style="font-size: 0.85rem; color: #000000; text-decoration: underline;">Why only 3?</a>
+                    </div>
+                </div>
+
+                <!-- Section B: Money Queue -->
+                <div class="planner-section section-money">
+                    <h3><i class="ph ph-currency-dollar-simple" style="color: var(--brand-blue);"></i> Money-Making Queue</h3>
+                    <div class="planner-task-list" id="list-money" data-section="money"></div>
+                </div>
+
                 <!-- New Modules Grid -->
                 <div class="planner-modules-grid">
                     <!-- 1. Pipeline Pulse -->
@@ -352,26 +369,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <!-- Section A: The Big 3 -->
-                <div class="planner-section section-big-3">
-                    <h3><i class="ph ph-star-fill" style="color: var(--brand-yellow);"></i> Unleash the power of 3</h3>
-                    <div class="planner-task-list" id="list-big-3" data-section="big3"></div>
-                    <div style="text-align: left; margin-top: 0.5rem;">
-                        <a href="#" id="why-3-link" style="font-size: 0.85rem; color: #000000; text-decoration: underline;">Why only 3?</a>
+                <!-- Lead Pipeline -->
+                <div class="lead-pipeline-container">
+                    <div class="lead-bucket-wrapper">
+                        <div class="lead-bucket bucket-hunt" id="bucket-hunt" data-bucket="hunt"></div>
+                        <span class="bucket-label">The Hunt</span>
                     </div>
+                    <div class="lead-bucket-wrapper">
+                        <div class="lead-bucket bucket-heat" id="bucket-heat" data-bucket="heat"></div>
+                        <span class="bucket-label">The Heat</span>
+                    </div>
+                    <div class="lead-bucket-wrapper">
+                        <div class="lead-bucket bucket-bag" id="bucket-bag" data-bucket="bag"></div>
+                        <span class="bucket-label">The Bag</span>
+                    </div>
+                    <button class="btn-add-lead" id="btn-add-lead" title="Add New Lead"><i class="ph ph-plus"></i></button>
                 </div>
 
-                <!-- Section B: Money Queue -->
-                <div class="planner-section section-money">
-                    <h3><i class="ph ph-currency-dollar-simple" style="color: var(--brand-blue);"></i> Money-Making Queue</h3>
-                    <div class="planner-task-list" id="list-money" data-section="money"></div>
-                </div>
             </div>
         `;
 
         renderPlannerTasks();
         updateTimerDisplay();
         if (window.Sortable) initPlannerSortable();
+
+        renderLeadTokens();
+        if (window.Sortable) initLeadBucketsSortable();
+
 
         // Event Listeners
         const quickAdd = document.getElementById('planner-quick-add');
@@ -438,6 +462,28 @@ document.addEventListener('DOMContentLoaded', () => {
         moneyList.innerHTML = '';
 
         const tasks = currentState.planner.tasks || [];
+
+        // Determine if we should show the "Big 3" or "Money Queue" based on task count
+        const big3Tasks = tasks.filter(t => t.section === 'big3');
+        const moneyTasks = tasks.filter(t => t.section === 'money');
+
+        const big3Section = document.querySelector('.section-big-3');
+        const moneySection = document.querySelector('.section-money');
+
+        if (big3Section) {
+            if (big3Tasks.length === 0 && tasks.length > 0) {
+                big3Section.style.display = 'none';
+            } else {
+                big3Section.style.display = 'block';
+            }
+        }
+        if (moneySection) {
+            if (moneyTasks.length === 0 && tasks.length > 0) {
+                moneySection.style.display = 'none';
+            } else {
+                moneySection.style.display = 'block';
+            }
+        }
         
         if (tasks.length === 0) {
             moneyList.innerHTML = `<div style="text-align:center; color: var(--text-secondary); padding: 2rem;">
@@ -534,7 +580,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderLeadTokens() {
+        // Clear all buckets first
+        document.querySelectorAll('.lead-bucket').forEach(bucket => bucket.innerHTML = '');
+
+        const leads = currentState.planner.leads || [];
+        leads.forEach(lead => {
+            const bucketEl = document.getElementById(`bucket-${lead.bucket}`);
+            if (bucketEl) {
+                const token = document.createElement('div');
+                token.className = 'lead-token';
+                if (lead.isCold) {
+                    token.classList.add('cold');
+                }
+                token.dataset.id = lead.id;
+                token.textContent = lead.initials;
+                token.title = lead.name;
+                bucketEl.appendChild(token);
+            }
+        });
+    }
+
+    function addLead() {
+        const name = prompt("Enter lead's name or company:");
+        if (!name || !name.trim()) return;
+
+        const initials = name.trim().split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
+
+        const newLead = {
+            id: Date.now(),
+            name: name.trim(),
+            initials: initials,
+            bucket: 'hunt',
+            lastMoved: Date.now(),
+            isCold: false
+        };
+
+        if (!currentState.planner.leads) currentState.planner.leads = [];
+        currentState.planner.leads.push(newLead);
+        saveState();
+        renderLeadTokens(); // Just re-render the tokens, not the whole planner
+    }
+
     function addPlannerTask(text) {
+        // Limit to 3 tasks maximum
+        if (currentState.planner.tasks && currentState.planner.tasks.length >= 3) {
+            alert("You can only set 3 main goals for the day. This forces you to prioritize what truly moves the needle.");
+            return;
+        }
+
         // Check for value tag in text (e.g. "Call client $1000")
         let valueTag = null;
         const moneyMatch = text.match(/\$(\d+(?:,\d{3})*(?:k|m)?)/i);
@@ -571,12 +665,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    let taskToDeleteId = null;
+    function setupDeleteModal() {
+        if (document.getElementById('delete-confirm-modal')) return;
+        const modal = document.createElement('div');
+        modal.id = 'delete-confirm-modal';
+        modal.className = 'custom-modal-overlay';
+        modal.innerHTML = `
+            <div class="custom-modal">
+                <h3>Delete Task?</h3>
+                <p>Are you sure you want to remove this task? This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="btn-modal btn-cancel" id="btn-cancel-delete">Cancel</button>
+                    <button class="btn-modal btn-confirm-delete" id="btn-confirm-delete">Delete</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.querySelector('#btn-cancel-delete').addEventListener('click', () => modal.classList.remove('active'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+    }
+
     function deletePlannerTask(id) {
-        if (confirm("Delete this task?")) {
-            currentState.planner.tasks = currentState.planner.tasks.filter(t => t.id !== id);
-            saveState();
-            renderPlanner();
-        }
+        setupDeleteModal();
+        taskToDeleteId = id;
+        const modal = document.getElementById('delete-confirm-modal');
+        modal.classList.add('active');
+        const confirmBtn = document.getElementById('btn-confirm-delete');
+        const newBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+        newBtn.addEventListener('click', () => {
+            if (taskToDeleteId) {
+                currentState.planner.tasks = currentState.planner.tasks.filter(t => t.id !== taskToDeleteId);
+                saveState();
+                renderPlanner();
+                modal.classList.remove('active');
+            }
+        });
     }
 
     function updatePlannerTask(id, updates) {
@@ -594,6 +719,83 @@ document.addEventListener('DOMContentLoaded', () => {
             saveState();
             renderPlannerTasks(); // Re-render to update icon state
         }
+    }
+
+    function initLeadBucketsSortable() {
+        const buckets = document.querySelectorAll('.lead-bucket');
+        buckets.forEach(bucket => {
+            new Sortable(bucket, {
+                group: 'leads',
+                animation: 150,
+                delay: 200, // Long press to pick up (200ms)
+                delayOnTouchOnly: true, // Immediate drag on desktop
+                ghostClass: 'sortable-ghost',
+                dragClass: 'sortable-drag',
+                
+                // Physics: Magnet Pulse on Hover
+                onMove: function (evt) {
+                    // Remove pulse from all, add to current target
+                    document.querySelectorAll('.lead-bucket').forEach(b => b.classList.remove('bucket-pulse'));
+                    if (evt.to) {
+                        evt.to.classList.add('bucket-pulse');
+                    }
+                },
+                
+                onEnd: function (evt) {
+                    // Clean up pulse effect
+                    document.querySelectorAll('.lead-bucket').forEach(b => b.classList.remove('bucket-pulse'));
+
+                    const tokenEl = evt.item;
+                    const leadId = parseInt(tokenEl.dataset.id);
+                    const fromBucket = evt.from.dataset.bucket;
+                    const toBucket = evt.to.dataset.bucket;
+
+                    // --- Snap Back Logic ---
+                    if (fromBucket === 'hunt' && toBucket === 'bag') {
+                        evt.from.appendChild(tokenEl); // Visually move it back
+                        navigator.vibrate?.([50, 50, 50]); // Error vibration pattern
+                        tokenEl.classList.add('shake-error');
+                        setTimeout(() => tokenEl.classList.remove('shake-error'), 500);
+                        return; // Don't update state
+                    }
+
+                    const lead = currentState.planner.leads.find(l => l.id === leadId);
+                    if (lead) {
+                        lead.bucket = toBucket;
+                        lead.lastMoved = Date.now();
+                        lead.isCold = false; // Reset cold status on move
+                        navigator.vibrate?.(50); // Haptic feedback
+
+                        if (toBucket === 'heat') {
+                            // Trigger Aveo Script
+                            toggleAveoDrawer(true);
+                            addAveoMessage(`<strong>Aveo 1:</strong> Moving ${lead.name} to Heat? Good. Here is a quick follow-up script:<br><br><em>"Hi ${lead.name.split(' ')[0]}, just circling back on this. Are we still good to go, or should I prioritize other accounts this week?"</em>`, 'ai');
+                        }
+
+                        if (toBucket === 'bag') {
+                            currentState.planner.lastBaggedTimestamp = Date.now();
+                            triggerParticleExplosion();
+                            // Sync to "North Star" (Mastery Gauge visual update)
+                            const gauge = document.querySelector('.progress-gauge-thin .progress');
+                            if(gauge) { 
+                                gauge.style.transition = 'stroke 0.2s ease-in-out';
+                                gauge.style.stroke = 'var(--brand-yellow)'; 
+                                // Fill animation simulation
+                                const originalDash = gauge.style.strokeDashoffset;
+                                gauge.style.strokeDashoffset = '0';
+                                setTimeout(() => {
+                                    gauge.style.stroke = ''; // Reverts to stylesheet color
+                                    gauge.style.strokeDashoffset = originalDash; // Revert offset
+                                    setTimeout(() => gauge.style.transition = '', 200); // Remove transition override
+                                }, 1000); 
+                            }
+                        }
+                        saveState();
+                        renderLeadTokens();
+                    }
+                }
+            });
+        });
     }
 
     function initPlannerSortable() {
@@ -658,6 +860,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+
+        // --- Lead System Checks (Cooldown & Referee) ---
+        // We run this less frequently or just check timestamps here
+        checkLeadSystem();
+    }
+
+    function checkLeadSystem() {
+        const leads = currentState.planner.leads || [];
+        const heatLeads = [];
+        let stateChanged = false;
+
+        leads.forEach(lead => {
+            if (lead.bucket === 'heat') {
+                heatLeads.push(lead);
+                // Check for cold leads (24 hours)
+                const isNowCold = (Date.now() - lead.lastMoved) > (24 * 3600 * 1000);
+                if (lead.isCold !== isNowCold) {
+                    lead.isCold = isNowCold;
+                    stateChanged = true;
+                    // Update DOM directly
+                    const tokenEl = document.querySelector(`.lead-token[data-id="${lead.id}"]`);
+                    if (tokenEl) {
+                        tokenEl.classList.toggle('cold', isNowCold);
+                    }
+                }
+            }
+        });
+
+        if (stateChanged) saveState();
+
+        // Aveo Referee Mode (48 hours check)
+        // Only run this check once per session or infrequently to avoid spamming
+        if (heatLeads.length >= 3) {
+            const lastBagged = currentState.planner.lastBaggedTimestamp || 0;
+            const timeSinceBag = Date.now() - lastBagged;
+            const fortyEightHours = 48 * 3600 * 1000;
+
+            if (timeSinceBag > fortyEightHours) {
+                const lastRefereeAlert = JSON.parse(sessionStorage.getItem('lastRefereeAlert') || '0');
+                // Alert max once every 6 hours
+                if (Date.now() - lastRefereeAlert > 6 * 3600 * 1000) { 
+                    toggleAveoDrawer(true);
+                    addAveoMessage(`<strong>Aveo 1 (Referee Mode):</strong> Boss, your 'Heat' bucket is overflowing (${heatLeads.length} leads). You're busy, but you aren't closing. Move one of those to 'The Bag' in the next hour or we're losing money.`, 'ai');
+                    sessionStorage.setItem('lastRefereeAlert', JSON.stringify(Date.now()));
+                }
+            }
+        }
     }
 
     function togglePlannerTimer() {
@@ -711,6 +960,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const m = Math.floor((seconds % 3600) / 60);
         if (h > 0) return `${h}h ${m}m`;
         return `${m}m`;
+    }
+
+    function triggerParticleExplosion() {
+        const container = document.createElement('div');
+        container.className = 'particle-explosion-container';
+        document.body.appendChild(container);
+
+        for (let i = 0; i < 100; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.background = `hsl(${Math.random() * 50 + 40}, 100%, 50%)`; // Gold/Yellow tones
+            
+            const x = Math.random() * 100 - 50;
+            const y = Math.random() * 100 - 50;
+            const duration = Math.random() * 1 + 0.5;
+
+            particle.style.setProperty('--x', `${x}vw`);
+            particle.style.setProperty('--y', `${y}vh`);
+            particle.style.animation = `explode ${duration}s forwards`;
+            
+            container.appendChild(particle);
+        }
+
+        setTimeout(() => container.remove(), 2000);
     }
 
     // --- Profile & Settings Logic ---
@@ -1296,7 +1569,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bottomNav.innerHTML = `
             <button class="mobile-nav-item active" data-target="home">
                 <i class="ph-duotone ph-house"></i>
-                <span>Dashboard</span>
+                <span>Home</span>
             </button>
             <button class="mobile-nav-item" data-target="hacks">
                 <i class="ph-duotone ph-list-dashes"></i>
