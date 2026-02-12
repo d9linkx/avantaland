@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveState();
 
         renderHackNavigator();
+        renderDesktopSidebar();
         renderIntelligenceWing();
         renderDashboardGrid(); // Default to dashboard view
         setupMobileView(); // Initialize mobile UI
@@ -107,58 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
             currentState.notes = e.target.value;
             saveState();
         });
-
-        // Add listener for the main Dashboard nav item
-        const dashboardNavItems = document.querySelectorAll('.sidebar-nav .nav-item');
-        const dashboardNavItem = Array.from(dashboardNavItems).find(item => item.textContent.includes('Dashboard'));
-
-        if (dashboardNavItem) {
-            dashboardNavItem.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                // De-activate other nav items and activate this one
-                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
-                dashboardNavItem.classList.add('active');
-                
-                // De-activate any active hack list item
-                document.querySelectorAll('.hack-list-item.active').forEach(item => item.classList.remove('active'));
-
-                renderDashboardGrid();
-            });
-        }
-
-        // Add listener for Planner nav item if it exists in sidebar
-        const plannerNavItem = Array.from(dashboardNavItems).find(item => item.textContent.includes('Planner'));
-        if (plannerNavItem) {
-            plannerNavItem.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
-                plannerNavItem.classList.add('active');
-                renderPlanner();
-            });
-        }
-
-        // Add listener for Profile nav item if it exists in sidebar
-        const profileNavItem = Array.from(dashboardNavItems).find(item => item.textContent.includes('Profile'));
-        if (profileNavItem) {
-            profileNavItem.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
-                profileNavItem.classList.add('active');
-                renderProfile();
-            });
-        }
-
-        // Add listener for Community/Aveo nav item in Desktop Sidebar
-        const communityNavItem = Array.from(dashboardNavItems).find(item => item.textContent.includes('Community'));
-        if (communityNavItem) {
-            // Rename to Aveo 1 for consistency if possible, or just hijack click
-            communityNavItem.innerHTML = `<i class="ph-duotone ph-robot"></i> Aveo 1`;
-            communityNavItem.addEventListener('click', (e) => {
-                e.preventDefault();
-                toggleAveoDrawer(true);
-            });
-        }
     }
 
     // --- Rendering Functions ---
@@ -762,6 +711,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderDesktopSidebar() {
+        const sidebarNav = document.querySelector('.sidebar-nav');
+        if (!sidebarNav) return;
+
+        sidebarNav.innerHTML = `
+            <a href="#" class="nav-item active" data-target="home">
+                <i class="ph-duotone ph-house"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-target="planner">
+                <i class="ph-duotone ph-calendar-check"></i>
+                <span>Planner</span>
+            </a>
+            <a href="#" class="nav-item" data-target="aveo">
+                <i class="ph-duotone ph-robot"></i>
+                <span>Aveo 1</span>
+            </a>
+            <a href="#" class="nav-item" data-target="profile">
+                <i class="ph-duotone ph-user-circle"></i>
+                <span>Profile</span>
+            </a>
+        `;
+
+        const navItems = sidebarNav.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                
+                const target = item.dataset.target;
+                
+                if (target === 'home') {
+                    document.querySelectorAll('.hack-list-item.active').forEach(item => item.classList.remove('active'));
+                    renderDashboardGrid();
+                } else if (target === 'hacks') {
+                    const accordion = document.querySelector('.hack-accordion');
+                    if (accordion) {
+                        accordion.open = true;
+                        accordion.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else if (target === 'planner') {
+                    renderPlanner();
+                } else if (target === 'aveo') {
+                    toggleAveoDrawer(true);
+                } else if (target === 'profile') {
+                    renderProfile();
+                }
+            });
+        });
+    }
+
     async function displayHack(index, forceFetch = true) {
         currentState.currentHackIndex = index;
         const truth = truthsData[index];
@@ -770,6 +771,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.hack-list-item').forEach(item => {
             item.classList.toggle('active', parseInt(item.dataset.index) === index);
         });
+
+        // Update active state in sidebar nav
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
+        const hacksNav = document.querySelector('.sidebar-nav .nav-item[data-target="hacks"]');
+        if (hacksNav) hacksNav.classList.add('active');
 
         // Determine mastery state
         const isMastered = !!currentState.progress[index];
@@ -1065,7 +1071,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bottomNav.innerHTML = `
             <button class="mobile-nav-item active" data-target="home">
                 <i class="ph-duotone ph-house"></i>
-                <span>Home</span>
+                <span>Dashboard</span>
             </button>
             <button class="mobile-nav-item" data-target="hacks">
                 <i class="ph-duotone ph-list-dashes"></i>
