@@ -1302,14 +1302,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="aveo-messages" id="aveo-messages">
                 <div class="aveo-message ai">
-                    Founders don't sleep, but they do need strategy. I'm Aveo. What's the roadblock today?
+                    <strong>Aveo 1:</strong> Founders don't sleep, but they do need strategy. I'm Aveo. What's the roadblock today?
                 </div>
             </div>
             <div class="aveo-chips">
-                <button class="aveo-chip">Explain this Truth</button>
+                <button class="aveo-chip">Why does this hack matter?</button>
                 <button class="aveo-chip">Give me a script</button>
-                <button class="aveo-chip">I'm feeling lazy</button>
-                <button class="aveo-chip">Roast my progress</button>
+                <button class="aveo-chip">I'm stuck</button>
             </div>
             <div class="aveo-input-area">
                 <input type="text" class="aveo-input" placeholder="Ask Aveo anything..." id="aveo-input">
@@ -1325,6 +1324,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const sendBtn = drawer.querySelector('#aveo-send');
         const chips = drawer.querySelectorAll('.aveo-chip');
 
+        // Proactive Logic: Check on load
+        const checkProactive = () => {
+            const hour = new Date().getHours();
+            const tasks = currentState.planner.tasks || [];
+            const completed = tasks.filter(t => t.completed).length;
+            
+            // If past 12 PM and 0% completion
+            if (hour >= 12 && tasks.length > 0 && completed === 0) {
+                const msgContainer = document.getElementById('aveo-messages');
+                // Only add if not already there
+                if (msgContainer.children.length <= 1) {
+                    addAveoMessage(`<strong>Aveo 1:</strong> It's past midday and you haven't crushed a single task in your Big 3. Remember your goal: "${currentState.profile.dreamResult || 'Financial Freedom'}". Stop procrastinating.`, 'ai');
+                }
+            }
+        };
+        // Run check when drawer opens
+
         const sendMessage = async (text) => {
             if (!text.trim()) return;
             
@@ -1333,52 +1349,66 @@ document.addEventListener('DOMContentLoaded', () => {
             input.value = '';
 
             // Show Typing Indicator (Mock)
-            const typingId = addAveoMessage('<i class="ph ph-dots-three-circle"></i> Thinking...', 'ai');
+            const typingId = addAveoMessage('<div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>', 'ai');
 
             // Prepare Context
             const currentTruth = truthsData[currentState.currentHackIndex];
-            const plannerStats = currentState.planner.tasks ? 
-                `${currentState.planner.tasks.filter(t => t.completed).length}/${currentState.planner.tasks.length} tasks done` : 'No tasks set';
+            const plannerTasks = currentState.planner.tasks || [];
+            const plannerState = plannerTasks.map(t => `- ${t.text} [${t.completed ? 'DONE' : 'PENDING'}]`).join('\n');
             
-            const systemContext = `
-                You are Aveo 1, a high-performance business mentor for the "Avantaland" methodology.
-                Your Persona: Direct, witty, high-energy, zero-BS. You are a peer, not a robot.
-                User Profile: ${currentState.profile.name}, Dream: ${currentState.profile.dreamResult || 'Not set'}.
-                Current Context: User is viewing Truth #${currentState.currentHackIndex + 1}: "${currentTruth.title}".
-                Planner Status: ${plannerStats}.
-                Goal: Push the user to execute. If they are lazy, call them out using their Dream Result as leverage.
-            `;
+            const contextPayload = {
+                user_business: currentState.profile.dreamResult || "General Entrepreneur", // Using dream result as proxy for business context if specific field missing
+                dream_result: currentState.profile.dreamResult || "Not defined",
+                current_location: `Hack #${currentState.currentHackIndex + 1}: ${currentTruth.title}`,
+                planner_state: plannerState || "No tasks set for today."
+            };
 
             try {
-                // Call API (Assuming /api/chat or similar exists based on chat.js presence)
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        messages: [
-                            { role: "system", content: systemContext },
-                            { role: "user", content: text }
-                        ]
+                        message: text,
+                        context: contextPayload
                     })
                 });
 
-                const data = await response.json();
-                
-                // Remove typing indicator
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                // Remove typing indicator before streaming starts
                 const typingMsg = document.getElementById(typingId);
                 if (typingMsg) typingMsg.remove();
 
-                if (data.choices && data.choices[0]) {
-                    addAveoMessage(data.choices[0].message.content, 'ai');
-                } else {
-                    // Fallback if API fails or is not set up
-                    addAveoMessage("I'm having trouble connecting to the mainframe. But here's a truth: Action cures fear. Go do something.", 'ai');
+                // Create a new message bubble for the stream
+                const streamMsgId = addAveoMessage('', 'ai');
+                const streamMsgDiv = document.getElementById(streamMsgId);
+                
+                // Handle Streaming Response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let aiText = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    aiText += chunk;
+                    
+                    // Simple markdown parsing for bolding (optional, can be enhanced)
+                    const formattedText = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    streamMsgDiv.innerHTML = formattedText;
+                    
+                    // Auto-scroll
+                    const container = document.getElementById('aveo-messages');
+                    container.scrollTop = container.scrollHeight;
                 }
+
             } catch (e) {
                 console.error(e);
                 const typingMsg = document.getElementById(typingId);
                 if (typingMsg) typingMsg.remove();
-                addAveoMessage("Connection offline. But you shouldn't be. Get back to work.", 'ai');
+                addAveoMessage("<strong>Aveo 1:</strong> Connection offline. But you shouldn't be. Get back to work.", 'ai');
             }
         };
 
@@ -1400,6 +1430,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (show) {
             drawer.classList.add('active');
             if (overlay) overlay.classList.add('active');
+            // Trigger proactive check logic here if needed, but usually on load is fine.
         } else {
             drawer.classList.remove('active');
             if (overlay) overlay.classList.remove('active');
