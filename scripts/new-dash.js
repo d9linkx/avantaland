@@ -100,7 +100,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 leads: [],
                 lastBaggedTimestamp: null
             };
-            currentState.planner = { ...defaultPlanner, ...JSON.parse(localStorage.getItem('bizLabPlanner') || '{}') };
+            let plannerData = JSON.parse(localStorage.getItem('bizLabPlanner') || '{}');
+            if (plannerData.tasks) {
+                plannerData.tasks.forEach(task => {
+                    // One-time migration for old tasks with HH:MM strings
+                    if (task.startTime && typeof task.startDateTime === 'undefined') {
+                        const today = new Date();
+                        const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                        
+                        if (task.startTime) task.startDateTime = new Date(`${todayStr}T${task.startTime}`).toISOString();
+                        if (task.endTime) task.endDateTime = new Date(`${todayStr}T${task.endTime}`).toISOString();
+                        
+                        delete task.startTime;
+                        delete task.endTime;
+                    }
+                });
+            }
+            currentState.planner = { ...defaultPlanner, ...plannerData };
             
             currentState.profile = JSON.parse(localStorage.getItem('bizLabProfile')) || { name: 'Founder', email: '', dreamResult: '', avatar: null };
             currentState.lastVisit = JSON.parse(localStorage.getItem('bizLabLastVisit')) || null;
@@ -510,41 +526,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tasks.forEach(task => {
             const el = document.createElement('div');
-            el.className = `planner-task ${task.completed ? 'completed' : ''}`;
+            el.className = `planner-task ${task.completed ? 'completed' : ''} priority-${task.priority || 'medium'}`;
             el.dataset.id = task.id;
             
             // Ensure defaults for existing tasks
-            if (typeof task.startTime === 'undefined') task.startTime = '';
-            if (typeof task.endTime === 'undefined') task.endTime = '';
+            if (typeof task.startDateTime === 'undefined') task.startDateTime = null;
+            if (typeof task.endDateTime === 'undefined') task.endDateTime = null;
             if (typeof task.elapsedTime === 'undefined') task.elapsedTime = 0;
             if (typeof task.isStopwatchRunning === 'undefined') task.isStopwatchRunning = false;
 
             // Calculate initial timer display
             let initialTimerText = "00:00";
-            if (task.startTime && task.endTime && !task.completed) {
+            if (task.startDateTime && task.endDateTime && !task.completed) {
                 const now = new Date();
-                const [sh, sm] = task.startTime.split(':').map(Number);
-                const startDate = new Date(); startDate.setHours(sh, sm, 0, 0);
-                const [eh, em] = task.endTime.split(':').map(Number);
-                const endDate = new Date(); endDate.setHours(eh, em, 0, 0);
+                const startDate = new Date(task.startDateTime);
+                const endDate = new Date(task.endDateTime);
                 
                 if (now < startDate) initialTimerText = formatSeconds(Math.floor((endDate - startDate) / 1000));
                 else if (now < endDate) initialTimerText = formatSeconds(Math.floor((endDate - now) / 1000));
             }
 
+            // Subtask & Notes Badges
+            const subtaskCount = (task.subtasks || []).length;
+            const subtaskCompleted = (task.subtasks || []).filter(st => st.completed).length;
+            const hasNotes = task.notes && task.notes.trim().length > 0;
+            const hasLinks = task.links && task.links.length > 0;
+
+            // Build Preview HTML
+            let previewHtml = '';
+            if (hasNotes || subtaskCount > 0 || hasLinks) {
+                previewHtml = `<div class="task-details-preview">`;
+                
+                if (hasNotes) {
+                    previewHtml += `<div class="preview-note"><i class="ph-fill ph-text-align-left"></i> ${task.notes}</div>`;
+                }
+
+                if (subtaskCount > 0) {
+                    (task.subtasks || []).forEach(st => {
+                        previewHtml += `
+                            <div class="preview-subtask ${st.completed ? 'completed' : ''}">
+                                <i class="ph-bold ${st.completed ? 'ph-check-square' : 'ph-square'}" style="color: ${st.completed ? 'var(--success-color)' : 'var(--text-secondary)'}"></i>
+                                <span>${st.text}</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (hasLinks) {
+                    previewHtml += `<div class="preview-links">`;
+                    (task.links || []).forEach(l => {
+                        previewHtml += `<a href="${l.url}" target="_blank" class="preview-link-tag"><i class="ph-bold ph-link"></i> ${l.text || 'Link'}</a>`;
+                    });
+                    previewHtml += `</div>`;
+                }
+                
+                previewHtml += `</div>`;
+            }
+
             el.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 1rem; width: 100%; flex-wrap: wrap;">
-                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} style="margin-top: 4px;">
+                <div class="task-inner">
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
                     
-                    <div style="flex: 1; min-width: 200px;">
-                        <div class="task-content" style="font-weight: 500; margin-bottom: 4px;">${task.text}</div>
-                        <div class="task-meta-controls" style="display: flex; gap: 8px; align-items: center; font-size: 0.85rem; color: var(--text-secondary);">
-                            <span style="background: #F1F5F9; padding: 2px 8px; border-radius: 6px;"><i class="ph ph-clock"></i> ${task.startTime || '--:--'}</span>
-                            <span style="background: #F1F5F9; padding: 2px 8px; border-radius: 6px;"><i class="ph ph-clock-counter-clockwise"></i> ${task.endTime || '--:--'}</span>
+                    <div class="task-main">
+                        <div class="task-header-row">
+                            <div class="task-content">${task.text}</div>
+                            <div class="task-badges">
+                                ${subtaskCount > 0 ? `<span class="subtask-badge ${subtaskCompleted === subtaskCount ? 'completed' : ''}"><i class="ph-bold ph-list-checks"></i> ${subtaskCompleted}/${subtaskCount}</span>` : ''}
+                                ${hasNotes ? `<span class="notes-badge"><i class="ph-bold ph-note"></i></span>` : ''}
+                                ${hasLinks ? `<span class="notes-badge"><i class="ph-bold ph-link"></i></span>` : ''}
+                            </div>
+                        </div>
+                        <div class="task-meta-row">
+                            <span style="background: #F1F5F9; padding: 2px 8px; border-radius: 6px;"><i class="ph ph-clock"></i> ${formatTaskDateTime(task.startDateTime)}</span>
+                            <span style="background: #F1F5F9; padding: 2px 8px; border-radius: 6px;"><i class="ph ph-clock-counter-clockwise"></i> ${formatTaskDateTime(task.endDateTime)}</span>
                         </div>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 12px; margin-left: auto;">
+                    <div class="task-controls-row">
                         ${task.section === 'big3' ? `
                             <div class="deep-work-stopwatch ${task.isStopwatchRunning ? 'running' : ''}" style="display: flex; align-items: center; gap: 6px;">
                                 <button class="btn-stopwatch ${task.isStopwatchRunning ? 'active' : ''}" data-id="${task.id}">
@@ -560,13 +618,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             </span>
                         `}
                         
-                        <div class="task-actions" style="display: flex; gap: 4px;">
+                        <div class="task-actions-group">
                             <button class="btn-task-edit" style="background: none; border: none; color: #64748B; cursor: pointer; padding: 4px;"><i class="ph ph-pencil-simple"></i></button>
                             <button class="btn-task-delete" style="background: none; border: none; color: #EF4444; cursor: pointer; padding: 4px;"><i class="ph ph-trash"></i></button>
                             <i class="ph ph-dots-six-vertical" style="color: #CBD5E1; cursor: grab; padding: 4px;"></i>
                         </div>
                     </div>
                 </div>
+                ${previewHtml}
             `;
 
             el.querySelector('.task-checkbox').addEventListener('change', () => {
@@ -578,7 +637,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             el.querySelector('.btn-task-delete').addEventListener('click', () => deletePlannerTask(task.id));
-            el.querySelector('.btn-task-edit').addEventListener('click', () => openEditTaskModal(task.id));
+            el.querySelector('.btn-task-edit').addEventListener('click', (e) => {
+                e.stopPropagation();
+                openTaskDetailsModal(task.id);
+            });
             
             // Stopwatch Toggle
             const stopwatchBtn = el.querySelector('.btn-stopwatch');
@@ -691,28 +753,25 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => container.remove(), 2000);
     }
 
-    function checkTimeOverlap(newStart, newEnd, excludeId = null) {
-        if (!newStart || !newEnd) return false;
-        
-        const parseTime = (t) => {
-            const [h, m] = t.split(':').map(Number);
-            return h * 60 + m;
-        };
+    function checkTimeOverlap(newStartDateTime, newEndDateTime, excludeId = null) {
+        if (!newStartDateTime || !newEndDateTime) return false;
 
-        const newStartMin = parseTime(newStart);
-        const newEndMin = parseTime(newEnd);
-        
-        if (newEndMin <= newStartMin) return true; // Invalid range
+        const newStartMs = new Date(newStartDateTime).getTime();
+        const newEndMs = new Date(newEndDateTime).getTime();
+
+        if (newEndMs <= newStartMs) return true; // Invalid range
 
         const tasks = currentState.planner.tasks || [];
         
         for (const task of tasks) {
             if (task.id === excludeId) continue;
             if (task.completed) continue;
-            if (!task.startTime || !task.endTime) continue;
-            const taskStartMin = parseTime(task.startTime);
-            const taskEndMin = parseTime(task.endTime);
-            if (newStartMin < taskEndMin && taskStartMin < newEndMin) return true;
+            if (!task.startDateTime || !task.endDateTime) continue;
+
+            const taskStartMs = new Date(task.startDateTime).getTime();
+            const taskEndMs = new Date(task.endDateTime).getTime();
+
+            if (newStartMs < taskEndMs && taskStartMs < newEndMs) return true;
         }
         return false;
     }
@@ -737,8 +796,12 @@ document.addEventListener('DOMContentLoaded', () => {
             section: 'money', // Default to money queue
             completed: false,
             valueTag: valueTag,
-            startTime: '', // HH:MM
-            endTime: '',   // HH:MM
+            startDateTime: null, // ISO String
+            endDateTime: null,   // ISO String
+            priority: 'medium',
+            subtasks: [],
+            notes: '',
+            links: [],
             isRunning: false,
             hasAlerted: false,
             elapsedTime: 0,
@@ -760,50 +823,214 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function openEditTaskModal(taskId) {
+    function toLocalISOString(isoString) {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+        const localISOTime = new Date(date.getTime() - tzoffset).toISOString().slice(0, 16);
+        return localISOTime;
+    }
+
+    function openTaskDetailsModal(taskId) {
         const task = currentState.planner.tasks.find(t => t.id === taskId);
         if (!task) return;
 
-        const existing = document.getElementById('edit-task-modal');
+        // Ensure defaults
+        if (!task.subtasks) task.subtasks = [];
+        if (!task.priority) task.priority = 'medium';
+        if (!task.notes) task.notes = '';
+        if (!task.links) task.links = [];
+        if (!task.startDateTime) task.startDateTime = null;
+        if (!task.endDateTime) task.endDateTime = null;
+
+        const existing = document.getElementById('task-details-modal');
         if (existing) existing.remove();
 
         const modal = document.createElement('div');
-        modal.id = 'edit-task-modal';
-        modal.className = 'custom-modal-overlay active';
+        modal.id = 'task-details-modal';
+        modal.className = 'custom-modal-overlay'; // Start hidden for transition
         modal.innerHTML = `
-            <div class="custom-modal" style="text-align: left;">
-                <h3>Edit Task</h3>
-                <div class="form-group">
-                    <label>Task Name</label>
-                    <input type="text" id="edit-task-text" class="settings-input" value="${task.text}">
+            <div class="custom-modal task-details-modal">
+                <div class="modal-header">
+                    <h3>Task Details</h3>
+                    <button class="btn-close-modal" style="background:none; border:none; font-size:1.5rem; cursor:pointer;"><i class="ph ph-x"></i></button>
                 </div>
-                <div class="form-group">
-                    <label>Start Time</label>
-                    <input type="time" id="edit-task-start" class="settings-input" value="${task.startTime || ''}">
+                
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Task Name</label>
+                        <input type="text" id="edit-task-text" class="settings-input" value="${task.text}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <div class="priority-selector">
+                            <div class="priority-btn ${task.priority === 'high' ? 'selected' : ''}" data-priority="high">High</div>
+                            <div class="priority-btn ${task.priority === 'medium' ? 'selected' : ''}" data-priority="medium">Medium</div>
+                            <div class="priority-btn ${task.priority === 'low' ? 'selected' : ''}" data-priority="low">Low</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Start Time</label>
+                            <input type="datetime-local" id="edit-task-start" class="settings-input" value="${toLocalISOString(task.startDateTime)}">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>End Time</label>
+                            <input type="datetime-local" id="edit-task-end" class="settings-input" value="${toLocalISOString(task.endDateTime)}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Subtasks</label>
+                        <div class="subtask-list" id="modal-subtask-list"></div>
+                        <button class="btn-add-subtask" id="btn-add-subtask"><i class="ph-bold ph-plus"></i> Add Subtask</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="edit-task-notes" class="notes-area" placeholder="Add details or thoughts here...">${task.notes}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Attachments / Links</label>
+                        <div class="link-list" id="modal-link-list"></div>
+                        <div class="add-link-wrapper">
+                            <input type="text" id="new-link-url" class="link-input" placeholder="https://...">
+                            <input type="text" id="new-link-text" class="link-input" placeholder="Title (optional)">
+                            <button class="btn-add-link-action" id="btn-add-link">Add</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>End Time</label>
-                    <input type="time" id="edit-task-end" class="settings-input" value="${task.endTime || ''}">
-                </div>
-                <div class="modal-actions" style="margin-top: 1.5rem;">
-                    <button class="btn-modal btn-cancel" id="btn-cancel-edit">Cancel</button>
-                    <button class="btn-modal btn-complete" id="btn-save-edit">Save Changes</button>
+
+                <div class="modal-footer">
+                    <button class="btn-modal btn-complete" id="btn-save-edit" style="width: 100%;">Save Changes</button>
                 </div>
             </div>
         `;
         document.body.appendChild(modal);
+        
+        // Force reflow to ensure transition works
+        void modal.offsetWidth;
+        modal.classList.add('active');
 
-        modal.querySelector('#btn-cancel-edit').addEventListener('click', () => modal.remove());
+        // --- Subtask Logic ---
+        const subtaskListEl = modal.querySelector('#modal-subtask-list');
+        let currentSubtasks = JSON.parse(JSON.stringify(task.subtasks)); // Deep copy
+
+        function renderSubtasks() {
+            subtaskListEl.innerHTML = '';
+            currentSubtasks.forEach((st, idx) => {
+                const row = document.createElement('div');
+                row.className = 'subtask-row';
+                row.innerHTML = `
+                    <input type="checkbox" class="subtask-checkbox" ${st.completed ? 'checked' : ''}>
+                    <input type="text" class="subtask-input ${st.completed ? 'completed' : ''}" value="${st.text}" placeholder="Subtask...">
+                    <button class="btn-remove-subtask"><i class="ph-bold ph-trash"></i></button>
+                `;
+                
+                // Events
+                row.querySelector('.subtask-checkbox').addEventListener('change', (e) => {
+                    st.completed = e.target.checked;
+                    renderSubtasks(); // Re-render to update styling
+                });
+                row.querySelector('.subtask-input').addEventListener('input', (e) => {
+                    st.text = e.target.value;
+                });
+                row.querySelector('.btn-remove-subtask').addEventListener('click', () => {
+                    currentSubtasks.splice(idx, 1);
+                    renderSubtasks();
+                });
+
+                subtaskListEl.appendChild(row);
+            });
+        }
+        renderSubtasks();
+
+        modal.querySelector('#btn-add-subtask').addEventListener('click', () => {
+            currentSubtasks.push({ text: '', completed: false });
+            renderSubtasks();
+            // Focus new input
+            setTimeout(() => {
+                const inputs = subtaskListEl.querySelectorAll('.subtask-input');
+                if(inputs.length) inputs[inputs.length - 1].focus();
+            }, 50);
+        });
+
+        // --- Link Logic ---
+        const linkListEl = modal.querySelector('#modal-link-list');
+        let currentLinks = JSON.parse(JSON.stringify(task.links));
+
+        function renderLinks() {
+            linkListEl.innerHTML = '';
+            currentLinks.forEach((link, idx) => {
+                const item = document.createElement('div');
+                item.className = 'link-item';
+                item.innerHTML = `
+                    <a href="${link.url}" target="_blank"><i class="ph-bold ph-link"></i> ${link.text || link.url}</a>
+                    <button class="btn-remove-link"><i class="ph-bold ph-trash"></i></button>
+                `;
+                item.querySelector('.btn-remove-link').addEventListener('click', () => {
+                    currentLinks.splice(idx, 1);
+                    renderLinks();
+                });
+                linkListEl.appendChild(item);
+            });
+        }
+        renderLinks();
+
+        modal.querySelector('#btn-add-link').addEventListener('click', () => {
+            const urlInput = modal.querySelector('#new-link-url');
+            const textInput = modal.querySelector('#new-link-text');
+            const url = urlInput.value.trim();
+            if (!url) return;
+            currentLinks.push({ url: url.startsWith('http') ? url : 'https://' + url, text: textInput.value.trim() });
+            urlInput.value = ''; textInput.value = '';
+            renderLinks();
+        });
+
+        // --- Priority Logic ---
+        let selectedPriority = task.priority;
+        modal.querySelectorAll('.priority-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                modal.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedPriority = btn.dataset.priority;
+            });
+        });
+
+        // --- Save & Close ---
+        const closeModal = () => modal.remove();
+        modal.querySelector('.btn-close-modal').addEventListener('click', closeModal);
+        
         modal.querySelector('#btn-save-edit').addEventListener('click', () => {
             const newText = document.getElementById('edit-task-text').value.trim();
-            const newStart = document.getElementById('edit-task-start').value;
-            const newEnd = document.getElementById('edit-task-end').value;
+            const newStartValue = document.getElementById('edit-task-start').value;
+            const newEndValue = document.getElementById('edit-task-end').value;
+            const newNotes = document.getElementById('edit-task-notes').value;
+
+            const newStartDateTime = newStartValue ? new Date(newStartValue).toISOString() : null;
+            const newEndDateTime = newEndValue ? new Date(newEndValue).toISOString() : null;
 
             if (!newText) return alert("Task name cannot be empty");
-            if (newStart && newEnd && newEnd <= newStart) return alert("End time must be after start time.");
-            if (newStart && newEnd && checkTimeOverlap(newStart, newEnd, taskId)) return alert("Time clash detected! This task overlaps with another active task.");
+            if (newStartDateTime && newEndDateTime && newEndDateTime <= newStartDateTime) return alert("End time must be after start time.");
+            if (newStartDateTime && newEndDateTime && checkTimeOverlap(newStartDateTime, newEndDateTime, taskId)) return alert("Time clash detected! This task overlaps with another active task.");
 
-            updatePlannerTask(taskId, { text: newText, startTime: newStart, endTime: newEnd, hasAlerted: false });
+            // Filter out empty subtasks
+            const finalSubtasks = currentSubtasks.filter(st => st.text.trim() !== '');
+
+            updatePlannerTask(taskId, { 
+                text: newText, 
+                startDateTime: newStartDateTime, 
+                endDateTime: newEndDateTime, 
+                priority: selectedPriority,
+                subtasks: finalSubtasks,
+                notes: newNotes,
+                links: currentLinks,
+                hasAlerted: false 
+            });
+            
             renderPlannerTasks();
             modal.remove();
         });
@@ -899,15 +1126,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentState.planner.tasks.forEach(task => {
             // Real-time Countdown Logic
-            if (!task.startTime || !task.endTime || task.completed) return;
+            if (!task.startDateTime || !task.endDateTime || task.completed) return;
 
-            const [sh, sm] = task.startTime.split(':').map(Number);
-            const startDate = new Date();
-            startDate.setHours(sh, sm, 0, 0);
-
-            const [eh, em] = task.endTime.split(':').map(Number);
-            const endDate = new Date();
-            endDate.setHours(eh, em, 0, 0);
+            const startDate = new Date(task.startDateTime);
+            const endDate = new Date(task.endDateTime);
 
             if (now >= startDate && now < endDate) {
                 // Task is active
@@ -1002,6 +1224,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const m = Math.floor(seconds / 60).toString().padStart(2, '0');
         const s = (seconds % 60).toString().padStart(2, '0');
         return `${m}:${s}`;
+    }
+
+    function formatTaskDateTime(isoString) {
+        if (!isoString) return '--:--';
+        const date = new Date(isoString);
+        const now = new Date();
+        
+        const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+        const timeStr = date.toLocaleTimeString('en-GB', timeOptions); // Use en-GB for 24h format
+
+        const isToday = date.getFullYear() === now.getFullYear() &&
+                        date.getMonth() === now.getMonth() &&
+                        date.getDate() === now.getDate();
+
+        if (isToday) {
+            return timeStr;
+        } else {
+            const dateOptions = { month: 'short', day: 'numeric' };
+            const dateStr = date.toLocaleDateString('en-US', dateOptions);
+            return `${dateStr}, ${timeStr}`;
+        }
     }
 
     function formatDurationText(seconds) {

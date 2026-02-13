@@ -798,6 +798,245 @@ body.zen-dashboard-body {
     }
 }
 
+/* --- CEO Execution Planner --- */
+.planner-container {
+    max-width: 800px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+    padding-bottom: 4rem; /* Extra space for mobile scrolling */
+}
+
+.planner-header {
+    margin-bottom: 2rem;
+}
+
+.planner-header h1 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.planner-header .date {
+    color: var(--text-secondary);
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+
+.planner-progress-container {
+    background: #E2E8F0;
+    height: 8px;
+    border-radius: 4px;
+    margin-top: 1rem;
+    overflow: hidden;
+}
+
+.planner-progress-bar {
+    height: 100%;
+    background: var(--brand-blue);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.planner-progress-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    font-weight: 600;
+}
+
+.quick-add-container {
+    margin-bottom: 2rem;
+}
+
+.quick-add-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    background: var(--bg-surface);
+    font-style: italic;
+    color: var(--text-primary);
+}
+
+.quick-add-input:focus {
+    outline: none;
+    border-color: var(--brand-blue);
+    box-shadow: 0 4px 12px rgba(41, 121, 255, 0.1);
+}
+
+    /* Make planner modules swipable on mobile/tablet */
+.planner-modules-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 1.25rem;
+        /* Add padding to allow cards to not stick to edges when scrolling */
+        padding: 0.75rem 1rem 2rem 1rem;
+        margin: 0 -1rem 2rem -1rem; /* Use negative margin to span full width inside padded parent */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        scroll-snap-type: x mandatory; /* Snap to cards */
+    }
+
+    /* Hide scrollbar for a cleaner look */
+    .planner-modules-grid::-webkit-scrollbar { display: none; }
+    .planner-modules-grid { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .planner-modules-grid .planner-card {
+        flex: 0 0 88%; /* Each card takes up 88% of the container width */
+        scroll-snap-align: center;
+        /* Ensure cards don't shrink if content is small */
+        min-width: 88%;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); /* Elevated look */
+        border: 1px solid rgba(0, 0, 0, 0.3)
+}
+
+.planner-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+    
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.module-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.module-sub {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+/* Pipeline Pulse */
+.pipeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.pipeline-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: opacity 0.3s ease;
+    
+}
+
+.pipeline-row.dimmed {
+    opacity: 0.4;
+}
+
+.pipeline-input {
+    flex: 1;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background: transparent;
+    border-radius: 0;
+}
+
+.pipeline-input:focus {
+    outline: none;
+    border-bottom-color: var(--brand-blue);
+}
+
+/* Yellow Toggle for Pipeline */
+.pipeline-toggle { position: relative; display: inline-block; width: 40px; height: 24px; flex-shrink: 0; }
+.pipeline-toggle input { opacity: 0; width: 0; height: 0; }
+.pipeline-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #E2E8F0; transition: .4s; border-radius: 24px; }
+.pipeline-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .pipeline-slider { background-color: #FFD700; } /* Vibrant Yellow */
+input:checked + .pipeline-slider:before { transform: translateX(16px); }
+
+/* Content Engine */
+.content-input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hook-input {
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    background: #F8FAFC;
+}
+
+.content-input-wrapper.logged .hook-input {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+    background: #F1F5F9;
+}
+
+.btn-log-hook {
+    background: #0062FF;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.content-input-wrapper.logged .btn-log-hook {
+    background: var(--success-color);
+    cursor: default;
+}
+
+.planner-section {
+    border-radius: 24px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.planner-section h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+/* Section A: Big 3 */
+.section-big-3 {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0.15) 100%);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px -10px rgba(255, 215, 0, 0.15);
+}
+
+.section-big-3 h3 { color: var(--brand-yellow-dark);}
+
+/* Section B: Money Queue */
+.section-money {
+    background: linear-gradient(135deg, rgba(41, 121, 255, 0.02) 0%, rgba(41, 121, 255, 0.08) 100%);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+}
+.section-money h3 { color: var(--brand-blue); }
+
 /* Mobile & Tablet (1024px and down) - Hamburger Menu & Compact Grid */
 @media (max-width: 1024px) {
     .workstation-container {
@@ -1961,7 +2200,6 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     cursor: grab;
     min-height: 60px; /* Ensure minimum height for touch */
-    flex-wrap: wrap; /* Responsive wrapping for desktop/mobile */
 }
 
 .planner-task:active { cursor: grabbing; }
@@ -1973,6 +2211,47 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
     cursor: pointer;
     accent-color: var(--brand-blue);
     flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.task-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.task-main {
+    flex: 1;
+    min-width: 200px;
+}
+
+.task-header-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.task-meta-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.task-controls-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.task-actions-group {
+    display: flex;
+    gap: 4px;
 }
 
 .task-content { flex: 1; font-weight: 500; font-size: 1rem; color: var(--text-primary); }
@@ -2760,3 +3039,482 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 @media (max-width: 1024px) { .aveo-drawer { width: 100%; } }
+
+/* --- Priority Indicators & Subtask Styles --- */
+.planner-task {
+    border-left: 4px solid transparent; /* Default */
+    position: relative;
+}
+.planner-task.priority-high { border-left-color: #EF4444; }
+.planner-task.priority-medium { border-left-color: #3B82F6; }
+.planner-task.priority-low { border-left-color: #94A3B8; }
+
+.task-badges {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-left: 8px;
+}
+
+.subtask-badge, .notes-badge {
+    font-size: 0.7rem;
+    background: #F1F5F9;
+    color: #64748B;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 600;
+}
+
+.subtask-badge.completed {
+    background: #ECFDF5;
+    color: #10B981;
+}
+
+/* --- Enhanced Task Details Modal --- */
+.custom-modal.task-details-modal {
+    width: 600px;
+    max-width: 95%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: auto; /* Ensure centering in overlay */
+    overflow: hidden; /* Inner scroll */
+    text-align: left;
+}
+
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+}
+
+.modal-header h3 { margin: 0; font-size: 1.25rem; }
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background: #F8FAFC;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* Priority Selector */
+.priority-selector {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.priority-btn {
+    flex: 1;
+    padding: 0.6rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    text-align: center;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.priority-btn:hover { background: #F8FAFC; }
+
+.priority-btn.selected {
+    font-weight: 700;
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.priority-btn[data-priority="high"].selected { background: #EF4444; }
+.priority-btn[data-priority="medium"].selected { background: #3B82F6; }
+.priority-btn[data-priority="low"].selected { background: #94A3B8; }
+
+/* Subtasks in Modal */
+.subtask-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.subtask-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #F8FAFC;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.subtask-row:focus-within {
+    border-color: var(--brand-blue);
+    background: white;
+}
+
+.subtask-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--brand-blue);
+    cursor: pointer;
+}
+
+.subtask-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    padding: 4px 0;
+}
+
+.subtask-input:focus { outline: none; }
+.subtask-input.completed { text-decoration: line-through; color: var(--text-secondary); }
+
+.btn-remove-subtask {
+    color: #EF4444;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.4;
+    padding: 4px;
+    display: flex;
+}
+.btn-remove-subtask:hover { opacity: 1; }
+
+.btn-add-subtask {
+    background: white;
+    border: 1px dashed var(--border-color);
+    color: var(--brand-blue);
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+.btn-add-subtask:hover { background: #F0F9FF; border-color: var(--brand-blue); }
+
+/* Notes & Links */
+.notes-area {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    background: #F8FAFC;
+    margin-bottom: 1.5rem;
+}
+.notes-area:focus { outline: none; border-color: var(--brand-blue); background: white; }
+
+.link-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Mobile Optimization for Modal */
+@media (max-width: 768px) {
+    .custom-modal.task-details-modal {
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        margin: 0;
+        transform: none !important; /* Override scale animation */
+    }
+    
+    .modal-header {
+        padding: 1rem;
+        padding-top: max(1rem, env(safe-area-inset-top));
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+}
+
+/* --- Task Details Preview --- */
+.task-details-preview {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--border-color);
+    width: 100%;
+    animation: fadeIn 0.3s ease;
+}
+
+.preview-note {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    background: #F8FAFC;
+    padding: 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+.preview-note i {
+    margin-top: 3px;
+    color: var(--brand-blue);
+}
+
+.preview-subtask {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+    padding-left: 0.5rem;
+}
+
+.preview-subtask.completed {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+}
+
+.preview-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-left: 0.5rem;
+}
+
+.preview-link-tag {
+    font-size: 0.8rem;
+    background: #EFF6FF;
+    color: var(--brand-blue);
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.preview-link-tag:hover {
+    background: #DBEAFE;
+    border-color: var(--brand-blue);
+}
+
+/* --- Desktop Planner Redesign (Reset) --- */
+@media (min-width: 1025px) {
+    .planner-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding-bottom: 4rem;
+    }
+
+    /* Card Container */
+    .planner-task {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem 1.5rem; /* Adjusted desktop padding */
+        gap: 0.5rem;
+        background: #FFFFFF;
+        border: 1px solid var(--border-color-soft);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        transition: all 0.2s ease;
+        align-items: stretch;
+    }
+
+    .planner-task:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+        transform: translateY(-1px);
+        border-color: var(--border-color);
+    }
+
+    /* Top Row: Checkbox + Content + Controls */
+    .task-inner {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 1.25rem;
+    }
+
+    .task-checkbox {
+        width: 20px;
+        height: 20px;
+        margin-top: 0;
+        cursor: pointer;
+    }
+
+    .task-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .task-controls-row {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-left: auto;
+    }
+
+    .task-actions-group {
+        opacity: 0; /* Hide until hover for cleaner desktop look */
+        transition: opacity 0.2s ease;
+    }
+
+    .planner-task:hover .task-actions-group {
+        opacity: 1;
+    }
+}
+
+/* --- Link/Attachment Manager Styles --- */
+.link-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.link-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #F1F5F9;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+    transition: background 0.2s;
+}
+
+.link-item:hover { background: #E2E8F0; }
+
+.link-item a {
+    flex: 1;
+    color: var(--brand-blue);
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.link-item a:hover { text-decoration: underline; }
+
+.btn-remove-link {
+    color: #94A3B8;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.btn-remove-link:hover { color: #EF4444; }
+
+.add-link-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    background: #F8FAFC;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.link-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    background: white;
+}
+.link-input:focus { outline: none; border-color: var(--brand-blue); }
+
+.btn-add-link-action {
+    background: var(--brand-blue);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+.btn-add-link-action:hover { background: var(--brand-blue-dark); }
+
+/* Mobile Optimization Enhancements */
+@media (max-width: 768px) {
+    /* Larger touch targets for task actions */
+    .task-actions button {
+        padding: 10px !important; /* Larger touch target */
+        font-size: 1.2rem !important;
+    }
+    
+    .task-actions {
+        gap: 12px !important;
+    }
+
+    /* Stack link inputs on mobile */
+    .add-link-wrapper {
+        flex-direction: column;
+        padding: 0.75rem;
+    }
+    
+    .btn-add-link-action {
+        padding: 0.75rem;
+        width: 100%;
+        margin-top: 0.25rem;
+    }
+    
+    /* Ensure modal content is easily tappable */
+    .subtask-row {
+        padding: 0.75rem;
+    }
+    
+    .priority-btn {
+        padding: 0.85rem;
+    }
+}
