@@ -3075,15 +3075,20 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* --- Enhanced Task Details Modal --- */
 .custom-modal.task-details-modal {
-    width: 600px;
+    /* Desktop: centered card that mirrors mobile inner layout */
+    width: 720px;
     max-width: 95%;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
     padding: 0;
-    margin: auto; /* Ensure centering in overlay */
-    overflow: hidden; /* Inner scroll */
+    margin: auto; /* Center within overlay */
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden; /* Inner scroll handled by .modal-body */
     text-align: left;
+    background: white;
+    box-shadow: 0 30px 80px rgba(2,6,23,0.25);
 }
 
 .modal-header {
@@ -3518,3 +3523,146 @@ input:checked + .slider:before { transform: translateX(20px); }
         padding: 0.85rem;
     }
 }
+
+/* --- Planner Toolbar (Rollover & Timeline) --- */
+.planner-actions-toolbar {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-planner-action {
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.btn-planner-action:hover {
+    border-color: var(--brand-blue);
+    color: var(--brand-blue);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+/* --- Time Blocking Timeline --- */
+.timeline-wrapper {
+    position: relative;
+    height: 60vh;
+    overflow-y: auto;
+    background: #F8FAFC;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-top: 1rem;
+}
+
+.timeline-grid {
+    position: relative;
+    height: 1440px; /* 24 hours * 60px */
+    background-image: linear-gradient(to bottom, #E2E8F0 1px, transparent 1px);
+    background-size: 100% 60px; /* 1 hour lines */
+}
+
+.timeline-time-label {
+    position: absolute;
+    left: 8px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    transform: translateY(-50%);
+    background: #F8FAFC;
+    padding-right: 4px;
+}
+
+.timeline-event {
+    position: absolute;
+    left: 60px;
+    right: 10px;
+    background: rgba(41, 121, 255, 0.15);
+    border-left: 4px solid var(--brand-blue);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    color: var(--brand-blue-dark);
+    overflow: hidden;
+    cursor: grab;
+    z-index: 10;
+    transition: box-shadow 0.2s;
+}
+
+.timeline-event:hover {
+    z-index: 20;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.timeline-event:active {
+    cursor: grabbing;
+}
+
+.timeline-event .event-time {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-bottom: 2px;
+    display: block;
+}
+
+/* --- Recurrence Select --- */
+.recurrence-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: white;
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-top: 0.5rem;
+    font-family: inherit;
+}
+
+/* --- Notifications & Toasts --- */
+.notification-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-left: 4px solid var(--brand-blue);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 350px;
+    font-weight: 500;
+}
+.notification-toast.nag { border-left-color: #EF4444; }
+@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* --- Focus Mode Overlay --- */
+.focus-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-main);
+    z-index: 5000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+}
+.focus-timer-large { font-size: clamp(4rem, 10vw, 8rem); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-primary); line-height: 1; margin-bottom: 1rem; }
+.focus-task-display { font-size: 1.5rem; color: var(--text-secondary); margin-bottom: 3rem; max-width: 800px; }
+.btn-exit-focus { background: transparent; border: 2px solid var(--border-color); padding: 1rem 2rem; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: var(--text-secondary); }
+.btn-exit-focus:hover { border-color: #EF4444; color: #EF4444; }
