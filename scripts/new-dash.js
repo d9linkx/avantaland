@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (big3Tasks.length === 0) {
             focusType = "Planning Mode";
-            motivation = "The day is open. Define your Big 3 to get started.";
+            motivation = "You can do this!";
         } else if (taskTexts.match(/call|email|sell|close|\$|lead|prospect|client/)) {
             focusType = "Revenue Focus";
             motivation = "You're hunting today. Prioritize the tasks that bring in cash.";
@@ -260,13 +260,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>${t.text}</span>
                 </div>
             `).join('');
-        } else {
-            tasksHtml = `<p class="executor-empty">No plans for today?</p>`;
         }
 
         executorCard.innerHTML = `
             <div class="executor-header">
-                <h3>My Top 3 Goals</h3>
+                <h3>Today's Tasks</h3>
                 <span class="executor-focus-badge">${focusType}</span>
             </div>
             <p class="executor-explanation">${motivation}</p>
