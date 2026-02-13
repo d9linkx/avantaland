@@ -3103,7 +3103,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .modal-header h3 { margin: 0; font-size: 1.25rem; }
 
 .modal-body {
-    padding: 1.5rem;
+    padding: 0;
     overflow-y: auto;
     flex: 1;
 }
@@ -3115,6 +3115,24 @@ input:checked + .slider:before { transform: translateX(20px); }
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+}
+
+/* Modal Sections */
+.modal-section {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-section-primary {
+    background-color: #FFFFFF;
+}
+
+.modal-section-time {
+    background-color: #EFF6FF; /* Light Blue */
+}
+
+.modal-section-details {
+    background-color: #F8FAFC; /* Light Grey */
 }
 
 /* Priority Selector */
@@ -3244,6 +3262,13 @@ input:checked + .slider:before { transform: translateX(20px); }
     margin-bottom: 0.5rem;
 }
 
+.time-inputs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
 /* Mobile Optimization for Modal */
 @media (max-width: 768px) {
     .custom-modal.task-details-modal {
@@ -3271,6 +3296,11 @@ input:checked + .slider:before { transform: translateX(20px); }
     .modal-footer {
         padding: 1rem;
         padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+
+    .time-inputs-row {
+        display: flex;
+        flex-direction: column;
     }
 }
 

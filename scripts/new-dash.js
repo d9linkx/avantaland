@@ -418,7 +418,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderBusinessDashboard();
         });
 
-        document.getElementById('btn-start-timer').addEventListener('click', togglePlannerTimer);
+        const timerBtn = document.getElementById('btn-start-timer');
+        if (timerBtn) timerBtn.addEventListener('click', togglePlannerTimer);
         
         document.getElementById('btn-rollover').addEventListener('click', rolloverTasks);
         document.getElementById('btn-timeline').addEventListener('click', openTimelineModal);
@@ -1151,76 +1152,85 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label>Task Name</label>
-                        <input type="text" id="edit-task-text" class="settings-input" value="${task.text}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Priority</label>
-                        <div class="priority-selector">
-                            <div class="priority-btn ${task.priority === 'high' ? 'selected' : ''}" data-priority="high">High</div>
-                            <div class="priority-btn ${task.priority === 'medium' ? 'selected' : ''}" data-priority="medium">Medium</div>
-                            <div class="priority-btn ${task.priority === 'low' ? 'selected' : ''}" data-priority="low">Low</div>
+                    <!-- Row 1: Task Info (White) -->
+                    <div class="modal-section modal-section-primary">
+                        <div class="form-group">
+                            <label>Task Name</label>
+                            <input type="text" id="edit-task-text" class="settings-input" value="${task.text}">
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label>Recurring Task</label>
-                        <select id="edit-task-recurrence" class="recurrence-select">
-                            <option value="none" ${task.recurrence === 'none' ? 'selected' : ''}>Does not repeat</option>
-                            <option value="daily" ${task.recurrence === 'daily' ? 'selected' : ''}>Daily</option>
-                            <option value="weekly" ${task.recurrence === 'weekly' ? 'selected' : ''}>Weekly</option>
-                            <option value="monthly" ${task.recurrence === 'monthly' ? 'selected' : ''}>Monthly</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <div class="priority-selector">
+                                <div class="priority-btn ${task.priority === 'high' ? 'selected' : ''}" data-priority="high">High</div>
+                                <div class="priority-btn ${task.priority === 'medium' ? 'selected' : ''}" data-priority="medium">Medium</div>
+                                <div class="priority-btn ${task.priority === 'low' ? 'selected' : ''}" data-priority="low">Low</div>
+                            </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Reminders & Nudges</label>
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            <select id="edit-task-reminder" class="recurrence-select" style="flex: 1;">
-                                <option value="0" ${task.reminderOffset === 0 ? 'selected' : ''}>No Reminder</option>
-                                <option value="5" ${task.reminderOffset === 5 ? 'selected' : ''}>5 minutes before</option>
-                                <option value="10" ${task.reminderOffset === 10 ? 'selected' : ''}>10 minutes before</option>
-                                <option value="30" ${task.reminderOffset === 30 ? 'selected' : ''}>30 minutes before</option>
-                                <option value="60" ${task.reminderOffset === 60 ? 'selected' : ''}>1 hour before</option>
+                        <div class="form-group">
+                            <label>Recurring Task</label>
+                            <select id="edit-task-recurrence" class="recurrence-select">
+                                <option value="none" ${task.recurrence === 'none' ? 'selected' : ''}>Does not repeat</option>
+                                <option value="daily" ${task.recurrence === 'daily' ? 'selected' : ''}>Daily</option>
+                                <option value="weekly" ${task.recurrence === 'weekly' ? 'selected' : ''}>Weekly</option>
+                                <option value="monthly" ${task.recurrence === 'monthly' ? 'selected' : ''}>Monthly</option>
                             </select>
-                            <label class="toggle-switch" style="flex-shrink: 0;" title="Nag Mode: Alerts you if task is overdue">
-                                <input type="checkbox" id="edit-task-nag" ${task.nagMode ? 'checked' : ''}>
-                                <span class="slider"></span>
-                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Reminders & Nudges</label>
+                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                <select id="edit-task-reminder" class="recurrence-select" style="flex: 1;">
+                                    <option value="0" ${task.reminderOffset === 0 ? 'selected' : ''}>No Reminder</option>
+                                    <option value="5" ${task.reminderOffset === 5 ? 'selected' : ''}>5 minutes before</option>
+                                    <option value="10" ${task.reminderOffset === 10 ? 'selected' : ''}>10 minutes before</option>
+                                    <option value="30" ${task.reminderOffset === 30 ? 'selected' : ''}>30 minutes before</option>
+                                    <option value="60" ${task.reminderOffset === 60 ? 'selected' : ''}>1 hour before</option>
+                                </select>
+                                <label class="toggle-switch" style="flex-shrink: 0;" title="Nag Mode: Alerts you if task is overdue">
+                                    <input type="checkbox" id="edit-task-nag" ${task.nagMode ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label>Start Time</label>
-                            <input type="datetime-local" id="edit-task-start" class="settings-input" value="${toLocalISOString(task.startDateTime)}">
+                    <!-- Row 2: Time (Light Blue) -->
+                    <div class="modal-section modal-section-time">
+                        <div class="time-inputs-row" style="margin-bottom: 0;">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>Start Time</label>
+                                <input type="datetime-local" id="edit-task-start" class="settings-input" value="${toLocalISOString(task.startDateTime)}">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>End Time</label>
+                                <input type="datetime-local" id="edit-task-end" class="settings-input" value="${toLocalISOString(task.endDateTime)}">
+                            </div>
                         </div>
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label>End Time</label>
-                            <input type="datetime-local" id="edit-task-end" class="settings-input" value="${toLocalISOString(task.endDateTime)}">
+                    </div>
+
+                    <!-- Row 3: Details (Light Grey) -->
+                    <div class="modal-section modal-section-details">
+                        <div class="form-group">
+                            <label>Subtasks</label>
+                            <div class="subtask-list" id="modal-subtask-list"></div>
+                            <button class="btn-add-subtask" id="btn-add-subtask"><i class="ph-bold ph-plus"></i> Add Subtask</button>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label>Subtasks</label>
-                        <div class="subtask-list" id="modal-subtask-list"></div>
-                        <button class="btn-add-subtask" id="btn-add-subtask"><i class="ph-bold ph-plus"></i> Add Subtask</button>
-                    </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea id="edit-task-notes" class="notes-area" placeholder="Add details or thoughts here...">${task.notes}</textarea>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Notes</label>
-                        <textarea id="edit-task-notes" class="notes-area" placeholder="Add details or thoughts here...">${task.notes}</textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Attachments / Links</label>
-                        <div class="link-list" id="modal-link-list"></div>
-                        <div class="add-link-wrapper">
-                            <input type="text" id="new-link-url" class="link-input" placeholder="https://...">
-                            <input type="text" id="new-link-text" class="link-input" placeholder="Title (optional)">
-                            <button class="btn-add-link-action" id="btn-add-link">Add</button>
+                        <div class="form-group">
+                            <label>Attachments / Links</label>
+                            <div class="link-list" id="modal-link-list"></div>
+                            <div class="add-link-wrapper">
+                                <input type="text" id="new-link-url" class="link-input" placeholder="https://...">
+                                <input type="text" id="new-link-text" class="link-input" placeholder="Title (optional)">
+                                <button class="btn-add-link-action" id="btn-add-link">Add</button>
+                            </div>
                         </div>
                     </div>
                 </div>
