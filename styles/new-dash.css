@@ -4278,6 +4278,13 @@ input:checked + .slider:before { transform: translateX(20px); }
         font-size: 1.25rem;
     }
     
+    /* Ensure share icon is white on mobile */
+    .btn-share i {
+        color: white !important;
+        margin: 0;
+        font-size: 1.25rem;
+    }
+
     /* Brand Identity Stacking */
     .pf-identity-grid {
         flex-direction: column;
