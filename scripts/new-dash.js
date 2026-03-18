@@ -1628,7 +1628,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="profile-header-card">
                     <div class="profile-identity">
                         <div class="avatar-wrapper">
-                            <img src="${currentState.profile.avatar || 'https://ui-avatars.com/api/?name=' + currentState.profile.name + '&background=2979FF&color=fff'}" alt="Profile" class="profile-avatar-large" id="profile-avatar-img">
+                            <img src="${currentState.profile.avatar || 'https://ui-avatars.com/api/?name=' + currentState.profile.name + '&background=00db87&color=fff'}" alt="Profile" class="profile-avatar-large" id="profile-avatar-img">
                             <button class="btn-edit-avatar" id="btn-upload-avatar"><i class="ph ph-pencil-simple"></i></button>
                             <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;">
                         </div>

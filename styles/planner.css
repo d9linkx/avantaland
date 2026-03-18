@@ -1,12 +1,12 @@
 :root {
     --planner-bg: #F8FAFC;
     --prime-bg: #FFFFFF;
-    --accent-focus: #2979FF;
-    --text-dark: #1E293B;
+    --accent-focus: #00db87;
+    --text-dark: #6b7280;
     --text-muted: #64748B;
     --border-light: #E2E8F0;
     --slot-revenue: #10B981;
-    --slot-ops: #3B82F6;
+    --slot-ops: #00db87;
     --slot-dev: #8B5CF6;
     --victory-bg: #ECFDF5;
     --survival-color: #F59E0B;
@@ -24,7 +24,7 @@ body.peak-mode {
 body.trough-mode {
     --planner-bg: #F0F9FF;
     --prime-bg: #E0F2FE;
-    --accent-focus: #0284C7;
+    --accent-focus: #00b771;
 }
 /* ---------------------------- */
 
@@ -192,11 +192,11 @@ body.victory-state {
     background-image: linear-gradient(to right, rgba(16, 185, 129, 0.05), transparent);
 }
 
-.mission-slot[data-type="operations"] { border-color: rgba(59, 130, 246, 0.3); }
+.mission-slot[data-type="operations"] { border-color: rgba(0, 219, 135, 0.3); }
 .mission-slot[data-type="operations"].filled { 
     border-left: 6px solid var(--slot-ops); 
     border-color: var(--border-light);
-    background-image: linear-gradient(to right, rgba(59, 130, 246, 0.05), transparent);
+    background-image: linear-gradient(to right, rgba(0, 219, 135, 0.05), transparent);
 }
 
 .mission-slot[data-type="development"] { border-color: rgba(139, 92, 246, 0.3); }
@@ -216,7 +216,7 @@ body.victory-state {
 
 .slot-empty-icon {
     font-size: 2rem;
-    color: #3B82F6; /* Set to #3B82F6 */
+    color: var(--slot-ops); /* Set to #3B82F6 */
     margin-bottom: 1rem;
     transition: all 0.3s ease;
 }
@@ -239,8 +239,8 @@ body.victory-state {
 }
 
 .btn-fill-slot {
-    background: #3B82F6; /* Clear #3B82F6 */
-    border: 1px solid #3B82F6; /* Clear #3B82F6 */
+    background: var(--slot-ops); /* Clear #3B82F6 */
+    border: 1px solid var(--slot-ops); /* Clear #3B82F6 */
     padding: 8px 16px;
     border-radius: 8px;
     cursor: pointer;

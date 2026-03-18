@@ -1,6 +1,6 @@
 body {
     background-color: #F8FAFC;
-    color: #2979FF;
+    color: #00db87;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -33,19 +33,19 @@ body {
 .icon-wrapper {
     width: 80px;
     height: 80px;
-    background: rgba(41, 121, 255, 0.1);
+    background: rgba(0, 219, 135, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 2rem;
-    color: #2979FF;
+    color: #00db87;
 }
 
 h1 {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: #1E293B;
+    color: #6b7280;
 }
 
 p {
@@ -56,7 +56,7 @@ p {
 }
 
 .btn-enter {
-    background: #2979FF;
+    background: #00db87;
     color: white;
     border: none;
     padding: 16px 32px;
@@ -70,7 +70,7 @@ p {
 }
 
 .btn-enter:hover {
-    background: #1E60CC;
+    background: #00b771;
     transform: translateY(-2px);
 }
 
@@ -97,8 +97,8 @@ p {
 }
 
 .auth-input:focus {
-    border-color: #2979FF;
-    box-shadow: 0 0 0 4px rgba(41, 121, 255, 0.1);
+    border-color: #00db87;
+    box-shadow: 0 0 0 4px rgba(0, 219, 135, 0.1);
     background: #FFFFFF;
 }
 

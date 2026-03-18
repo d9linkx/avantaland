@@ -604,8 +604,7 @@ style.innerHTML = `
     position: absolute;
     top: 10px;
     left: 10px;
-    background-color: rgba(0, 123, 255, 0.2); /* Semi-transparent blue */
-    color: white;
+    background-color: rgba(0, 
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 0.8em;

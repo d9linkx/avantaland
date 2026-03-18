@@ -28,7 +28,7 @@ body {
 }
 
 .back-link:hover {
-    color: #2563eb;
+    color: #00b771;
 }
 
 .truth-header {
@@ -38,8 +38,8 @@ body {
 
 .truth-number {
     display: inline-block;
-    background: #dbeafe;
-    color: #2563eb;
+    background: #e6fcf2;
+    color: #00db87;
     font-size: 0.8rem;
     font-weight: 700;
     padding: 0.4rem 1rem;
@@ -59,7 +59,7 @@ body {
 /* Phase 1: Summary Box */
 .truth-summary-box {
     background: #f1f5f9;
-    border-left: 4px solid #2563eb;
+    border-left: 4px solid #00db87;
     padding: 1.5rem;
     border-radius: 0 8px 8px 0;
     margin-bottom: 2.5rem;
@@ -136,7 +136,7 @@ body {
 }
 
 .btn-complete {
-    background: #2563eb;
+    background: #00db87;
     color: white;
 }
 

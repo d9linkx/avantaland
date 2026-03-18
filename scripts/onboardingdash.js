@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = 'new-dashboard.html';
                 }, 1000);
             } else {
-                authMessage.innerHTML = "Email not found. <a href='product-test.html' style='color: #2979FF; text-decoration: underline;'>Sign up here</a> or try again.";
+                authMessage.innerHTML = "Email not found. <a href='product-test.html' style='color: #00db87; text-decoration: underline;'>Sign up here</a> or try again.";
                 authMessage.className = "auth-message error";
                 enterBtn.disabled = false;
                 enterBtn.textContent = "Sign In";
