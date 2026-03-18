@@ -4106,6 +4106,21 @@ input:checked + .slider:before { transform: translateX(20px); }
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
+.btn-preview-pf {
+    background: white;
+    border: 1px solid var(--border-color);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
 .btn-share {
     background: var(--brand-blue-dark);
     color: white;
@@ -4229,22 +4244,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     
     .pf-toggle-btn {
         flex: 1;
-    }
-
-    /* Standardize header buttons for desktop first */
-    .btn-preview-pf {
-        background: white;
-        border: 1px solid var(--border-color);
-        padding: 0.6rem 1.2rem;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        color: var(--text-secondary);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
-        font-size: 0.9rem;
     }
 
     /* Optimize Action Buttons */
