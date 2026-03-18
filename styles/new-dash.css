@@ -4103,7 +4103,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .btn-share {
-    background: #FF7F50;
+    background: var(--brand-blue-dark);
     color: white;
     border: none;
     padding: 0.6rem 1.2rem;

@@ -1615,6 +1615,96 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${m}m`;
     }
 
+    // --- Helper: Generate Public Profile HTML ---
+    function getPublicProfileHTML(p) {
+        return `
+            <div class="public-profile-container" style="max-width: 800px; margin: 0 auto; padding-top: 2rem;">
+                <div class="public-hero" style="background: white; border-radius: 24px; padding: 3rem; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                    <div class="public-avatar-wrapper" style="width: 140px; height: 140px; margin: 0 auto 1.5rem;">
+                        <img src="${p.avatar || 'https://ui-avatars.com/api/?name=' + p.name + '&background=00db87&color=fff'}" class="public-avatar">
+                    </div>
+                    <div class="public-info">
+                        <h1 class="public-name-title" style="font-size: 2.5rem; margin-bottom: 0.5rem; justify-content: center;">${p.name} <span style="font-weight: 300; opacity: 0.4;">|</span> <span style="color: var(--brand-blue);">${p.primarySkill || 'Specialist'}</span></h1>
+                        <p class="public-bio" style="font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem;">${p.bio || ''}</p>
+                        
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-bottom: 2rem;">
+                            ${(p.skills || []).map(s => `<span style="background: var(--brand-blue-light); color: var(--brand-blue-dark); padding: 6px 16px; border-radius: 99px; font-weight: 600;">${s}</span>`).join('')}
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+                            ${(p.tools || []).map(t => `<div style="width: 48px; height: 48px; background: #F8FAFC; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-secondary);" title="${t}"><i class="ph-duotone ph-wrench"></i></div>`).join('')}
+                        </div>
+
+                        <button class="btn-work-with-me">Work With Me</button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-primary); text-align: center;">Experience & Track Record</h3>
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        ${(p.experience || []).map(exp => `
+                            <div style="background: white; padding: 2rem; border-radius: 16px; border: 1px solid var(--border-color); display: flex; gap: 1.5rem; align-items: flex-start;">
+                                <div style="width: 12px; height: 12px; background: var(--brand-blue); border-radius: 50%; margin-top: 6px;"></div>
+                                <div>
+                                    <h4 style="margin: 0 0 0.5rem 0; font-size: 1.25rem; color: var(--text-primary);">${exp.role} <span style="font-weight: 400; color: var(--text-secondary);">at ${exp.company}</span></h4>
+                                    <span style="display: block; font-size: 0.9rem; color: #94A3B8; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">${exp.date}</span>
+                                    <ul style="margin: 0; padding-left: 1.2rem; color: var(--text-secondary); line-height: 1.6;">
+                                        ${(exp.bullets || []).filter(b => b.trim() !== '').map(b => `<li>${b}</li>`).join('')}
+                                        ${(!exp.bullets || exp.bullets.length === 0) ? '<li>Contributed to key strategic initiatives.</li>' : ''}
+                                    </ul>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- Helper: Share Modal ---
+    function openShareModal() {
+        const username = currentState.profile.name.replace(/\s+/g, '-').toLowerCase();
+        const url = `https://avantaland.com/u/${username}`;
+        
+        const modal = document.createElement('div');
+        modal.className = 'custom-modal-overlay active';
+        modal.innerHTML = `
+            <div class="custom-modal" style="width: 450px;">
+                <h3>Share Portfolio</h3>
+                <p>Your public portfolio is ready. Share this link with clients or investors.</p>
+                
+                <div style="background: #F8FAFC; padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <i class="ph-bold ph-link" style="color: var(--text-secondary);"></i>
+                    <input type="text" value="${url}" readonly style="flex: 1; background: transparent; border: none; font-family: monospace; font-size: 0.9rem; color: var(--text-primary); outline: none;">
+                    <button id="btn-copy-link" style="background: white; border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; color: var(--brand-blue);">Copy</button>
+                </div>
+                
+                <div style="display: flex; justify-content: center; gap: 1rem;">
+                    <button class="btn-modal btn-cancel" onclick="this.closest('.custom-modal-overlay').remove()">Close</button>
+                    <button class="btn-modal btn-complete" onclick="window.open('${url}', '_blank')">Open Link</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        const copyBtn = modal.querySelector('#btn-copy-link');
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(url);
+            copyBtn.textContent = 'Copied!';
+            copyBtn.style.background = 'var(--brand-blue)';
+            copyBtn.style.color = 'white';
+            copyBtn.style.borderColor = 'var(--brand-blue)';
+            setTimeout(() => {
+                copyBtn.textContent = 'Copy';
+                copyBtn.style.background = 'white';
+                copyBtn.style.color = 'var(--brand-blue)';
+                copyBtn.style.borderColor = 'var(--border-color)';
+            }, 2000);
+        });
+        
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    }
+
     // --- Profile & Settings Logic ---
     function renderProfile(isPublicView = false) {
         // Ensure state defaults
@@ -1790,6 +1880,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="pf-input-group"><label class="pf-label">Job Title</label><input type="text" class="pf-input exp-field" data-idx="${idx}" data-field="role" value="${exp.role}"></div>
                     <div class="pf-input-group"><label class="pf-label">Company</label><input type="text" class="pf-input exp-field" data-idx="${idx}" data-field="company" value="${exp.company}"></div>
                     <div class="pf-input-group"><label class="pf-label">Dates</label><input type="text" class="pf-input exp-field" data-idx="${idx}" data-field="date" value="${exp.date}"></div>
+                    <div class="pf-input-group"><label class="pf-label">Key Achievements (One per line)</label><textarea class="pf-textarea exp-field" data-idx="${idx}" data-field="bullets" rows="3" placeholder="Launched MVP\nScaled to $10k MRR">${(exp.bullets || []).join('\n')}</textarea></div>
                 </div>
             `).join('');
 
@@ -1798,8 +1889,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.addEventListener('input', (e) => {
                     const idx = e.target.dataset.idx;
                     const field = e.target.dataset.field;
-                    currentState.profile.experience[idx][field] = e.target.value;
-                    renderExperience(); // Re-render preview only logic would be faster, but this keeps sync simple
+                    
+                    if (field === 'bullets') {
+                        currentState.profile.experience[idx][field] = e.target.value.split('\n');
+                    } else {
+                        currentState.profile.experience[idx][field] = e.target.value;
+                    }
+                    // Removed renderExperience() to prevent focus loss and lag
                 });
             });
             expEditor.querySelectorAll('.btn-remove-item').forEach(btn => {
@@ -2487,7 +2583,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderBusinessDashboard();
                     } else if (target === 'aveo') {
                         toggleAveoDrawer(true);
-                    } else if (target === 'community' || target === 'profile') {
+                    } else if (target === 'profile') {
+                        renderProfile();
+                    } else if (target === 'community') {
                         alert(`${target.charAt(0).toUpperCase() + target.slice(1)} feature coming soon!`);
                     }
                 }
