@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Founder Profile | Avantaland</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/new-dash.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            background-color: #F8FAFC;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-viewer-container {
+            max-width: 900px;
+            margin: 40px auto;
+            width: 90%;
+            flex: 1;
+        }
+        .footer-branding {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+        .footer-branding img {
+            height: 24px;
+            width: auto;
+            margin: 0 auto 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-viewer-container" id="profile-root">
+        <!-- Profile will be injected here -->
+        <div style="text-align: center; padding: 4rem;">
+            <div class="loading-hud-ring"></div>
+            <p style="color: var(--brand-blue); font-weight: 600;">Loading Profile...</p>
+        </div>
+    </div>
+
+    <div class="footer-branding">
+        <img src="images/avblack.png" alt="Avantaland">
+        <p>Verified Founder Profile via Avantaland Academy</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const root = document.getElementById('profile-root');
+            
+            // Parse URL params
+            const params = new URLSearchParams(window.location.search);
+            const data = params.get('data');
+
+            if (!data) {
+                root.innerHTML = `
+                    <div class="public-hero" style="text-align: center; flex-direction: column;">
+                        <h2>Profile Not Found</h2>
+                        <p>The link you followed may be incomplete or expired.</p>
+                        <a href="index.html" class="btn-work-with-me" style="text-decoration: none; display: inline-block; margin-top: 1rem;">Go Home</a>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const profile = JSON.parse(decodeURIComponent(data));
+                
+                // Reusing HTML generation logic
+                const html = `
+                    <div class="public-profile-container" style="padding-bottom: 0;">
+                        <div class="public-hero">
+                            <div class="public-avatar-wrapper">
+                                <img src="${profile.avatar || 'https://ui-avatars.com/api/?name=' + profile.name + '&background=00db87&color=fff'}" class="public-avatar">
+                            </div>
+                            <div class="public-info">
+                                <h1 class="public-name-title">${profile.name} <span style="font-weight: 300; opacity: 0.4;">|</span> <span style="color: var(--brand-blue);">${profile.primarySkill || 'Specialist'}</span></h1>
+                                <p class="public-bio">${profile.bio || ''}</p>
+                                
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 2rem;">
+                                    ${(profile.skills || []).map(s => `<span style="background: var(--brand-blue-light); color: var(--brand-blue-dark); padding: 6px 16px; border-radius: 99px; font-weight: 600;">${s}</span>`).join('')}
+                                </div>
+                                
+                                <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                                    ${(profile.tools || []).map(t => `<div style="width: 48px; height: 48px; background: #F8FAFC; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-secondary);" title="${t}"><i class="ph-duotone ph-wrench"></i></div>`).join('')}
+                                </div>
+
+                                <button class="btn-work-with-me" onclick="window.location.href='mailto:${profile.email}'">Work With Me</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 3rem;">
+                            <h3 style="font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-primary);">Experience & Track Record</h3>
+                            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                                ${(profile.experience || []).map(exp => `
+                                    <div style="background: white; padding: 2rem; border-radius: 16px; border: 1px solid var(--border-color); display: flex; gap: 1.5rem; align-items: flex-start; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+                                        <div style="width: 12px; height: 12px; background: var(--brand-blue); border-radius: 50%; margin-top: 6px; flex-shrink: 0;"></div>
+                                        <div>
+                                            <h4 style="margin: 0 0 0.5rem 0; font-size: 1.25rem; color: var(--text-primary);">${exp.role} <span style="font-weight: 400; color: var(--text-secondary);">at ${exp.company}</span></h4>
+                                            <span style="display: block; font-size: 0.9rem; color: #94A3B8; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">${exp.date}</span>
+                                            <ul style="margin: 0; padding-left: 1.2rem; color: var(--text-secondary); line-height: 1.6;">
+                                                ${(exp.bullets || []).filter(b => b.trim() !== '').map(b => `<li>${b}</li>`).join('')}
+                                                ${(!exp.bullets || exp.bullets.length === 0) ? '<li>Contributed to key strategic initiatives.</li>' : ''}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                root.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                root.innerHTML = `<p style="text-align:center; color: red;">Error loading profile data.</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

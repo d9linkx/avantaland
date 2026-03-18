@@ -4205,14 +4205,44 @@ input:checked + .slider:before { transform: translateX(20px); }
         flex: 1;
     }
 
-    /* Optimize Action Buttons */
-    .btn-share, .btn-preview-pf, .btn-save-pf {
-        padding: 0.75rem 1rem;
-        font-size: 0.85rem;
-        flex: 1;
-        justify-content: center;
+    /* Standardize header buttons for desktop first */
+    .btn-preview-pf {
+        background: white;
+        border: 1px solid var(--border-color);
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+        font-size: 0.9rem;
     }
 
+    /* Optimize Action Buttons */
+    .btn-share, .btn-preview-pf, .btn-save-pf, .btn-toggle-view {
+        padding: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        justify-content: center;
+        min-width: 44px;
+        flex: 0 0 auto;
+    }
+
+    /* Hide text on mobile */
+    .btn-share .btn-text, .btn-preview-pf .btn-text, .btn-save-pf .btn-text, .btn-toggle-view .btn-text {
+        display: none;
+    }
+
+    /* Adjust icons */
+    .btn-share i, .btn-preview-pf i, .btn-save-pf i {
+        margin: 0;
+        font-size: 1.25rem;
+    }
+    
     /* Brand Identity Stacking */
     .pf-identity-grid {
         flex-direction: column;

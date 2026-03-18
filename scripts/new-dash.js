@@ -1663,8 +1663,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Helper: Share Modal ---
     function openShareModal() {
-        const username = currentState.profile.name.replace(/\s+/g, '-').toLowerCase();
-        const url = `https://avantaland.com/u/${username}`;
+        // Encode the profile data into the URL for the static page to read
+        const profileData = encodeURIComponent(JSON.stringify(currentState.profile));
+        // Construct URL relative to current location
+        const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+        const url = `${baseUrl}/public-profile.html?data=${profileData}`;
         
         const modal = document.createElement('div');
         modal.className = 'custom-modal-overlay active';
@@ -1724,9 +1727,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="pf-toggle-btn" id="view-public">Public Portfolio</button>
                     </div>
                     <div style="display: flex; gap: 1rem; align-items: center;">
-                        <button class="btn-preview-pf" id="btn-preview-pf" style="background: white; border: 1px solid var(--border-color); padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s;"><i class="ph-bold ph-eye"></i> Preview</button>
-                        <button class="btn-share"><i class="ph-bold ph-link"></i> Share</button>
-                        <button class="btn-save-pf" id="btn-save-pf">Save Changes</button>
+                    <button class="btn-preview-pf" id="btn-preview-pf"><i class="ph-bold ph-eye"></i> <span class="btn-text">Preview</span></button>
+                    <button class="btn-share"><i class="ph-bold ph-share-network"></i> <span class="btn-text">Share</span></button>
+                    <button class="btn-save-pf" id="btn-save-pf"><i class="ph-bold ph-floppy-disk"></i> <span class="btn-text">Save Changes</span></button>
                     </div>
                 </div>
 
@@ -1918,17 +1921,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const saveBtn = document.getElementById('btn-save-pf');
         saveBtn.addEventListener('click', () => {
             saveState();
-            const originalText = saveBtn.textContent;
+            const originalHtml = saveBtn.innerHTML;
             
             // Transformation
-            saveBtn.innerHTML = '<i class="ph-bold ph-check"></i> URL COPIED';
+            saveBtn.innerHTML = '<i class="ph-bold ph-check"></i> <span class="btn-text">Saved</span>';
             saveBtn.classList.add('saved');
             
             // Mock Clipboard copy
             // navigator.clipboard.writeText('https://avantaland.com/u/' + currentState.profile.name);
 
             setTimeout(() => {
-                saveBtn.innerHTML = originalText;
+                saveBtn.innerHTML = originalHtml;
                 saveBtn.classList.remove('saved');
             }, 1500);
         });
