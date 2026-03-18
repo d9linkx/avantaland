@@ -421,6 +421,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="planner-task-list" id="list-big-3" data-section="big3"></div>
                     <div style="text-align: left; margin-top: 0.5rem;">
                         <a href="#" id="why-3-link" style="font-size: 0.85rem; color: #000000; text-decoration: underline;">Why only 3?</a>
+                        <p id="why-3-explanation" style="display: none; font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem; line-height: 1.5; font-style: italic;">
+                            Limiting your daily focus to 3 key tasks forces ruthless prioritization, ensuring you tackle what truly moves the needle. It prevents the paralysis of a long to-do list and builds powerful momentum as you complete them. By constraining your focus, you guarantee execution on the things that actually matter for your growth.
+                        </p>
                     </div>
                 </div>
 
@@ -460,7 +463,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (why3Link) {
             why3Link.addEventListener('click', (e) => {
                 e.preventDefault();
-                alert("Limiting your daily focus to 3 key tasks forces prioritization and ensures you actually complete what matters most. It prevents overwhelm and builds momentum.");
+                const explanation = document.getElementById('why-3-explanation');
+                if (explanation.style.display === 'none') {
+                    explanation.style.display = 'block';
+                } else {
+                    explanation.style.display = 'none';
+                }
             });
         }
 

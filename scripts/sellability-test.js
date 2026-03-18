@@ -366,6 +366,7 @@ const switchScreen = (screenName) => {
                 // Use HTML for the pro tip since it's rendered directly (not typed)
                 proTipTextToDisplay = applyReplacements(proTipTextToDisplay, `${productName}`);
             }
+            questionProTip.style.display = 'none';
             typeWriter(questionTextToDisplay, questionText);
             questionProTip.innerHTML = proTipTextToDisplay;
 
@@ -577,6 +578,11 @@ const switchScreen = (screenName) => {
     };
 
     // --- Event Listeners ---
+    questionText.style.cursor = 'pointer';
+    questionText.addEventListener('click', () => {
+        questionProTip.style.display = (questionProTip.style.display === 'none') ? 'block' : 'none';
+    });
+
     emailCheckForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const email = testEmailInput.value.trim();
