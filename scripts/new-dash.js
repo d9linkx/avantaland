@@ -1776,6 +1776,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure state defaults
         if (!currentState.profile.skills) currentState.profile.skills = ['Strategy', 'Leadership'];
         if (!currentState.profile.tools) currentState.profile.tools = [];
+        if (!currentState.profile.customSections) currentState.profile.customSections = [];
         if (!currentState.profile.experience) currentState.profile.experience = [
             { role: 'Founder', company: 'Stealth Startup', date: '2023 - Present', bullets: ['Building MVP', 'Validating market fit'] }
         ];
@@ -1833,7 +1834,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="pf-section">
                             <h3>Tools I Master</h3>
                             <div class="tools-grid" id="tools-grid">
-                                <!-- Tool toggles injected here -->
+                                <!-- Tool toggles -->
+                            </div>
+                            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; align-items: center;">
+                                <input type="text" class="pf-input" id="input-new-tool" placeholder="Add custom tool..." style="flex: 1;">
+                                <button class="btn-add-link-action" id="btn-add-tool" style="height: 42px;">Add</button>
                             </div>
                         </div>
 
@@ -1842,6 +1847,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <h3>Experience & Proof</h3>
                             <div id="experience-list-editor"></div>
                             <button class="btn-add-ghost" id="btn-add-exp"><i class="ph-bold ph-plus"></i> Add New Role</button>
+                        </div>
+
+                        <!-- Additional Sections -->
+                        <div class="pf-section">
+                            <h3>Additional Sections</h3>
+                            <div id="custom-sections-editor"></div>
+                            <button class="btn-add-ghost" id="btn-add-section"><i class="ph-bold ph-plus"></i> Add Section (e.g. Hobbies)</button>
                         </div>
                     </div>
                 </div>
@@ -1906,11 +1918,14 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSkills();
 
         // 4. Tools Grid
-        const tools = ['Zapier', 'Notion', 'Figma', 'Python', 'React', 'Google Ads', 'Shopify', 'Stripe'];
+        const defaultTools = ['Zapier', 'Notion', 'Figma', 'Python', 'React', 'Google Ads', 'Shopify', 'Stripe'];
         const toolsGrid = document.getElementById('tools-grid');
 
         function renderTools() {
-            toolsGrid.innerHTML = tools.map(tool => {
+            // Combine default tools with user selected tools to show everything
+            const allTools = Array.from(new Set([...defaultTools, ...currentState.profile.tools]));
+            
+            toolsGrid.innerHTML = allTools.map(tool => {
                 const isActive = currentState.profile.tools.includes(tool);
                 return `<div class="tool-toggle ${isActive ? 'active' : ''}" data-tool="${tool}">
                     <i class="ph-duotone ph-wrench"></i> ${tool}
@@ -1930,6 +1945,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         renderTools();
+
+        // Add New Tool Logic
+        document.getElementById('btn-add-tool').addEventListener('click', () => {
+            const input = document.getElementById('input-new-tool');
+            const val = input.value.trim();
+            if (val && !currentState.profile.tools.includes(val)) {
+                currentState.profile.tools.push(val);
+                input.value = '';
+                renderTools();
+            }
+        });
 
         // 5. Experience Repeater
         const expEditor = document.getElementById('experience-list-editor');
@@ -1976,7 +2002,48 @@ document.addEventListener('DOMContentLoaded', () => {
             renderExperience();
         });
 
-        // 6. Save Micro-interaction
+        // 6. Custom Sections Logic
+        const sectionsEditor = document.getElementById('custom-sections-editor');
+
+        function renderCustomSections() {
+            sectionsEditor.innerHTML = currentState.profile.customSections.map((sec, idx) => `
+                <div class="experience-item">
+                    <button class="btn-remove-item section-remove" data-idx="${idx}"><i class="ph-bold ph-trash"></i></button>
+                    <div class="pf-input-group">
+                        <label class="pf-label">Section Title</label>
+                        <input type="text" class="pf-input section-field" data-idx="${idx}" data-field="title" value="${sec.title}" placeholder="e.g. Hobbies & Interests">
+                    </div>
+                    <div class="pf-input-group">
+                        <label class="pf-label">Content</label>
+                        <textarea class="pf-textarea section-field" data-idx="${idx}" data-field="content" rows="3" placeholder="I love hiking...">${sec.content}</textarea>
+                    </div>
+                </div>
+            `).join('');
+
+            // Listeners
+            sectionsEditor.querySelectorAll('.section-field').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const idx = e.target.dataset.idx;
+                    const field = e.target.dataset.field;
+                    currentState.profile.customSections[idx][field] = e.target.value;
+                });
+            });
+            sectionsEditor.querySelectorAll('.section-remove').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = e.currentTarget.dataset.idx;
+                    currentState.profile.customSections.splice(idx, 1);
+                    renderCustomSections();
+                });
+            });
+        }
+        renderCustomSections();
+
+        document.getElementById('btn-add-section').addEventListener('click', () => {
+            currentState.profile.customSections.push({ title: 'New Section', content: '' });
+            renderCustomSections();
+        });
+
+        // 7. Save Micro-interaction
         const saveBtn = document.getElementById('btn-save-pf');
         saveBtn.addEventListener('click', () => {
             saveState();
@@ -2011,7 +2078,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${(p.skills || []).map(s => `<span style="background: #F1F5F9; color: #475569; padding: 4px 12px; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">${s}</span>`).join('')}
                         </div>
                         <div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 2rem;">
-                            ${(p.tools || []).map(t => `<div style="width: 36px; height: 36px; background: #F8FAFC; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text-secondary);"><i class="ph-duotone ph-wrench"></i></div>`).join('')}
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
+                                ${(p.tools || []).map(t => `<div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 12px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; color: var(--text-secondary);"><i class="ph-duotone ph-wrench"></i> ${t}</div>`).join('')}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2027,6 +2096,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         `).join('')}
                     </div>
                 </div>
+                ${(p.customSections || []).map(sec => `
+                <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--text-primary);">${sec.title}</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6; white-space: pre-line;">${sec.content}</p>
+                </div>
+                `).join('')}
             `;
 
             const modalOverlay = document.createElement('div');
