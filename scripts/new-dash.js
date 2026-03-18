@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setupMobileView(); // Initialize mobile UI
         setupAveoDrawer(); // Initialize AI Agent
         setupEventListeners();
+        updateSidebarProfileDisplay(); // Update sidebar with profile data
 
         // Start the global task timer system
         if (!taskSystemInterval) taskSystemInterval = setInterval(checkTaskSystem, 1000);
@@ -133,6 +134,60 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('bizLabPlanner', JSON.stringify(currentState.planner));
         localStorage.setItem('bizLabProfile', JSON.stringify(currentState.profile));
         localStorage.setItem('bizLabLastVisit', JSON.stringify(currentState.lastVisit));
+        updateSidebarProfileDisplay();
+    }
+
+    function updateSidebarProfileDisplay() {
+        const sidebarProfile = document.querySelector('.sidebar-profile');
+        if (sidebarProfile && currentState.profile) {
+            // Update click handler to navigate to profile view within SPA
+            sidebarProfile.removeAttribute('onclick');
+            sidebarProfile.onclick = (e) => {
+                e.preventDefault();
+                renderProfile();
+                document.querySelectorAll('.sidebar-nav .nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelector('.sidebar-nav .nav-item[data-target="profile"]')?.classList.add('active');
+            };
+
+            const p = currentState.profile;
+            // Use image if available, else fallback to initial
+            const avatarHtml = p.avatar 
+                ? `<img src="${p.avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">`
+                : `<div class="profile-avatar">${p.name.charAt(0).toUpperCase()}</div>`;
+            
+            sidebarProfile.innerHTML = `
+                ${avatarHtml}
+                <div class="profile-info">
+                    <span class="profile-name">${p.name}</span>
+                    <span class="profile-role">${p.primarySkill || 'Founder'}</span>
+                </div>
+            `;
+        }
+        
+        // Update Mobile Nav Profile Icon
+        const mobileProfile = document.querySelector('.mobile-nav-item[data-target="profile"]');
+        if (mobileProfile && currentState.profile) {
+            const p = currentState.profile;
+            // Check if we need to update icon to image
+            const icon = mobileProfile.querySelector('i');
+            const existingImg = mobileProfile.querySelector('img');
+            
+            if (p.avatar) {
+                if (icon) icon.remove();
+                if (existingImg) {
+                    existingImg.src = p.avatar;
+                } else {
+                    const img = document.createElement('img');
+                    img.src = p.avatar;
+                    img.style.width = '24px';
+                    img.style.height = '24px';
+                    img.style.borderRadius = '50%';
+                    img.style.objectFit = 'cover';
+                    img.style.marginBottom = '4px';
+                    mobileProfile.insertBefore(img, mobileProfile.firstChild);
+                }
+            }
+        }
     }
 
     function setupEventListeners() {
@@ -1722,10 +1777,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="portfolio-wrapper">
                 <!-- 1. Global Controls Header -->
                 <div class="portfolio-header">
-                    <div class="pf-toggle-group">
-                        <button class="pf-toggle-btn active" id="view-internal">Internal</button>
-                        <button class="pf-toggle-btn" id="view-public">Public Portfolio</button>
-                    </div>
                     <div style="display: flex; gap: 1rem; align-items: center;">
                     <button class="btn-preview-pf" id="btn-preview-pf"><i class="ph-bold ph-eye"></i> <span class="btn-text">Preview</span></button>
                     <button class="btn-share"><i class="ph-bold ph-share-network"></i> <span class="btn-text">Share</span></button>

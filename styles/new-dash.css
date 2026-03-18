@@ -1059,6 +1059,8 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
         padding: 1rem 1.5rem;
         background: var(--bg-surface);
         border-bottom: 1px solid var(--border-color);
+        position: sticky; /* Make header fixed/sticky on scroll */
+        top: 0;
         flex-shrink: 0;
         z-index: 1001;
         width: 100%;
@@ -3844,11 +3846,13 @@ input:checked + .slider:before { transform: translateX(20px); }
     background: #FFFFFF;
     border-bottom: 1px solid var(--border-color);
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end; /* Align remaining buttons to right */
     align-items: center;
     padding: 0 2rem;
     flex-shrink: 0;
-    z-index: 20;
+    z-index: 100;
+    position: sticky; /* Fix header while scrolling */
+    top: 0;
 }
 
 .portfolio-split {
@@ -4180,7 +4184,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     .portfolio-header {
         height: auto;
         padding: 1rem;
-        flex-direction: column;
+        flex-direction: row; /* Keep row but manipulate children */
         gap: 1rem;
         align-items: stretch;
         position: sticky;
@@ -4189,11 +4193,31 @@ input:checked + .slider:before { transform: translateX(20px); }
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
     
+    /* Sticky Vertical Icons on Mobile */
     .portfolio-header > div {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        gap: 0.5rem;
+        position: fixed;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        flex-direction: column !important;
+        gap: 16px;
+        width: auto;
+        background: transparent;
+        padding: 0;
+        pointer-events: none; /* Container passes clicks */
+        z-index: 1005;
+    }
+
+    .portfolio-header > div > button {
+        pointer-events: auto; /* Buttons catch clicks */
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background: white;
+        border: 1px solid var(--border-color);
+        margin: 0;
+        justify-content: center;
     }
     
     .pf-toggle-group {
@@ -4223,13 +4247,14 @@ input:checked + .slider:before { transform: translateX(20px); }
 
     /* Optimize Action Buttons */
     .btn-share, .btn-preview-pf, .btn-save-pf, .btn-toggle-view {
-        padding: 0;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
+        /* Styles handled by parent container rule above for consistency */
         justify-content: center;
-        min-width: 44px;
-        flex: 0 0 auto;
+    }
+    
+    .btn-save-pf {
+        background: var(--brand-blue) !important;
+        color: white !important;
+        border-color: var(--brand-blue) !important;
     }
 
     /* Hide text on mobile */
