@@ -4206,6 +4206,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         padding: 0;
         pointer-events: none; /* Container passes clicks */
         z-index: 1005;
+        display: flex !important;
     }
 
     .portfolio-header > div > button {
@@ -4218,6 +4219,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         border: 1px solid var(--border-color);
         margin: 0;
         justify-content: center;
+        color: var(--text-secondary); /* Default icon color */
     }
     
     .pf-toggle-group {
@@ -4251,15 +4253,23 @@ input:checked + .slider:before { transform: translateX(20px); }
         justify-content: center;
     }
     
+    .btn-share {
+        background: var(--brand-blue-dark) !important;
+        color: white !important;
+        border-color: var(--brand-blue-dark) !important;
+    }
+
     .btn-save-pf {
         background: var(--brand-blue) !important;
         color: white !important;
         border-color: var(--brand-blue) !important;
     }
 
-    /* Hide text on mobile */
-    .btn-share .btn-text, .btn-preview-pf .btn-text, .btn-save-pf .btn-text, .btn-toggle-view .btn-text {
-        display: none;
+    .portfolio-header {
+        background: transparent;
+        border-bottom: none;
+        box-shadow: none;
+        pointer-events: none; /* Let clicks pass through header area */
     }
 
     /* Adjust icons */
