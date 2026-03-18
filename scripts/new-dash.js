@@ -1992,7 +1992,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const p = currentState.profile;
             
             const modalContent = `
-                <div class="public-hero" style="border: none; box-shadow: none; padding: 0; margin: 0;">
+                <div class="public-hero" style="border: none; box-shadow: none; padding: 0; margin: 0; flex-direction: column; gap: 0;">
                     <div class="public-avatar-wrapper" style="width: 120px; height: 120px; margin: 0 auto 1.5rem;">
                         <img src="${p.avatar || 'https://ui-avatars.com/api/?name=' + p.name + '&background=00db87&color=fff'}" class="public-avatar">
                     </div>
