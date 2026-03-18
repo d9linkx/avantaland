@@ -1616,189 +1616,275 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Profile & Settings Logic ---
-    function renderProfile() {
-        const hacksMastered = Object.keys(currentState.progress).length;
-        // Mock data for days active/streak since we don't track login dates yet
-        const daysActive = 45; 
-        const dailyStreak = 5;
+    function renderProfile(isPublicView = false) {
+        // Ensure state defaults
+        if (!currentState.profile.skills) currentState.profile.skills = ['Strategy', 'Leadership'];
+        if (!currentState.profile.tools) currentState.profile.tools = [];
+        if (!currentState.profile.experience) currentState.profile.experience = [
+            { role: 'Founder', company: 'Stealth Startup', date: '2023 - Present', bullets: ['Building MVP', 'Validating market fit'] }
+        ];
 
+        // --- HTML Structure ---
         learningStage.innerHTML = `
-            <div class="profile-container">
-                <!-- 1. Profile Header -->
-                <div class="profile-header-card">
-                    <div class="profile-identity">
-                        <div class="avatar-wrapper">
-                            <img src="${currentState.profile.avatar || 'https://ui-avatars.com/api/?name=' + currentState.profile.name + '&background=00db87&color=fff'}" alt="Profile" class="profile-avatar-large" id="profile-avatar-img">
-                            <button class="btn-edit-avatar" id="btn-upload-avatar"><i class="ph ph-pencil-simple"></i></button>
-                            <input type="file" id="avatar-upload-input" accept="image/*" style="display: none;">
-                        </div>
-                        <div class="identity-info">
-                            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-                                <h1>${currentState.profile.name}</h1>
-                                <span class="member-badge">Test Group Founder</span>
-                            </div>
-                            <div class="quick-stats">
-                                <div class="stat-item">
-                                    <span class="stat-value">${hacksMastered}/33</span>
-                                    <span class="stat-label">Hacks Mastered</span>
-                                </div>
-                                <div class="stat-divider"></div>
-                                <div class="stat-item">
-                                    <span class="stat-value">${daysActive}</span>
-                                    <span class="stat-label">Days Active</span>
-                                </div>
-                                <div class="stat-divider"></div>
-                                <div class="stat-item">
-                                    <span class="stat-value">${dailyStreak}</span>
-                                    <span class="stat-label">Daily Streak</span>
-                                </div>
-                            </div>
-                        </div>
+            <div class="portfolio-wrapper">
+                <!-- 1. Global Controls Header -->
+                <div class="portfolio-header">
+                    <div class="pf-toggle-group">
+                        <button class="pf-toggle-btn active" id="view-internal">Internal</button>
+                        <button class="pf-toggle-btn" id="view-public">Public Portfolio</button>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button class="btn-preview-pf" id="btn-preview-pf" style="background: white; border: 1px solid var(--border-color); padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s;"><i class="ph-bold ph-eye"></i> Preview</button>
+                        <button class="btn-share"><i class="ph-bold ph-link"></i> Share</button>
+                        <button class="btn-save-pf" id="btn-save-pf">Save Changes</button>
                     </div>
                 </div>
 
-                <!-- 2. Tabbed Navigation -->
-                <div class="profile-tabs">
-                    <button class="tab-btn active" data-tab="account">Account</button>
-                    <button class="tab-btn" data-tab="business">Business Profile</button>
-                    <button class="tab-btn" data-tab="preferences">Preferences</button>
-                </div>
-
-                <!-- 3. Functional Settings Cards -->
-                <div class="settings-content">
-                    <!-- Account Tab -->
-                    <div class="settings-tab active" id="tab-account">
-                        <div class="settings-card">
-                            <h3>Personal Information</h3>
-                            <div class="form-group">
-                                <label>Full Name</label>
-                                <input type="text" id="input-name" value="${currentState.profile.name}" class="settings-input">
+                <div class="portfolio-split">
+                    <!-- 2. Left Panel: Input Form -->
+                    <div class="editor-pane">
+                        <!-- Brand Identity -->
+                        <div class="pf-section">
+                            <h3>Brand Identity</h3>
+                            <div class="pf-identity-grid">
+                                <div class="pf-avatar-drop" id="pf-avatar-drop">
+                                    <img src="${currentState.profile.avatar || `https://ui-avatars.com/api/?name=${currentState.profile.name}&background=00db87&color=fff`}" id="editor-avatar-img">
+                                    <input type="file" id="pf-avatar-input" accept="image/*" style="display: none;">
+                                </div>
+                                <div style="flex: 1;">
+                                    <div class="pf-input-group">
+                                        <label class="pf-label">Display Name</label>
+                                        <input type="text" class="pf-input" id="input-name" value="${currentState.profile.name}">
+                                    </div>
+                                    <div class="pf-input-group">
+                                        <label class="pf-label">Headline (Max 80 chars)</label>
+                                        <input type="text" class="pf-input" id="input-skill" value="${currentState.profile.primarySkill || ''}" placeholder="e.g. Helping B2B Founders...">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Email Address</label>
-                                <input type="email" id="input-email" value="${currentState.profile.email}" class="settings-input" placeholder="founder@example.com">
-                            </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" value="********" class="settings-input" disabled>
-                                <button class="btn-text-link" style="margin-top: 0.5rem;">Change Password</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Business Profile Tab -->
-                    <div class="settings-tab" id="tab-business">
-                        <div class="settings-card">
-                            <h3>Your Dream Result</h3>
-                            <p class="helper-text">What is the single biggest outcome you are working toward?</p>
-                            <textarea id="input-dream" class="settings-textarea" placeholder="e.g. Build a $1M ARR SaaS company...">${currentState.profile.dreamResult}</textarea>
-                        </div>
-                    </div>
-
-                    <!-- Preferences Tab -->
-                    <div class="settings-tab" id="tab-preferences">
-                        <div class="settings-card">
-                            <h3>App Preferences</h3>
-                            <div class="toggle-row">
-                                <span>Daily Reminder</span>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="toggle-row">
-                                <span>Marketing Alerts</span>
-                                <label class="toggle-switch">
-                                    <input type="checkbox">
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="toggle-row">
-                                <span>Dark Mode</span>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="toggle-dark-mode">
-                                    <span class="slider"></span>
-                                </label>
+                            <div class="pf-input-group">
+                                <label class="pf-label">Value Prop</label>
+                                <textarea class="pf-textarea" id="input-bio" rows="3" placeholder="I help companies scale...">${currentState.profile.bio || ''}</textarea>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="profile-actions">
-                    <button class="btn-save-changes" id="btn-save-profile">Save Changes</button>
-                    <button class="btn-logout">Log Out</button>
+                        <!-- Skill Matrix -->
+                        <div class="pf-section">
+                            <h3>Skill Matrix</h3>
+                            <div class="pf-tags-container" id="skill-tags-container">
+                                <!-- Tags injected here -->
+                                <input type="text" class="pf-tag-input" id="input-skill-tag" placeholder="Add skill + Enter">
+                            </div>
+                        </div>
+
+                        <!-- Tools I Master -->
+                        <div class="pf-section">
+                            <h3>Tools I Master</h3>
+                            <div class="tools-grid" id="tools-grid">
+                                <!-- Tool toggles injected here -->
+                            </div>
+                        </div>
+
+                        <!-- Experience & Proof -->
+                        <div class="pf-section">
+                            <h3>Experience & Proof</h3>
+                            <div id="experience-list-editor"></div>
+                            <button class="btn-add-ghost" id="btn-add-exp"><i class="ph-bold ph-plus"></i> Add New Role</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
 
-        // Update Right Sidebar
-        renderProfileRightSidebar();
+        // --- Logic & Listeners ---
 
-        // Event Listeners
-        // Tabs
-        const tabs = learningStage.querySelectorAll('.tab-btn');
-        const contents = learningStage.querySelectorAll('.settings-tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                contents.forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                learningStage.querySelector(`#tab-${tab.dataset.tab}`).classList.add('active');
+        // 1. Real-time Text Binding
+        const bindText = (inputId, field) => {
+            const input = document.getElementById(inputId);
+            input.addEventListener('input', (e) => {
+                currentState.profile[field] = e.target.value;
             });
-        });
+        };
+        bindText('input-name', 'name');
+        bindText('input-skill', 'primarySkill');
+        bindText('input-bio', 'bio');
 
-        // Image Upload
-        const uploadBtn = document.getElementById('btn-upload-avatar');
-        const fileInput = document.getElementById('avatar-upload-input');
-        const avatarImg = document.getElementById('profile-avatar-img');
-
-        uploadBtn.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => {
+        // 2. Avatar Upload
+        const avatarDrop = document.getElementById('pf-avatar-drop');
+        const avatarInput = document.getElementById('pf-avatar-input');
+        avatarDrop.addEventListener('click', () => avatarInput.click());
+        avatarInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    avatarImg.src = e.target.result;
+                    document.getElementById('editor-avatar-img').src = e.target.result;
                     currentState.profile.avatar = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // Save Changes
-        document.getElementById('btn-save-profile').addEventListener('click', () => {
-            const nameInput = document.getElementById('input-name');
-            const emailInput = document.getElementById('input-email');
-            const dreamInput = document.getElementById('input-dream');
+        // 3. Skills Tag Input
+        const tagContainer = document.getElementById('skill-tags-container');
 
-            // Validation
-            if (!nameInput.value.trim()) {
-                alert("Name cannot be empty.");
-                return;
-            }
-            if (emailInput.value && !emailInput.value.includes('@')) {
-                alert("Please enter a valid email.");
-                return;
-            }
+        function renderSkills() {
+            // Editor Tags
+            const tagsHtml = currentState.profile.skills.map((skill, idx) => `
+                <div class="pf-tag">${skill} <i class="ph-bold ph-x" data-idx="${idx}"></i></div>
+            `).join('');
+            tagContainer.innerHTML = tagsHtml + '<input type="text" class="pf-tag-input" id="input-skill-tag" placeholder="Add skill + Enter">';
+            
+            // Re-attach listener to new input
+            document.getElementById('input-skill-tag').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && e.target.value.trim()) {
+                    currentState.profile.skills.push(e.target.value.trim());
+                    renderSkills();
+                }
+            });
+            // Remove listeners
+            tagContainer.querySelectorAll('.ph-x').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = e.target.dataset.idx;
+                    currentState.profile.skills.splice(idx, 1);
+                    renderSkills();
+                });
+            });
+        }
+        renderSkills();
 
-            currentState.profile.name = nameInput.value.trim();
-            currentState.profile.email = emailInput.value.trim();
-            currentState.profile.dreamResult = dreamInput ? dreamInput.value.trim() : currentState.profile.dreamResult;
-            
-            saveState();
-            alert("Profile updated successfully!");
-            
-            // Update sidebar profile name if visible
-            const sidebarName = document.querySelector('.sidebar-profile .profile-name');
-            if (sidebarName) sidebarName.textContent = currentState.profile.name;
+        // 4. Tools Grid
+        const tools = ['Zapier', 'Notion', 'Figma', 'Python', 'React', 'Google Ads', 'Shopify', 'Stripe'];
+        const toolsGrid = document.getElementById('tools-grid');
+
+        function renderTools() {
+            toolsGrid.innerHTML = tools.map(tool => {
+                const isActive = currentState.profile.tools.includes(tool);
+                return `<div class="tool-toggle ${isActive ? 'active' : ''}" data-tool="${tool}">
+                    <i class="ph-duotone ph-wrench"></i> ${tool}
+                </div>`;
+            }).join('');
+
+            toolsGrid.querySelectorAll('.tool-toggle').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const t = btn.dataset.tool;
+                    if (currentState.profile.tools.includes(t)) {
+                        currentState.profile.tools = currentState.profile.tools.filter(i => i !== t);
+                    } else {
+                        currentState.profile.tools.push(t);
+                    }
+                    renderTools();
+                });
+            });
+        }
+        renderTools();
+
+        // 5. Experience Repeater
+        const expEditor = document.getElementById('experience-list-editor');
+
+        function renderExperience() {
+            // Editor
+            expEditor.innerHTML = currentState.profile.experience.map((exp, idx) => `
+                <div class="experience-item">
+                    <button class="btn-remove-item" data-idx="${idx}"><i class="ph-bold ph-trash"></i></button>
+                    <div class="pf-input-group"><label class="pf-label">Job Title</label><input type="text" class="pf-input exp-field" data-idx="${idx}" data-field="role" value="${exp.role}"></div>
+                    <div class="pf-input-group"><label class="pf-label">Company</label><input type="text" class="pf-input exp-field" data-idx="${idx}" data-field="company" value="${exp.company}"></div>
+                    <div class="pf-input-group"><label class="pf-label">Dates</label><input type="text" class="pf-input exp-field" data-idx="${idx}" data-field="date" value="${exp.date}"></div>
+                </div>
+            `).join('');
+
+            // Listeners
+            expEditor.querySelectorAll('.exp-field').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const idx = e.target.dataset.idx;
+                    const field = e.target.dataset.field;
+                    currentState.profile.experience[idx][field] = e.target.value;
+                    renderExperience(); // Re-render preview only logic would be faster, but this keeps sync simple
+                });
+            });
+            expEditor.querySelectorAll('.btn-remove-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Prevent bubble up if any
+                    const idx = e.currentTarget.dataset.idx;
+                    currentState.profile.experience.splice(idx, 1);
+                    renderExperience();
+                });
+            });
+        }
+        renderExperience();
+
+        document.getElementById('btn-add-exp').addEventListener('click', () => {
+            currentState.profile.experience.push({ role: 'New Role', company: 'Company', date: 'Dates', bullets: [] });
+            renderExperience();
         });
 
-        // Logout (Mock)
-        learningStage.querySelector('.btn-logout').addEventListener('click', () => {
-            if(confirm("Are you sure you want to log out?")) {
-                alert("Logged out.");
-                location.reload();
-            }
+        // 6. Save Micro-interaction
+        const saveBtn = document.getElementById('btn-save-pf');
+        saveBtn.addEventListener('click', () => {
+            saveState();
+            const originalText = saveBtn.textContent;
+            
+            // Transformation
+            saveBtn.innerHTML = '<i class="ph-bold ph-check"></i> URL COPIED';
+            saveBtn.classList.add('saved');
+            
+            // Mock Clipboard copy
+            // navigator.clipboard.writeText('https://avantaland.com/u/' + currentState.profile.name);
+
+            setTimeout(() => {
+                saveBtn.innerHTML = originalText;
+                saveBtn.classList.remove('saved');
+            }, 1500);
+        });
+
+        // 7. Preview Modal
+        document.getElementById('btn-preview-pf').addEventListener('click', () => {
+            const p = currentState.profile;
+            
+            const modalContent = `
+                <div class="public-hero" style="border: none; box-shadow: none; padding: 0; margin: 0;">
+                    <div class="public-avatar-wrapper" style="width: 120px; height: 120px; margin: 0 auto 1.5rem;">
+                        <img src="${p.avatar || 'https://ui-avatars.com/api/?name=' + p.name + '&background=00db87&color=fff'}" class="public-avatar">
+                    </div>
+                    <div class="public-info" style="text-align: center;">
+                        <h1 class="public-name-title" style="font-size: 1.8rem; justify-content: center;">${p.name} <span style="font-weight: 300; opacity: 0.4;">|</span> <span style="color: var(--brand-blue);">${p.primarySkill || 'Specialist'}</span></h1>
+                        <p class="public-bio" style="margin: 0 auto 1.5rem;">${p.bio || ''}</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem;">
+                            ${(p.skills || []).map(s => `<span style="background: #F1F5F9; color: #475569; padding: 4px 12px; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">${s}</span>`).join('')}
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 2rem;">
+                            ${(p.tools || []).map(t => `<div style="width: 36px; height: 36px; background: #F8FAFC; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text-secondary);"><i class="ph-duotone ph-wrench"></i></div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-primary);">Experience</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        ${(p.experience || []).map(exp => `
+                            <div style="border-left: 2px solid #E2E8F0; padding-left: 1.5rem; position: relative; text-align: left;">
+                                <div style="position: absolute; left: -5px; top: 0; width: 8px; height: 8px; background: var(--brand-blue); border-radius: 50%;"></div>
+                                <h4 style="margin: 0; font-size: 1rem; color: var(--text-primary);">${exp.role} <span style="font-weight: 400; color: var(--text-secondary);">at ${exp.company}</span></h4>
+                                <span style="display: block; font-size: 0.8rem; color: #94A3B8; margin-top: 0.25rem;">${exp.date}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'custom-modal-overlay active';
+            modalOverlay.innerHTML = `
+                <div class="custom-modal" style="width: 600px; max-width: 90%; max-height: 90vh; overflow-y: auto; text-align: left; padding: 2.5rem;">
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+                        <button class="btn-close-preview" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary);"><i class="ph ph-x"></i></button>
+                    </div>
+                    ${modalContent}
+                </div>
+            `;
+            document.body.appendChild(modalOverlay);
+            
+            modalOverlay.querySelector('.btn-close-preview').addEventListener('click', () => modalOverlay.remove());
+            modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.remove(); });
         });
     }
 
