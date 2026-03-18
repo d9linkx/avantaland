@@ -4195,94 +4195,6 @@ input:checked + .slider:before { transform: translateX(20px); }
         border: 1px solid var(--border-color);
         box-shadow: none;
     }
-    
-    .portfolio-header {
-        height: auto;
-        padding: 1rem;
-        flex-direction: row; /* Keep row but manipulate children */
-        gap: 1rem;
-        align-items: stretch;
-        position: sticky;
-        top: 73px; /* Below mobile top bar approx */
-        z-index: 99;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    
-    /* Sticky Vertical Icons on Mobile */
-    .portfolio-header > div {
-        position: fixed;
-        right: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        flex-direction: column !important;
-        gap: 16px;
-        width: auto;
-        background: transparent;
-        padding: 0;
-        pointer-events: none; /* Container passes clicks */
-        z-index: 1005;
-        display: flex !important;
-    }
-
-    .portfolio-header > div > button {
-        pointer-events: auto; /* Buttons catch clicks */
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        background: white;
-        border: 1px solid var(--border-color);
-        margin: 0;
-        justify-content: center;
-        color: var(--text-secondary); /* Default icon color */
-    }
-    
-    .pf-toggle-group {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .pf-toggle-btn {
-        flex: 1;
-    }
-
-    /* Optimize Action Buttons */
-    .btn-share, .btn-preview-pf, .btn-save-pf, .btn-toggle-view {
-        /* Styles handled by parent container rule above for consistency */
-        justify-content: center;
-    }
-    
-    .btn-share {
-        background: var(--brand-blue-dark) !important;
-        color: white !important;
-        border-color: var(--brand-blue-dark) !important;
-    }
-
-    .btn-save-pf {
-        background: var(--brand-blue) !important;
-        color: white !important;
-        border-color: var(--brand-blue) !important;
-    }
-
-    .portfolio-header {
-        background: transparent;
-        border-bottom: none;
-        box-shadow: none;
-        pointer-events: none; /* Let clicks pass through header area */
-    }
-
-    /* Adjust icons */
-    .btn-share i, .btn-preview-pf i, .btn-save-pf i {
-        margin: 0;
-        font-size: 1.25rem;
-    }
-    
-    /* Ensure share icon is white on mobile */
-    .btn-share i {
-        color: white !important;
-        margin: 0;
-        font-size: 1.25rem;
-    }
 
     /* Brand Identity Stacking */
     .pf-identity-grid {
@@ -4297,4 +4209,88 @@ input:checked + .slider:before { transform: translateX(20px); }
     }
     
     .pf-avatar-drop { margin-bottom: 1rem; }
+}
+
+/* Mobile-specific adjustments for Portfolio Header Buttons */
+@media (max-width: 768px) {
+    .portfolio-header {
+        height: auto;
+        padding: 0;
+        position: static;
+        pointer-events: none;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    /* Hide text labels on mobile */
+    .btn-preview-pf .btn-text,
+    .btn-share .btn-text,
+    .btn-save-pf .btn-text {
+        display: none;
+    }
+
+    /* Sticky Vertical Icons on Mobile (Bottom Right FAB style) */
+    .portfolio-header > div {
+        position: fixed;
+        right: 16px;
+        bottom: 100px; /* Positioned above bottom nav roughly */
+        top: auto;
+        transform: none;
+        flex-direction: column !important;
+        gap: 12px;
+        width: auto;
+        background: transparent;
+        padding: 0;
+        pointer-events: none;
+        z-index: 1005;
+        display: flex !important;
+    }
+
+    .portfolio-header > div > button {
+        pointer-events: auto;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background: white;
+        border: 1px solid var(--border-color);
+        margin: 0;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-secondary);
+        padding: 0;
+    }
+
+    .btn-share {
+        background: var(--brand-blue-dark) !important;
+        color: white !important;
+        border-color: var(--brand-blue-dark) !important;
+    }
+
+    .btn-save-pf {
+        background: var(--brand-blue) !important;
+        color: white !important;
+        border-color: var(--brand-blue) !important;
+    }
+
+    /* Icon adjustments */
+    .btn-share i, .btn-preview-pf i, .btn-save-pf i {
+        margin: 0;
+        font-size: 1.25rem;
+        color: inherit;
+    }
+    
+    .btn-share i {
+        color: white !important;
+    }
+    
+    .pf-toggle-group {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .pf-toggle-btn {
+        flex: 1;
+    }
 }
