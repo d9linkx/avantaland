@@ -1778,9 +1778,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <!-- 1. Global Controls Header -->
                 <div class="portfolio-header">
                     <div style="display: flex; gap: 1rem; align-items: center;">
-                    <button class="btn-preview-pf" id="btn-preview-pf"><i class="ph-bold ph-eye"></i> <span class="btn-text">Preview</span></button>
-                    <button class="btn-share"><i class="ph-bold ph-share-network"></i> <span class="btn-text">Share</span></button>
-                    <button class="btn-save-pf" id="btn-save-pf"><i class="ph-bold ph-floppy-disk"></i> <span class="btn-text">Save Changes</span></button>
+                    <button class="btn-preview-pf" id="btn-preview-pf"><i class="ph-bold ph-eye"></i> <span class="btn-text"></span></button>
+                    <button class="btn-share"><i class="ph-bold ph-share-network"></i> <span class="btn-text"></span></button>
+                    <button class="btn-save-pf" id="btn-save-pf"><i class="ph-bold ph-floppy-disk"></i> <span class="btn-text"></span></button>
                     </div>
                 </div>
 
