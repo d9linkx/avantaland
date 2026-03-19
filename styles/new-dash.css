@@ -1055,7 +1055,6 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
         display: flex;
         justify-content: space-between;
         align-items: center;
-        justify-content: flex-start; /* Align logo to left */
         padding: 1rem 1.5rem;
         background: var(--bg-surface);
         border-bottom: 1px solid var(--border-color);

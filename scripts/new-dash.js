@@ -2182,9 +2182,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="ph-duotone ph-user-circle"></i>
                 <span>Profile</span>
             </a>
+            <a href="#" class="nav-item" id="sidebar-logout-btn" style="margin-top: 1rem; color: #EF4444;">
+                <i class="ph-duotone ph-sign-out"></i>
+                <span>Logout</span>
+            </a>
         `;
 
-        const navItems = sidebarNav.querySelectorAll('.nav-item');
+        document.getElementById('sidebar-logout-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            handleLogout();
+        });
+
+        const navItems = sidebarNav.querySelectorAll('.nav-item[data-target]');
         navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -2512,7 +2521,10 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileHeader.className = 'mobile-top-bar';
         mobileHeader.innerHTML = `
             <a href="index.html" class="logo"><img src="images/avblack.png" alt="Avantaland Logo" class="mobile-logo"></a>
+            <button id="mobile-logout-btn" style="background:none; border:none; color:var(--text-primary); font-size:1.5rem; cursor:pointer; padding: 0.5rem;"><i class="ph-bold ph-sign-out"></i></button>
         `;
+
+        mobileHeader.querySelector('#mobile-logout-btn').addEventListener('click', handleLogout);
 
         // Insert at top of container
         container.insertBefore(mobileHeader, container.firstChild);
@@ -2952,6 +2964,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error("Could not load planner tasks.", e);
             return 'Could not load planner tasks.';
+        }
+    }
+
+    function handleLogout() {
+        if(confirm("Are you sure you want to log out?")) {
+            // Redirect to login/onboarding page
+            window.location.href = 'onboardingdash.html';
         }
     }
 
