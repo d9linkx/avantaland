@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const checkAuth = async () => {
-        const email = emailInput.value.trim();
+        const email = emailInput.value.trim().toLowerCase();
         if (!email) {
             authMessage.textContent = "Please enter your email address.";
             authMessage.className = "auth-message error";
@@ -24,20 +24,36 @@ document.addEventListener('DOMContentLoaded', () => {
         authMessage.textContent = "";
 
         try {
-            const SCRIPT_URL = CONFIG.GOOGLE_SCRIPT_DASHBOARD_URL;
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx5HUQ9vvsiC35I5N1UveJhKuSAjM52BxOPGZdXHZ9FunFee36ykfsQZYru_gSffmh/exec';
             const response = await fetch(`${SCRIPT_URL}?action=checkEmail&email=${encodeURIComponent(email)}`);
-            const result = await response.json();
+            const data = await response.json();
 
-            if (result.found) {
+            if (data.found) {
                 authMessage.textContent = "Access Granted. Redirecting...";
                 authMessage.className = "auth-message success";
-                localStorage.setItem('userEmail', email);
+                
+                // Build Profile Object for Dashboard Uniqueness
+                const profile = {
+                    name: data.firstName || 'Founder',
+                    email: email,
+                    primarySkill: 'Entrepreneur',
+                    dreamResult: 'Financial Freedom',
+                    avatar: null,
+                    bio: '',
+                    // Split comma-separated lists
+                    skills: ['Strategy', 'Execution'],
+                    tools: [],
+                    experience: [], 
+                    customSections: []
+                };
+
+                localStorage.setItem('bizLabProfile', JSON.stringify(profile));
                 
                 setTimeout(() => {
                     window.location.href = 'new-dashboard.html';
                 }, 1000);
             } else {
-                authMessage.innerHTML = "Email not found. <a href='product-test.html' style='color: #00db87; text-decoration: underline;'>Sign up here</a> or try again.";
+                authMessage.innerHTML = "Email not found in database. <a href='https://wa.me/2347070989034' style='color: #00db87; text-decoration: underline;'>Contact Support</a>.";
                 authMessage.className = "auth-message error";
                 enterBtn.disabled = false;
                 enterBtn.textContent = "Sign In";

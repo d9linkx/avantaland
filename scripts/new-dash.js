@@ -68,6 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function init() {
         loadState();
         
+        // Auth Check: Redirect if no email is found in the profile
+        if (!currentState.profile || !currentState.profile.email) {
+            window.location.href = 'onboardingdash.html';
+            return;
+        }
+
         // Capture last visit time before updating it
         lastVisitTime = currentState.lastVisit;
         currentState.lastVisit = Date.now();
@@ -2874,20 +2880,36 @@ document.addEventListener('DOMContentLoaded', () => {
             const plannerTasks = currentState.planner.tasks || [];
             const plannerState = plannerTasks.map(t => `- ${t.text} [${t.completed ? 'DONE' : 'PENDING'}]`).join('\n');
             
-            const contextPayload = {
-                user_business: currentState.profile.dreamResult || "General Entrepreneur", // Using dream result as proxy for business context if specific field missing
-                dream_result: currentState.profile.dreamResult || "Not defined",
-                current_location: `Hack #${currentState.currentHackIndex + 1}: ${currentTruth.title}`,
-                planner_state: plannerState || "No tasks set for today."
-            };
+            const systemPrompt = `You are Aveo 1, an elite business strategist and AI mentor for ${currentState.profile.name}. 
+            Your goal is to help them achieve: "${currentState.profile.dreamResult}".
+            
+            Current Context:
+            - They are working on Hack #${currentState.currentHackIndex + 1}: "${currentTruth.title}".
+            - Their current tasks:
+            ${plannerState}
+            
+            Guidelines:
+            - Be concise, direct, and high-energy.
+            - Act like a senior partner, not a generic assistant.
+            - Push them to execute. If they are stuck, give a specific next step.
+            - Do not use fluff. Get straight to the value.`;
 
             try {
-                const response = await fetch('/api/chat', {
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer YOUR_OPENROUTER_API_KEY', // Replace with valid Key
+                        'HTTP-Referer': window.location.origin,
+                        'X-Title': 'Avantaland Dashboard'
+                    },
                     body: JSON.stringify({
-                        message: text,
-                        context: contextPayload
+                        model: "openai/gpt-3.5-turbo", // Or any other model supported by OpenRouter
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: text }
+                        ],
+                        stream: true
                     })
                 });
 
@@ -2905,21 +2927,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let aiText = '';
+                let buffer = '';
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
                     
-                    const chunk = decoder.decode(value, { stream: true });
-                    aiText += chunk;
-                    
-                    // Simple markdown parsing for bolding (optional, can be enhanced)
-                    const formattedText = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                    streamMsgDiv.innerHTML = formattedText;
-                    
-                    // Auto-scroll
-                    const container = document.getElementById('aveo-messages');
-                    container.scrollTop = container.scrollHeight;
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // Keep incomplete line in buffer
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const jsonStr = line.slice(6);
+                            if (jsonStr === '[DONE]') continue;
+                            try {
+                                const json = JSON.parse(jsonStr);
+                                const content = json.choices[0].delta.content || '';
+                                aiText += content;
+                                
+                                // Simple markdown parsing for bolding
+                                const formattedText = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                                streamMsgDiv.innerHTML = formattedText;
+                                
+                                // Auto-scroll
+                                const container = document.getElementById('aveo-messages');
+                                container.scrollTop = container.scrollHeight;
+                            } catch (e) { }
+                        }
+                    }
                 }
 
             } catch (e) {
