@@ -63,6 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastVisitTime = null;
     let taskSystemInterval = null;
     const timerBeep = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+    
+    // Debounce timer for cloud sync
+    let syncTimeout = null;
 
     // --- Initialization ---
     function init() {
@@ -141,6 +144,40 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('bizLabProfile', JSON.stringify(currentState.profile));
         localStorage.setItem('bizLabLastVisit', JSON.stringify(currentState.lastVisit));
         updateSidebarProfileDisplay();
+    }
+
+    // --- Cloud Sync Logic ---
+    function syncToCloud() {
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx5HUQ9vvsiC35I5N1UveJhKuSAjM52BxOPGZdXHZ9FunFee36ykfsQZYru_gSffmh/exec';
+        
+        // Prepare payload mapping to sheet columns
+        const payload = {
+            action: 'updateUser',
+            email: currentState.profile.email,
+            name: currentState.profile.name,
+            avatar: currentState.profile.avatar,
+            headline: currentState.profile.primarySkill,
+            bio: currentState.profile.bio,
+            dreamResult: currentState.profile.dreamResult,
+            // Serialize complex objects
+            skills: JSON.stringify(currentState.profile.skills),
+            tools: JSON.stringify(currentState.profile.tools),
+            experience: JSON.stringify(currentState.profile.experience),
+            customSections: JSON.stringify(currentState.profile.customSections),
+            progress: JSON.stringify(currentState.progress),
+            checklist: JSON.stringify(currentState.checklist),
+            planner: JSON.stringify(currentState.planner),
+            notes: currentState.notes,
+            lastVisit: new Date().toISOString()
+        };
+
+        // Use sendBeacon for reliable background sending or fetch
+        // We use fetch here with no-cors to avoid strict CORS issues if simple POST, 
+        // but ideally your script returns JSON with CORS headers.
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        }).then(res => console.log("Cloud Sync initiated")).catch(err => console.error("Sync failed", err));
     }
 
     function updateSidebarProfileDisplay() {
@@ -805,6 +842,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentState.planner.leads) currentState.planner.leads = [];
         currentState.planner.leads.push(newLead);
         saveState();
+        
+        // Debounced Sync
+        clearTimeout(syncTimeout);
+        syncTimeout = setTimeout(syncToCloud, 2000);
+        
         renderLeadTokens();
     }
 
@@ -837,6 +879,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
 
                         saveState();
+                        
+                        // Debounced Sync
+                        clearTimeout(syncTimeout);
+                        syncTimeout = setTimeout(syncToCloud, 2000);
+                        
                         renderLeadTokens(); // Re-render to update counts and timestamps
                     }
                 }
@@ -1148,6 +1195,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentState.planner.tasks) currentState.planner.tasks = [];
         currentState.planner.tasks.push(newTask);
         saveState();
+        
+        // Debounced Sync
+        clearTimeout(syncTimeout);
+        syncTimeout = setTimeout(syncToCloud, 2000);
+        
         renderPlanner();
     }
 
@@ -1162,6 +1214,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             saveState();
+            
+            // Debounced Sync
+            clearTimeout(syncTimeout);
+            syncTimeout = setTimeout(syncToCloud, 2000);
+            
             renderPlanner(); // Re-render to update progress bar
         }
     }
@@ -1494,6 +1551,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (taskToDeleteId) {
                 currentState.planner.tasks = currentState.planner.tasks.filter(t => t.id !== taskToDeleteId);
                 saveState();
+                
+                // Debounced Sync
+                clearTimeout(syncTimeout);
+                syncTimeout = setTimeout(syncToCloud, 2000);
+                
                 renderPlanner();
                 modal.classList.remove('active');
             }
@@ -1505,6 +1567,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (task) {
             Object.assign(task, updates);
             saveState();
+            
+            // Debounced Sync
+            clearTimeout(syncTimeout);
+            syncTimeout = setTimeout(syncToCloud, 2000);
         }
     }
 
@@ -2075,15 +2141,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const saveBtn = document.getElementById('btn-save-pf');
         saveBtn.addEventListener('click', () => {
             saveState();
+            syncToCloud(); // Force sync immediately on explicit save
             const originalHtml = saveBtn.innerHTML;
             
             // Transformation
             saveBtn.innerHTML = '<i class="ph-bold ph-check"></i> <span class="btn-text">Saved</span>';
             saveBtn.classList.add('saved');
             
-            // Mock Clipboard copy
-            // navigator.clipboard.writeText('https://avantaland.com/u/' + currentState.profile.name);
-
             setTimeout(() => {
                 saveBtn.innerHTML = originalHtml;
                 saveBtn.classList.remove('saved');
@@ -2499,6 +2563,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentState.checklist[truthIndex][checkIndex] = isChecked;
         saveState();
+        
+        // Debounced Sync
+        clearTimeout(syncTimeout);
+        syncTimeout = setTimeout(syncToCloud, 2000);
+        
         renderHackNavigator(); // Update dot color
         
         // Note: The updateCompleteButton logic is now handled directly within the event listener 
@@ -2511,6 +2580,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentState.progress[index] = true;
         saveState();
+        syncToCloud(); // Important milestone, sync immediately
 
         // Update persistent UI elements immediately
         renderHackNavigator();

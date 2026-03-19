@@ -32,22 +32,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 authMessage.textContent = "Access Granted. Redirecting...";
                 authMessage.className = "auth-message success";
                 
+                const user = data.user || data; // Handle different potential response structures
+
                 // Build Profile Object for Dashboard Uniqueness
                 const profile = {
-                    name: data.firstName || 'Founder',
+                    name: user.Name || 'Founder',
                     email: email,
-                    primarySkill: 'Entrepreneur',
-                    dreamResult: 'Financial Freedom',
-                    avatar: null,
-                    bio: '',
-                    // Split comma-separated lists
-                    skills: ['Strategy', 'Execution'],
-                    tools: [],
-                    experience: [], 
-                    customSections: []
+                    primarySkill: user.Headline || 'Entrepreneur',
+                    dreamResult: user.DreamResult || 'Financial Freedom',
+                    avatar: user.Avatar || null,
+                    bio: user.Bio || '',
+                    // Parse JSON strings if they exist, otherwise default
+                    skills: user.Skills ? JSON.parse(user.Skills) : ['Strategy', 'Execution'],
+                    tools: user.Tools ? JSON.parse(user.Tools) : [],
+                    experience: user.Experience ? JSON.parse(user.Experience) : [], 
+                    customSections: user.CustomSections ? JSON.parse(user.CustomSections) : []
                 };
 
+                // Save fetched data to LocalStorage so dashboard picks it up
                 localStorage.setItem('bizLabProfile', JSON.stringify(profile));
+                if (user.Progress) localStorage.setItem('bizLabProgress', user.Progress);
+                if (user.Checklist) localStorage.setItem('bizLabChecklist', user.Checklist);
+                if (user.Planner) localStorage.setItem('bizLabPlanner', user.Planner);
+                if (user.Notes) localStorage.setItem('bizLabFeedbackNotes', user.Notes);
                 
                 setTimeout(() => {
                     window.location.href = 'new-dashboard.html';
