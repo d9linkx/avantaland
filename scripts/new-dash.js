@@ -1784,18 +1784,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- HTML Structure ---
         learningStage.innerHTML = `
             <div class="portfolio-wrapper">
-                <!-- 1. Global Controls Header -->
-                <div class="portfolio-header">
-                    <div style="display: flex; gap: 1rem; align-items: center;">
-                    <button class="btn-preview-pf" id="btn-preview-pf"><i class="ph-bold ph-eye"></i> <span class="btn-text">Preview</span></button>
-                    <button class="btn-share"><i class="ph-bold ph-share-network"></i> <span class="btn-text">Share</span></button>
-                    <button class="btn-save-pf" id="btn-save-pf"><i class="ph-bold ph-floppy-disk"></i> <span class="btn-text">Save</span></button>
-                    </div>
-                </div>
-
                 <div class="portfolio-split">
                     <!-- 2. Left Panel: Input Form -->
                     <div class="editor-pane">
+                        
+                        <div class="portfolio-actions-row">
+                            <div class="pf-action-group">
+                                <button class="btn-preview-pf" id="btn-preview-pf"><i class="ph-bold ph-eye"></i> <span class="btn-text">Preview</span></button>
+                                <button class="btn-share"><i class="ph-bold ph-share-network"></i> <span class="btn-text">Share</span></button>
+                                <button class="btn-save-pf" id="btn-save-pf"><i class="ph-bold ph-floppy-disk"></i> <span class="btn-text">Save</span></button>
+                            </div>
+                            <button class="btn-logout-pf" id="btn-logout-pf"><i class="ph-bold ph-sign-out"></i> Logout</button>
+                        </div>
+
                         <!-- Brand Identity -->
                         <div class="pf-section">
                             <h3>Brand Identity</h3>
@@ -2043,6 +2044,9 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCustomSections();
         });
 
+        // Logout Button
+        document.getElementById('btn-logout-pf').addEventListener('click', handleLogout);
+
         // 7. Save Micro-interaction
         const saveBtn = document.getElementById('btn-save-pf');
         saveBtn.addEventListener('click', () => {
@@ -2061,6 +2065,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveBtn.classList.remove('saved');
             }, 1500);
         });
+
+        // Share Button
+        learningStage.querySelector('.btn-share').addEventListener('click', openShareModal);
 
         // 7. Preview Modal
         document.getElementById('btn-preview-pf').addEventListener('click', () => {
@@ -2182,16 +2189,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="ph-duotone ph-user-circle"></i>
                 <span>Profile</span>
             </a>
-            <a href="#" class="nav-item" id="sidebar-logout-btn" style="margin-top: 1rem; color: #EF4444;">
-                <i class="ph-duotone ph-sign-out"></i>
-                <span>Logout</span>
-            </a>
         `;
-
-        document.getElementById('sidebar-logout-btn').addEventListener('click', (e) => {
-            e.preventDefault();
-            handleLogout();
-        });
 
         const navItems = sidebarNav.querySelectorAll('.nav-item[data-target]');
         navItems.forEach(item => {
@@ -2521,8 +2519,30 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileHeader.className = 'mobile-top-bar';
         mobileHeader.innerHTML = `
             <a href="index.html" class="logo"><img src="images/avblack.png" alt="Avantaland Logo" class="mobile-logo"></a>
-            <button id="mobile-logout-btn" style="background:none; border:none; color:var(--text-primary); font-size:1.5rem; cursor:pointer; padding: 0.5rem;"><i class="ph-bold ph-sign-out"></i></button>
+            <div class="mobile-user-menu" style="position: relative;">
+                <button id="mobile-menu-trigger" style="background:none; border:none; color:var(--text-primary); cursor:pointer; padding: 0.5rem;">
+                    <i class="ph-bold ph-caret-down" style="font-size: 1.5rem;"></i>
+                </button>
+                <div id="mobile-user-dropdown" class="mobile-dropdown-menu">
+                    <a href="index.html" class="mobile-dropdown-item"><i class="ph-bold ph-globe"></i> Return to Website</a>
+                    <button id="mobile-logout-btn" class="mobile-dropdown-item" style="color: #EF4444;"><i class="ph-bold ph-sign-out"></i> Logout</button>
+                </div>
+            </div>
         `;
+
+        const trigger = mobileHeader.querySelector('#mobile-menu-trigger');
+        const dropdown = mobileHeader.querySelector('#mobile-user-dropdown');
+        
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!mobileHeader.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
 
         mobileHeader.querySelector('#mobile-logout-btn').addEventListener('click', handleLogout);
 
@@ -2968,10 +2988,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleLogout() {
-        if(confirm("Are you sure you want to log out?")) {
-            // Redirect to login/onboarding page
+        if (document.querySelector('.logout-modal-overlay')) return;
+
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'custom-modal-overlay logout-modal-overlay active';
+        modalOverlay.innerHTML = `
+            <div class="custom-modal fade-in">
+                <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Log Out</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">Are you sure you want to end your session?</p>
+                <div class="modal-actions">
+                    <button class="btn-modal btn-cancel">Cancel</button>
+                    <button class="btn-modal btn-confirm-delete" id="confirm-logout" style="background-color: #EF4444; border: 1px solid #EF4444; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">Log Out</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modalOverlay);
+        const close = () => modalOverlay.remove();
+        modalOverlay.querySelector('.btn-cancel').addEventListener('click', close);
+        modalOverlay.querySelector('#confirm-logout').addEventListener('click', () => {
             window.location.href = 'onboardingdash.html';
-        }
+        });
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) close();
+        });
     }
 
     init();
