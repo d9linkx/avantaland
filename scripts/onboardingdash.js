@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authMessage.textContent = "";
 
         try {
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx5HUQ9vvsiC35I5N1UveJhKuSAjM52BxOPGZdXHZ9FunFee36ykfsQZYru_gSffmh/exec';
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwM_BCrItLamrKY13Gl9ObTcsyaPLF9dEiHYELnelOunEGglRyKwBN7-ZlDigqOGgQ90w/exec';
             const response = await fetch(`${SCRIPT_URL}?action=checkEmail&email=${encodeURIComponent(email)}`);
             const data = await response.json();
 

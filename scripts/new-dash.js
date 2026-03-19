@@ -134,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error("Error loading state from localStorage", e);
         }
+        console.log("Dashboard loaded with state:", currentState); // Debugging line
     }
 
     function saveState() {
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Cloud Sync Logic ---
     function syncToCloud() {
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwx5HUQ9vvsiC35I5N1UveJhKuSAjM52BxOPGZdXHZ9FunFee36ykfsQZYru_gSffmh/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwM_BCrItLamrKY13Gl9ObTcsyaPLF9dEiHYELnelOunEGglRyKwBN7-ZlDigqOGgQ90w/exec';
         
         // Prepare payload mapping to sheet columns
         const payload = {
@@ -1953,11 +1954,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Logic & Listeners ---
 
+        const triggerProfileSave = () => {
+            saveState();
+            // Debounced Sync
+            clearTimeout(syncTimeout);
+            syncTimeout = setTimeout(syncToCloud, 2000);
+        };
+
         // 1. Real-time Text Binding
         const bindText = (inputId, field) => {
             const input = document.getElementById(inputId);
             input.addEventListener('input', (e) => {
                 currentState.profile[field] = e.target.value;
+                triggerProfileSave();
             });
         };
         bindText('input-name', 'name');
@@ -1975,6 +1984,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 reader.onload = (e) => {
                     document.getElementById('editor-avatar-img').src = e.target.result;
                     currentState.profile.avatar = e.target.result;
+                    triggerProfileSave();
                 };
                 reader.readAsDataURL(file);
             }
@@ -1995,6 +2005,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (e.key === 'Enter' && e.target.value.trim()) {
                     currentState.profile.skills.push(e.target.value.trim());
                     renderSkills();
+                    triggerProfileSave();
                 }
             });
             // Remove listeners
@@ -2003,6 +2014,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const idx = e.target.dataset.idx;
                     currentState.profile.skills.splice(idx, 1);
                     renderSkills();
+                    triggerProfileSave();
                 });
             });
         }
@@ -2032,6 +2044,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         currentState.profile.tools.push(t);
                     }
                     renderTools();
+                    triggerProfileSave();
                 });
             });
         }
@@ -2045,6 +2058,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentState.profile.tools.push(val);
                 input.value = '';
                 renderTools();
+                triggerProfileSave();
             }
         });
 
@@ -2075,6 +2089,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         currentState.profile.experience[idx][field] = e.target.value;
                     }
                     // Removed renderExperience() to prevent focus loss and lag
+                    triggerProfileSave();
                 });
             });
             expEditor.querySelectorAll('.btn-remove-item').forEach(btn => {
@@ -2083,6 +2098,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const idx = e.currentTarget.dataset.idx;
                     currentState.profile.experience.splice(idx, 1);
                     renderExperience();
+                    triggerProfileSave();
                 });
             });
         }
@@ -2091,6 +2107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('btn-add-exp').addEventListener('click', () => {
             currentState.profile.experience.push({ role: 'New Role', company: 'Company', date: 'Dates', bullets: [] });
             renderExperience();
+            triggerProfileSave();
         });
 
         // 6. Custom Sections Logic
@@ -2117,6 +2134,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const idx = e.target.dataset.idx;
                     const field = e.target.dataset.field;
                     currentState.profile.customSections[idx][field] = e.target.value;
+                    triggerProfileSave();
                 });
             });
             sectionsEditor.querySelectorAll('.section-remove').forEach(btn => {
@@ -2124,6 +2142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const idx = e.currentTarget.dataset.idx;
                     currentState.profile.customSections.splice(idx, 1);
                     renderCustomSections();
+                    triggerProfileSave();
                 });
             });
         }
@@ -2132,6 +2151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('btn-add-section').addEventListener('click', () => {
             currentState.profile.customSections.push({ title: 'New Section', content: '' });
             renderCustomSections();
+            triggerProfileSave();
         });
 
         // Logout Button
