@@ -1976,17 +1976,45 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Avatar Upload
         const avatarDrop = document.getElementById('pf-avatar-drop');
         const avatarInput = document.getElementById('pf-avatar-input');
+        
+        // Helper: Compress Image to avoid hitting Google Sheet cell limits (50k chars)
+        const compressImage = (file) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 200; // Resize to 200px (sufficient for avatar)
+                        const scaleSize = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        // Compress to JPEG at 0.7 quality
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
+                    };
+                };
+            });
+        };
+
         avatarDrop.addEventListener('click', () => avatarInput.click());
-        avatarInput.addEventListener('change', (e) => {
+        avatarInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('editor-avatar-img').src = e.target.result;
-                    currentState.profile.avatar = e.target.result;
+                try {
+                    const compressedBase64 = await compressImage(file);
+                    document.getElementById('editor-avatar-img').src = compressedBase64;
+                    currentState.profile.avatar = compressedBase64;
                     triggerProfileSave();
-                };
-                reader.readAsDataURL(file);
+                } catch (err) {
+                    console.error("Image processing failed", err);
+                    alert("Could not upload image. Please try a different file.");
+                }
             }
         });
 
