@@ -570,6 +570,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const tasks = currentState.planner.tasks || [];
 
+        // Helper to truncate description to 15 words
+        const getTruncatedDesc = (text) => {
+            if (!text) return '';
+            const words = text.split(/\s+/);
+            if (words.length > 15) {
+                return words.slice(0, 15).join(' ') + '...';
+            }
+            return text;
+        };
+
         // Determine if we should show the "Big 3" or "Money Queue" based on task count
         const big3Tasks = tasks.filter(t => t.section === 'big3');
         const moneyTasks = tasks.filter(t => t.section === 'money');
@@ -626,13 +636,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const subtaskCompleted = (task.subtasks || []).filter(st => st.completed).length;
             const hasNotes = task.notes && task.notes.trim().length > 0;
             const hasLinks = task.links && task.links.length > 0;
+            const shortDesc = hasNotes ? getTruncatedDesc(task.notes) : '';
 
             // Build Preview HTML
             let previewHtml = '';
-            if (hasNotes || subtaskCount > 0 || hasLinks) {
+            // Only show preview row if there are subtasks, links, or if notes were truncated (so we need to see full)
+            // Or if user just wants to expand details. 
+            // For design cleanliness, we keep the expansion logic but maybe hide the inline note if it's identical to the description line.
+            if ((hasNotes && shortDesc !== task.notes) || subtaskCount > 0 || hasLinks) {
                 previewHtml = `<div class="task-details-preview">`;
                 
-                if (hasNotes) {
+                if (hasNotes && shortDesc !== task.notes) {
                     previewHtml += `<div class="preview-note"><i class="ph-fill ph-text-align-left"></i> ${task.notes}</div>`;
                 }
 
@@ -659,25 +673,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             el.innerHTML = `
-                <div class="task-inner">
-                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
-                    
-                    <div class="task-main">
-                        <div class="task-header-row">
-                            <div class="task-content">${task.text}</div>
-                            <div class="task-badges">
-                                ${subtaskCount > 0 ? `<span class="subtask-badge ${subtaskCompleted === subtaskCount ? 'completed' : ''}"><i class="ph-bold ph-list-checks"></i> ${subtaskCompleted}/${subtaskCount}</span>` : ''}
-                                ${hasNotes ? `<span class="notes-badge"><i class="ph-bold ph-note"></i></span>` : ''}
-                                ${hasLinks ? `<span class="notes-badge"><i class="ph-bold ph-link"></i></span>` : ''}
-                            </div>
-                        </div>
-                        <div class="task-meta-row">
-                            <span style="background: #F1F5F9; padding: 2px 8px; border-radius: 6px;"><i class="ph ph-clock"></i> ${formatTaskDateTime(task.startDateTime)}</span>
-                            <span style="background: #F1F5F9; padding: 2px 8px; border-radius: 6px;"><i class="ph ph-clock-counter-clockwise"></i> ${formatTaskDateTime(task.endDateTime)}</span>
+                <div class="task-main-layout">
+                    <!-- Line 1: Checkbox & Title -->
+                    <div class="task-line-header">
+                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+                        <span class="task-title-text">${task.text}</span>
+                        <div class="task-badges-inline">
+                            ${subtaskCount > 0 ? `<span class="subtask-badge ${subtaskCompleted === subtaskCount ? 'completed' : ''}"><i class="ph-bold ph-list-checks"></i> ${subtaskCompleted}/${subtaskCount}</span>` : ''}
+                            ${hasLinks ? `<span class="notes-badge"><i class="ph-bold ph-link"></i></span>` : ''}
                         </div>
                     </div>
+                    
+                    <!-- Line 2: Description (truncated) -->
+                    ${shortDesc ? `<div class="task-line-desc">${shortDesc}</div>` : ''}
 
-                    <div class="task-controls-row">
+                    <!-- Line 3: Time & Controls -->
+                    <div class="task-line-meta">
+                        <div class="task-time-group">
+                            ${task.startDateTime ? `<span class="meta-tag"><i class="ph-bold ph-clock"></i> ${formatTaskDateTime(task.startDateTime)}</span>` : ''}
+                            ${task.endDateTime ? `<span class="meta-tag"><i class="ph-bold ph-clock-counter-clockwise"></i> ${formatTaskDateTime(task.endDateTime)}</span>` : ''}
+                        </div>
+                        
+                        <div class="task-controls-group">
                         ${task.section === 'big3' ? `
                             <div class="deep-work-stopwatch ${task.isStopwatchRunning ? 'running' : ''}" style="display: flex; align-items: center; gap: 6px;">
                                 <button class="btn-stopwatch ${task.isStopwatchRunning ? 'active' : ''}" data-id="${task.id}">
@@ -687,16 +704,17 @@ document.addEventListener('DOMContentLoaded', () => {
                                     ${task.completed ? formatDurationText(task.elapsedTime) : formatSeconds(task.elapsedTime)}
                                 </span>
                             </div>
-                        ` : `
+                        ` : task.startDateTime ? `
                             <span class="task-timer-display" style="font-family: monospace; font-weight: 700; color: ${task.isRunning ? 'var(--success-color)' : 'var(--brand-blue)'}; background: #EFF6FF; padding: 4px 8px; border-radius: 6px;">
                                 ${initialTimerText}
                             </span>
-                        `}
-                        
-                        <div class="task-actions-group">
-                            <button class="btn-task-edit" style="background: none; border: none; color: #64748B; cursor: pointer; padding: 4px;"><i class="ph ph-pencil-simple"></i></button>
-                            <button class="btn-task-delete" style="background: none; border: none; color: #EF4444; cursor: pointer; padding: 4px;"><i class="ph ph-trash"></i></button>
-                            <i class="ph ph-dots-six-vertical" style="color: #CBD5E1; cursor: grab; padding: 4px;"></i>
+                        ` : ''}
+                            
+                            <div class="action-buttons">
+                                <button class="btn-task-icon btn-task-edit"><i class="ph-bold ph-pencil-simple"></i></button>
+                                <button class="btn-task-icon btn-task-delete"><i class="ph-bold ph-trash"></i></button>
+                                <i class="ph-bold ph-dots-six-vertical drag-handle"></i>
+                            </div>
                         </div>
                     </div>
                 </div>

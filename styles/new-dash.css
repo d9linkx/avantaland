@@ -2192,80 +2192,210 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
 
 /* Task Items */
 .planner-task {
-    background: var(--bg-surface);
-    padding: 1.25rem; /* Larger padding for mobile touch targets */
+    background: #FFFFFF;
+    padding: 1rem;
     border-radius: 12px;
     margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    border: 1px solid var(--border-color-soft);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     cursor: grab;
-    min-height: 60px; /* Ensure minimum height for touch */
+    transition: all 0.2s ease;
+}
+
+.planner-task:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+    border-color: var(--brand-blue);
 }
 
 .planner-task:active { cursor: grabbing; }
 
+.task-main-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+/* Line 1: Header */
+.task-line-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+}
+
 .task-checkbox {
-    width: 28px; /* Larger for mobile */
-    height: 28px;
-    border-radius: 8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
     cursor: pointer;
     accent-color: var(--brand-blue);
     flex-shrink: 0;
-    margin-top: 4px;
+    margin-top: 3px;
 }
 
-.task-inner {
+.task-title-text {
+    flex: 1;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.planner-task.completed .task-title-text {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.task-badges-inline {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* Line 2: Description */
+.task-line-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    padding-left: 2rem; /* Indent to align with text, bypassing checkbox */
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit to 2 lines visual */
+    -webkit-box-orient: vertical;
+}
+
+/* Line 3: Meta & Controls */
+.task-line-meta {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    width: 100%;
+    justify-content: space-between;
+    padding-left: 2rem;
+    margin-top: 0.25rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.task-time-group {
+    display: flex;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
-.task-main {
-    flex: 1;
-    min-width: 200px;
-}
-
-.task-header-row {
+.meta-tag {
+    background: #F1F5F9;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #64748B;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: 4px;
+    white-space: nowrap;
 }
 
-.task-meta-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-}
-
-.task-controls-row {
+.task-controls-group {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-left: auto;
+    gap: 0.75rem;
+    margin-left: auto; /* Push to right */
 }
 
-.task-actions-group {
+.action-buttons {
     display: flex;
+    align-items: center;
     gap: 4px;
 }
 
-.task-content { flex: 1; font-weight: 500; font-size: 1rem; color: var(--text-primary); }
-.planner-task.completed .task-content { text-decoration: line-through; color: var(--text-secondary); }
+.btn-task-icon {
+    background: none;
+    border: none;
+    color: #94A3B8;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+}
 
-.value-tag {
-    background: var(--brand-blue-light);
+.btn-task-icon:hover {
+    background: #F1F5F9;
     color: var(--brand-blue);
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    border-radius: 99px;
-    font-weight: 700;
+}
+.btn-task-icon.btn-task-delete:hover {
+    color: #EF4444;
+    background: #FEF2F2;
+}
+
+.drag-handle {
+    color: #CBD5E1;
+    cursor: grab;
+    padding: 4px;
+}
+
+/* Mobile Optimization for Task Card */
+@media (max-width: 768px) {
+    .task-line-meta {
+        padding-left: 0; /* Remove indent on mobile to use full width */
+        justify-content: space-between;
+        width: 100%;
+        border-top: 1px dashed var(--border-color-soft);
+        padding-top: 0.75rem;
+    }
+    
+    .task-line-desc {
+        padding-left: 0;
+        margin-bottom: 0.25rem;
+    }
+    
+    .task-title-text {
+        font-size: 1.1rem;
+    }
+    
+    .planner-task {
+        padding: 1.25rem;
+    }
+}
+
+/* Desktop Override to keep it clean if screen is wide */
+@media (min-width: 1025px) {
+    .task-main-layout {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas: 
+            "check title controls"
+            "check desc controls"
+            "check meta controls";
+        align-items: center;
+        column-gap: 1rem;
+        row-gap: 0.25rem;
+    }
+    
+    .task-line-header { grid-area: title; width: auto; align-items: center; }
+    .task-line-desc { grid-area: desc; padding-left: 0; margin-top: 0; font-size: 0.85rem; }
+    .task-line-meta { grid-area: meta; padding-left: 0; margin-top: 0; width: auto; justify-content: flex-start; border-top: none; padding-top: 0; }
+    .task-controls-group { grid-area: controls; margin-left: 0; }
+    
+    /* Fix specific elements within grid areas */
+    .task-line-header .task-checkbox { display: none; } /* Hide duplicate checkbox logic if needed, but here we just used grid-template */
+    
+    /* Actually simpler desktop flex approach */
+    .task-main-layout {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+    
+    .task-line-header { flex: 0 0 auto; max-width: 30%; }
+    .task-line-desc { flex: 1; padding-left: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .task-line-meta { flex: 0 0 auto; width: auto; padding-left: 1rem; border-top: none; padding-top: 0; margin-top: 0; }
+    .task-controls-group { margin-left: 0; }
 }
 
 /* --- Founder Profile & Settings --- */
