@@ -219,6 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const header = learningStage.querySelector('.dashboard-header');
         if (!header) return;
 
+        const firstName = currentState.profile.name ? currentState.profile.name.split(' ')[0] : 'Founder';
+
         // --- 1. Master Card Logic ---
         const nextHackIndex = findNextUncompletedHack();
         const nextHack = truthsData[nextHackIndex];
@@ -258,16 +260,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const masterCard = document.createElement('div');
         masterCard.className = 'master-card';
         
-        let actionText = `You're currently mastering Hack #${String(nextHackIndex + 1).padStart(2, '0')}. You have ${tasksRemaining} tasks remaining before you're ready for the next level.`;
+        let actionText = `${firstName}, you're currently mastering Hack #${String(nextHackIndex + 1).padStart(2, '0')}. You have ${tasksRemaining} tasks remaining before you're ready for the next level.`;
         if (tasksRemaining === 0 && totalTasks > 0) {
-             actionText = `Boom! Hack #${String(nextHackIndex + 1).padStart(2, '0')} is crushed. Ready to dominate the next one? The market is waiting.`;
+             actionText = `Boom! Hack #${String(nextHackIndex + 1).padStart(2, '0')} is crushed. Ready to dominate the next one, ${firstName}? The market is waiting.`;
         } else if (totalTasks === 0) {
-             actionText = `Ready to start Hack #${String(nextHackIndex + 1).padStart(2, '0')}? The market is waiting.`;
+             actionText = `Ready to start Hack #${String(nextHackIndex + 1).padStart(2, '0')}, ${firstName}? The market is waiting.`;
         }
 
         masterCard.innerHTML = `
             <div class="master-card-content">
-                <p class="master-hook">Welcome back. You were last here ${lastVisitStr}.</p>
+                <p class="master-hook">Welcome back, ${firstName}. You were last here ${lastVisitStr}.</p>
                 <h3 class="master-title">Hack #${String(nextHackIndex + 1).padStart(2, '0')}</h3>
                 <p class="master-action">${actionText}</p>
                 <div class="master-progress-container">
@@ -292,16 +294,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (big3Tasks.length === 0) {
             focusType = "Planning Mode";
-            motivation = "You can do this!";
+            motivation = `Set your top 3 goals for today, tomorrow, or next week, ${firstName}. This will help you prioritize and execute better.`;
         } else if (taskTexts.match(/call|email|sell|close|\$|lead|prospect|client/)) {
             focusType = "Revenue Focus";
-            motivation = "You're hunting today. Prioritize the tasks that bring in cash.";
+            motivation = `You're hunting today, ${firstName}. Prioritize the tasks that bring in cash.`;
         } else if (taskTexts.match(/build|fix|code|design|write|create|launch|develop/)) {
             focusType = "Product Focus";
-            motivation = "Deep work mode. You are building the asset.";
+            motivation = `Deep work mode. You are building the asset, ${firstName}.`;
         } else if (taskTexts.match(/plan|organize|meeting|review|hire|strategy/)) {
             focusType = "Strategy Focus";
-            motivation = "Setting the stage for scale. Keep it efficient.";
+            motivation = `Setting the stage for scale. Keep it efficient, ${firstName}.`;
         }
 
         const executorCard = document.createElement('div');
@@ -319,7 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         executorCard.innerHTML = `
             <div class="executor-header">
-                <h3>Today's Tasks</h3>
                 <span class="executor-focus-badge">${focusType}</span>
             </div>
             <p class="executor-explanation">${motivation}</p>
@@ -396,11 +397,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const completedCount = tasks.filter(t => t.completed).length;
         const progress = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
 
+        const firstName = currentState.profile.name ? currentState.profile.name.split(' ')[0] : 'Founder';
+
         learningStage.innerHTML = `
             <div class="planner-container">
                 <div class="planner-header">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h1>Daily Focus <span class="date">${today}</span></h1>
+                        <h1>My Focus Today <span class="date">${today}</span></h1>
                         <a href="#" id="nav-to-business" style="font-weight: 600; color: var(--brand-blue); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; font-size: 1rem;">
                             Business <i class="ph-bold ph-arrow-right"></i>
                         </a>
@@ -408,11 +411,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="planner-progress-container">
                         <div class="planner-progress-bar" style="width: ${progress}%"></div>
                     </div>
-                    <div class="planner-progress-text">Daily Goal Completion: ${progress}%</div>
+                    <div class="planner-progress-text">Daily Goal Completion: ${progress}%. I believe in you, ${firstName}.</div>
                 </div>
 
                 <div class="quick-add-container">
-                    <input type="text" class="quick-add-input" placeholder="Any plans? (type and press Enter)" id="planner-quick-add">
+                    <input type="text" class="quick-add-input" placeholder="What's your goal? Type it here & press 'Enter'" id="planner-quick-add">
                 </div>
 
                 <!-- Section A: The Big 3 -->
@@ -429,15 +432,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- Section B: Money Queue -->
                 <div class="planner-section section-money">
-                    <h3><i class="ph ph-currency-dollar-simple" style="color: var(--brand-blue);"></i> My Tasks</h3>
+                    <h3><i class="ph ph-currency-dollar-simple" style="color: var(--brand-blue);"></i> My Top 3 Tasks</h3>
                     <div class="planner-task-list" id="list-money" data-section="money"></div>
-                </div>
-
-                <div class="planner-actions-toolbar">
-                    <button class="btn-planner-action" id="btn-rollover"><i class="ph ph-arrow-u-up-right"></i> Rollover Unfinished</button>
-                    <button class="btn-planner-action" id="btn-timeline"><i class="ph ph-clock"></i> Time Blocking</button>
-                    <button class="btn-planner-action" id="btn-focus-tools"><i class="ph ph-crosshair"></i> Focus Mode</button>
-                    <button class="btn-planner-action" id="btn-daily-review"><i class="ph ph-notebook"></i> Daily Review</button>
                 </div>
             </div>
         `;
@@ -499,11 +495,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.head.appendChild(script);
         }
 
+        const firstName = currentState.profile.name ? currentState.profile.name.split(' ')[0] : 'Founder';
+
         learningStage.innerHTML = `
             <div class="planner-container">
                 <div class="planner-header">
                     <h1>Business & Sales Funnel</h1>
-                    <p style="color: var(--text-secondary);">Drag leads through the stages to track your revenue flow.</p>
+                    <p style="color: var(--text-secondary);">Drag leads through the stages to track your revenue flow, ${firstName}.</p>
                 </div>
 
                 <div class="funnel-container">
@@ -602,10 +600,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
+        const firstName = currentState.profile.name ? currentState.profile.name.split(' ')[0] : 'Founder';
+
         if (tasks.length === 0) {
             moneyList.innerHTML = `<div style="text-align:center; color: var(--text-secondary); padding: 2rem;">
                 <i class="ph ph-rocket-launch" style="font-size: 2.5rem; margin-bottom: 1rem; display: block; color: var(--brand-blue); opacity: 0.5;"></i>
-                The market is waiting. What do you want to achieve today?
+                The market is waiting. What do you want to achieve today, ${firstName}? Type it in the box above and hit 'Enter' to set your focus and start building momentum.
             </div>`;
         }
 
@@ -2803,6 +2803,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function setupAveoDrawer() {
         if (document.querySelector('.aveo-drawer')) return;
 
+        const firstName = currentState.profile.name ? currentState.profile.name.split(' ')[0] : 'Founder';
+
         const drawer = document.createElement('div');
         drawer.className = 'aveo-drawer';
         drawer.innerHTML = `
@@ -2818,7 +2820,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="aveo-messages" id="aveo-messages">
                 <div class="aveo-message ai">
-                    <strong>Aveo 1:</strong> Founders don't sleep, but they do need strategy. I'm Aveo. What's the roadblock today?
+                    <strong>Aveo 1:</strong> Founders don't sleep, but they do need strategy. I'm Aveo. What's the roadblock today, ${firstName}?
                 </div>
             </div>
             <div class="aveo-chips">
@@ -2851,7 +2853,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const msgContainer = document.getElementById('aveo-messages');
                 // Only add if not already there
                 if (msgContainer.children.length <= 1) {
-                    addAveoMessage(`<strong>Aveo 1:</strong> It's past midday and you haven't crushed a single task in your Big 3. Remember your goal: "${currentState.profile.dreamResult || 'Financial Freedom'}". Stop procrastinating.`, 'ai');
+                    addAveoMessage(`<strong>Aveo 1:</strong> It's past midday and you haven't crushed a single task in your Big 3. Remember your goal: "${currentState.profile.dreamResult || 'Financial Freedom'}". Stop procrastinating, ${firstName}.`, 'ai');
                 }
             }
         };
@@ -3011,7 +3013,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const modalOverlay = document.createElement('div');
         modalOverlay.className = 'custom-modal-overlay logout-modal-overlay active';
         modalOverlay.innerHTML = `
-            <div class="custom-modal fade-in">
+            <div class="custom-modal">
                 <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Log Out</h3>
                 <p style="color: var(--text-secondary); margin-bottom: 2rem;">Are you sure you want to end your session?</p>
                 <div class="modal-actions">
