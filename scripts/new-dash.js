@@ -297,29 +297,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
         const tasksRemaining = totalTasks - completedTasks;
 
-        // Format Last Visit
+        // --- Logic for Welcome Message & Action Text ---
         const lastVisitStr = formatLastVisit(lastVisitTime);
+        const isStartOfJourney = nextHackIndex === 0 && (!currentState.progress || Object.keys(currentState.progress).length === 0);
+        
+        let welcomeHook = `Welcome back, ${firstName}. You were last here ${lastVisitStr}.`;
+        let actionText = `${firstName}, you're currently mastering Hack #${String(nextHackIndex + 1).padStart(2, '0')}. You have ${tasksRemaining} tasks remaining before you're ready for the next level.`;
+        let btnText = `Resume <i class="ph ph-arrow-right"></i>`;
+
+        if (isStartOfJourney) {
+            welcomeHook = `Welcome to the Lab, ${firstName}. Let's build your empire.`;
+            if (tasksRemaining === totalTasks) {
+                actionText = `Your journey begins now. Hack #01 lays the foundation for everything.`;
+                btnText = `Start Hack #01 <i class="ph ph-arrow-right"></i>`;
+            }
+        }
+
+        if (tasksRemaining === 0 && totalTasks > 0) {
+             actionText = `Boom! Hack #${String(nextHackIndex + 1).padStart(2, '0')} is crushed. Ready to dominate the next one, ${firstName}? The market is waiting.`;
+        } else if (totalTasks === 0 && !isStartOfJourney) {
+             actionText = `Ready to start Hack #${String(nextHackIndex + 1).padStart(2, '0')}, ${firstName}? The market is waiting.`;
+        }
 
         // Master Card HTML
         const masterCard = document.createElement('div');
         masterCard.className = 'master-card';
         
-        let actionText = `${firstName}, you're currently mastering Hack #${String(nextHackIndex + 1).padStart(2, '0')}. You have ${tasksRemaining} tasks remaining before you're ready for the next level.`;
-        if (tasksRemaining === 0 && totalTasks > 0) {
-             actionText = `Boom! Hack #${String(nextHackIndex + 1).padStart(2, '0')} is crushed. Ready to dominate the next one, ${firstName}? The market is waiting.`;
-        } else if (totalTasks === 0) {
-             actionText = `Ready to start Hack #${String(nextHackIndex + 1).padStart(2, '0')}, ${firstName}? The market is waiting.`;
-        }
-
         masterCard.innerHTML = `
             <div class="master-card-content">
-                <p class="master-hook">Welcome back, ${firstName}. You were last here ${lastVisitStr}.</p>
+                <p class="master-hook">${welcomeHook}</p>
                 <h3 class="master-title">Hack #${String(nextHackIndex + 1).padStart(2, '0')}</h3>
                 <p class="master-action">${actionText}</p>
                 <div class="master-progress-container">
                     <div class="master-progress-bar" style="width: ${progressPercent}%"></div>
                 </div>
-                <button class="btn-master-resume">Resume <i class="ph ph-arrow-right"></i></button>
+                <button class="btn-master-resume">${btnText}</button>
             </div>
         `;
         
