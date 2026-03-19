@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Cloud Sync Logic ---
     function syncToCloud() {
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9geoSSGdrHMb0KZ5dq2v8DUXURi_gsEN-njSJBb4h5oCgLGOFobIn-9CMqmHQ2qkMqw/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz0wf00nOS7knj3JCLILd66Pv_JJyx0cw7k7HzDZcMoUqBNokR1rPnbWZmGbF2ghRZEOg/exec';
         
         // Prepare payload mapping to sheet columns
         const payload = {
