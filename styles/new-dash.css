@@ -1419,6 +1419,34 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
 .card-heat { max-width: 650px; border-top: 4px solid var(--brand-blue); animation-delay: 0.2s; }
 .card-bag { max-width: 500px; border-top: 4px solid #F59E0B; background: linear-gradient(to bottom, #FFFCF0, #FFFFFF); animation-delay: 0.3s; }
 
+/* Desktop Kanban Board Layout */
+@media (min-width: 1024px) {
+    .funnel-container {
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: center;
+        max-width: 100%;
+        padding: 0 1rem 4rem 1rem;
+        gap: 1.5rem;
+    }
+
+    .funnel-card {
+        flex: 1;
+        width: auto;
+        max-width: none !important; /* Remove vertical funnel constraints */
+        min-height: 600px; /* Tall columns for drag space */
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .funnel-card .lead-bucket {
+        flex: 1;
+        background: rgba(248, 250, 252, 0.5);
+        border-radius: 12px;
+        padding: 0.5rem;
+    }
+}
+
 .card-header {
     display: flex;
     align-items: center;
@@ -1458,6 +1486,22 @@ input:checked + .pipeline-slider:before { transform: translateX(16px); }
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+/* Fix for conflict with circular buckets in other views */
+.funnel-card .lead-bucket {
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 100px;
+    align-items: stretch;
+    justify-content: flex-start;
 }
 
 /* Lead Token Card */

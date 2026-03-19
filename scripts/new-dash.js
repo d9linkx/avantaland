@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- Section B: Money Queue -->
                 <div class="planner-section section-money">
-                    <h3><i class="ph ph-currency-dollar-simple" style="color: var(--brand-blue);"></i> Money-Making Queue</h3>
+                    <h3><i class="ph ph-currency-dollar-simple" style="color: var(--brand-blue);"></i> My Tasks</h3>
                     <div class="planner-task-list" id="list-money" data-section="money"></div>
                 </div>
 
@@ -605,7 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tasks.length === 0) {
             moneyList.innerHTML = `<div style="text-align:center; color: var(--text-secondary); padding: 2rem;">
                 <i class="ph ph-rocket-launch" style="font-size: 2.5rem; margin-bottom: 1rem; display: block; color: var(--brand-blue); opacity: 0.5;"></i>
-                The market is waiting. What's the move today?
+                The market is waiting. What do you want to achieve today?
             </div>`;
         }
 
