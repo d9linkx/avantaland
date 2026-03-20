@@ -4668,13 +4668,13 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* Card-specific colors */
-.card-listen { background-color: #ffd426; color: #3f3f3f; } /* Soft Amber */
+.card-listen { background-color: #fffbec; color: #3f3f3f; } /* Soft Amber */
 .card-listen .card-icon-wrapper { background-color: #FEF3C7; color: #D97706; }
 
-.card-summary { background-color: #f3fffaa6; color: #3f3f3f; } /* Soft Green */
+.card-summary { background-color: #94b7a9; color: #3f3f3f; } /* Soft Green */
 .card-summary .card-icon-wrapper { background-color: #aadac7; color: #2f2f2f; }
 
-.card-full-truth { background-color: #F1F5F9; color: #909090; } /* Soft Grey */
+.card-full-truth { background-color: #c9e5d2; color: #909090; } /* Soft Grey */
 .card-full-truth .card-icon-wrapper { background-color: #E2E8F0; color: #64748B; }
 
 .card-tasks { background-color: #F5F3FF; color: #3f3f3f; } /* Soft Purple */

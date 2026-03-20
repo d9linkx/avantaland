@@ -2516,7 +2516,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <details class="action-card card-summary" name="truth-accordion">
                     <summary>
                         <div class="card-icon-wrapper"><i class="ph-duotone ph-file-text"></i></div>
-                        <span class="card-title">Read Summary</span>
+                        <span class="card-title">Summary</span>
                         <div class="card-caret"><i class="ph-bold ph-caret-down"></i></div>
                     </summary>
                     <div class="card-content">${summaryContent}</div>
@@ -2526,7 +2526,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <details class="action-card card-full-truth" name="truth-accordion">
                     <summary>
                         <div class="card-icon-wrapper"><i class="ph-duotone ph-book-open"></i></div>
-                        <span class="card-title">Read Full Truth</span>
+                        <span class="card-title">Get the Full Gist</span>
                         <div class="card-caret"><i class="ph-bold ph-caret-down"></i></div>
                     </summary>
                     <div class="card-content" id="full-truth-container">${fullContentHTML}</div>
@@ -2536,7 +2536,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <details class="action-card card-tasks" name="truth-accordion">
                     <summary>
                         <div class="card-icon-wrapper"><i class="ph-duotone ph-list-checks"></i></div>
-                        <span class="card-title">Action Tasks</span>
+                        <span class="card-title">Practice</span>
                         <div class="card-caret"><i class="ph-bold ph-caret-down"></i></div>
                     </summary>
                     <div class="card-content">
