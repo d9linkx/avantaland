@@ -459,7 +459,8 @@ body.zen-dashboard-body {
 .stage-nav-bottom {
     margin-top: 2rem;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
 }
 
 .btn-next-truth {
@@ -477,6 +478,30 @@ body.zen-dashboard-body {
 
 .btn-next-truth:hover {
     transform: translateX(4px);
+}
+
+.btn-prev-truth {
+    background: none;
+    border: none;
+    color: #94A3B8;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-prev-truth:hover:not(:disabled) {
+    transform: translateX(-4px);
+    color: var(--text-primary);
+}
+
+.btn-next-truth:disabled, .btn-prev-truth:disabled {
+    opacity: 0;
+    cursor: default;
+    pointer-events: none;
 }
 
 /* --- Right Sidebar (Intelligence Wing) --- */
