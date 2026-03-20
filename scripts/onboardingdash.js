@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Build Profile Object for Dashboard Uniqueness
                 const profile = {
-                    name: user.Name || 'Founder',
+                    name: user.Name || user.name || user.FirstName || user.firstName || user.firstname || 'Founder',
                     email: email,
                     primarySkill: user.Headline || 'Entrepreneur',
                     dreamResult: user.DreamResult || 'Financial Freedom',
