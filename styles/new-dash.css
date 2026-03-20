@@ -3110,7 +3110,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .master-action {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: var(--text-primary);
     margin-bottom: 1.5rem;
     line-height: 1.6;
@@ -3198,7 +3198,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .executor-explanation {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: #64748B;
     margin-top: 0;
     margin-bottom: 1.5rem;
