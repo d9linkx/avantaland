@@ -4610,7 +4610,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 /* --- Truth Page 2x2 Grid --- */
 .truth-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1.5rem;
     margin-top: 2rem;
 }
@@ -4714,7 +4714,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 /* Responsive */
 @media (max-width: 768px) {
     .truth-grid {
-        grid-template-columns: 1fr;
         gap: 1rem;
     }
     .action-card summary {
