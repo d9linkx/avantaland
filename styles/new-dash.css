@@ -393,6 +393,11 @@ body.zen-dashboard-body {
     font-size: 1.05rem;
 }
 
+#full-truth-container p {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+}
+
 /* Footer Actions */
 .stage-footer-actions {
     display: flex;
@@ -4575,4 +4580,121 @@ input:checked + .slider:before { transform: translateX(20px); }
     .desktop-dropdown-item:hover {
         background: #F8FAFC;
     }
+}
+
+/* --- Truth Page 2x2 Grid --- */
+.truth-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.action-card {
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    transition: all 0.2s ease-in-out;
+}
+
+.action-card summary {
+    list-style: none;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    position: relative;
+}
+.action-card summary::-webkit-details-marker { display: none; }
+
+.action-card .card-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.action-card .card-title {
+    flex-grow: 1;
+}
+
+.action-card .card-caret {
+    transition: transform 0.3s ease;
+}
+
+.action-card[open] > summary .card-caret {
+    transform: rotate(180deg);
+}
+
+.action-card[open] > summary {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.action-card .card-content {
+    padding: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Card-specific colors */
+.card-listen { background-color: #FFFBEB; } /* Soft Amber */
+.card-listen .card-icon-wrapper { background-color: #FEF3C7; color: #D97706; }
+
+.card-summary { background-color: #F0FDF4; } /* Soft Green */
+.card-summary .card-icon-wrapper { background-color: #DCFCE7; color: #16A34A; }
+
+.card-full-truth { background-color: #FEF2F2; } /* Soft Orange/Red */
+.card-full-truth .card-icon-wrapper { background-color: #FEE2E2; color: #DC2626; }
+
+.card-tasks { background-color: #F5F3FF; } /* Soft Purple */
+.card-tasks .card-icon-wrapper { background-color: #EDE9FE; color: #7C3AED; }
+
+/* Pressed effect */
+.action-card summary:active {
+    transform: scale(0.98);
+}
+
+/* Mini Player */
+.mini-player {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+}
+.player-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--brand-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.player-btn:hover { background: var(--brand-blue-dark); }
+.player-status { font-weight: 600; color: var(--text-secondary); }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .truth-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .action-card summary {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
 }

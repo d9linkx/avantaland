@@ -62,6 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let lastVisitTime = null;
     let taskSystemInterval = null;
+    let activeAudio = null; // To manage audio playback across views
+
     const timerBeep = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
     
     // Debounce timer for cloud sync
@@ -541,6 +543,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Restore default right sidebar
         renderIntelligenceWing();
+    }
+
+    function setupAudioPlayer(truthIndex) {
+        const playBtn = document.getElementById('audio-play-btn');
+        const statusDiv = document.querySelector('.mini-player .player-status');
+        if (!playBtn || !statusDiv) return;
+
+        let isSpeaking = false;
+        const voiceAudio = new Audio(`audio/truth-${truthIndex}.mp3`);
+        const introSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+        introSound.volume = 0.4;
+        const bgMusic = new Audio('https://assets.mixkit.co/music/preview/mixkit-dreaming-big-31.mp3');
+        bgMusic.loop = true;
+        bgMusic.volume = 0.1;
+
+        const stopAudio = () => {
+            if (!isSpeaking) return;
+            voiceAudio.pause();
+            voiceAudio.currentTime = 0;
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            isSpeaking = false;
+            playBtn.innerHTML = '<i class="ph-fill ph-play"></i>';
+            statusDiv.textContent = 'Ready';
+        };
+
+        voiceAudio.addEventListener('ended', stopAudio);
+        voiceAudio.addEventListener('error', () => {
+            if (isSpeaking) {
+                statusDiv.textContent = 'Audio not found';
+                isSpeaking = false;
+                playBtn.innerHTML = '<i class="ph-fill ph-play"></i>';
+            }
+        });
+
+        playBtn.addEventListener('click', () => {
+            if (isSpeaking) {
+                stopAudio();
+            } else {
+                introSound.play().catch(() => {});
+                voiceAudio.play().catch(() => {
+                    statusDiv.textContent = 'Audio not found';
+                });
+                bgMusic.play().catch(() => {});
+                isSpeaking = true;
+                playBtn.innerHTML = '<i class="ph-fill ph-stop"></i>';
+                statusDiv.textContent = 'Playing...';
+            }
+        });
+
+        // Expose a stop function to the global audio manager
+        activeAudio = {
+            stop: stopAudio,
+            isPlaying: () => isSpeaking
+        };
     }
 
     function renderBusinessDashboard() {
@@ -2371,6 +2428,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function displayHack(index, forceFetch = true) {
+        // Stop any currently playing audio from another truth
+        if (activeAudio && activeAudio.stop) {
+            activeAudio.stop();
+        }
+
         currentState.currentHackIndex = index;
         const truth = truthsData[index];
 
@@ -2408,7 +2470,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (checklistEl) {
                         const h3 = checklistEl.querySelector('h3');
                         if (h3) {
-                            h3.textContent = 'To use this hack, do this:';
+                            h3.textContent = 'How to fix this';
                             const subtitle = document.createElement('p');
                             subtitle.className = 'checklist-subtitle';
                             subtitle.textContent = '(Only tick these off when you have actually done them)';
@@ -2432,22 +2494,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="truth-number">Truth #${index + 1}</span>
                 <h1>${truth.title}</h1>
             </div>
-            <div class="stage-body">
-                <div class="executive-summary-container">
-                    ${summaryContent}
-                </div>
-                <div class="checklist-wrapper-container">
-                    ${checklistContent}
-                </div>
+
+            <div class="truth-grid">
+                <!-- Top Left: Listen -->
+                <details class="action-card card-listen" name="truth-accordion">
+                    <summary>
+                        <div class="card-icon-wrapper"><i class="ph-duotone ph-speaker-high"></i></div>
+                        <span class="card-title">Listen to Audio</span>
+                        <div class="card-caret"><i class="ph-bold ph-caret-down"></i></div>
+                    </summary>
+                    <div class="card-content" id="audio-card-content">
+                        <p>Press play to listen to the audio version of this truth.</p>
+                        <div class="mini-player">
+                            <button id="audio-play-btn" class="player-btn"><i class="ph-fill ph-play"></i></button>
+                            <div class="player-status">Ready</div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Top Right: Summary -->
+                <details class="action-card card-summary" name="truth-accordion">
+                    <summary>
+                        <div class="card-icon-wrapper"><i class="ph-duotone ph-file-text"></i></div>
+                        <span class="card-title">Read Summary</span>
+                        <div class="card-caret"><i class="ph-bold ph-caret-down"></i></div>
+                    </summary>
+                    <div class="card-content">${summaryContent}</div>
+                </details>
+
+                <!-- Bottom Left: Full Truth -->
+                <details class="action-card card-full-truth" name="truth-accordion">
+                    <summary>
+                        <div class="card-icon-wrapper"><i class="ph-duotone ph-book-open"></i></div>
+                        <span class="card-title">Read Full Truth</span>
+                        <div class="card-caret"><i class="ph-bold ph-caret-down"></i></div>
+                    </summary>
+                    <div class="card-content" id="full-truth-container">${fullContentHTML}</div>
+                </details>
+
+                <!-- Bottom Right: Tasks -->
+                <details class="action-card card-tasks" name="truth-accordion" open>
+                    <summary>
+                        <div class="card-icon-wrapper"><i class="ph-duotone ph-list-checks"></i></div>
+                        <span class="card-title">Action Tasks</span>
+                        <div class="card-caret"><i class="ph-bold ph-caret-down"></i></div>
+                    </summary>
+                    <div class="card-content">
+                        <div class="checklist-wrapper-container">
+                            ${checklistContent}
+                        </div>
+                        <button class="btn-action btn-complete ${isMastered ? 'completed' : ''}" id="btn-mark-complete" ${isMastered ? 'disabled' : ''}>
+                            ${isMastered ? '<i class="ph ph-check-circle"></i> Completed' : '<i class="ph ph-check"></i> Mark as Completed'}
+                        </button>
+                    </div>
+                </details>
             </div>
-            <div id="full-truth-container" style="display: none; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);"></div>
-            <div class="stage-footer-actions">
-                <button class="btn-action btn-complete ${isMastered ? 'completed' : ''}" id="btn-mark-complete" ${isMastered ? 'disabled' : ''}>
-                    ${isMastered ? '<i class="ph ph-check-circle"></i> Completed' : '<i class="ph ph-check"></i> Mark as Completed'}
-                </button>
-                <button class="btn-action btn-reveal" id="btn-reveal-truth"><i class="ph ph-caret-down"></i> Read Full Truth</button>
-                <button class="btn-action btn-listen"><i class="ph ph-speaker-high"></i> Listen</button>
-            </div>
+
             <div class="stage-nav-bottom">
                 <button id="prev-hack-btn" class="btn-prev-truth" ${index === 0 ? 'disabled' : ''}><i class="ph ph-arrow-left"></i> Previous Truth</button>
                 <button id="next-hack-btn" class="btn-next-truth" ${index === truthsData.length - 1 ? 'disabled' : ''}>Next Truth <i class="ph ph-arrow-right"></i></button>
@@ -2455,6 +2557,20 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         // --- Event Listeners for New Elements ---
+
+        // Exclusive Accordion Logic for <details>
+        const allDetails = learningStage.querySelectorAll('details.action-card');
+        allDetails.forEach(details => {
+            details.addEventListener('toggle', () => {
+                if (details.open) {
+                    allDetails.forEach(d => {
+                        if (d !== details) {
+                            d.open = false;
+                        }
+                    });
+                }
+            });
+        });
 
         // Back to Dashboard Button
         const backToDashBtn = learningStage.querySelector('#back-to-dashboard-btn');
@@ -2522,78 +2638,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const completeBtn = learningStage.querySelector('#btn-mark-complete');
         completeBtn.addEventListener('click', toggleMastery);
 
-        // Next Truth Button
-        const nextBtn = learningStage.querySelector('#next-hack-btn');
-        nextBtn.addEventListener('click', () => {
-            if (index < truthsData.length - 1) {
-                displayHack(index + 1);
-            }
-        });
+        // Audio Player
+        setupAudioPlayer(index);
 
-        // Previous Truth Button
-        const prevBtn = learningStage.querySelector('#prev-hack-btn');
-        prevBtn.addEventListener('click', () => {
-            if (index > 0) {
-                displayHack(index - 1);
-            }
-        });
-
-        // Listen Button (Placeholder logic)
-        const listenBtn = learningStage.querySelector('.btn-listen');
-        listenBtn.addEventListener('click', () => {
-            alert("Audio feature coming soon!");
-        });
-        
-        // Reveal Button (Display Full Truth Inline)
-        const revealBtn = learningStage.querySelector('#btn-reveal-truth');
-        const fullTruthContainer = learningStage.querySelector('#full-truth-container');
-        
-        revealBtn.addEventListener('click', async () => {
-            // If we already fetched content during initial load (fullContentHTML), use it.
-            // Otherwise, try fetching again or show error.
-            
-            if (fullTruthContainer.style.display === 'block') {
-                fullTruthContainer.style.display = 'none';
-                revealBtn.innerHTML = '<i class="ph ph-caret-down"></i> Read Full Truth';
-                return;
-            }
-
-            if (!fullTruthContainer.innerHTML.trim()) {
-                 if (fullContentHTML) {
-                     fullTruthContainer.innerHTML = fullContentHTML;
-                 } else {
-                 try {
-                    const response = await fetch(`truth${index + 1}.html`);
-                    if (response.ok) {
-                        const text = await response.text();
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = text;
-                        
-                        // Try to find the specific full content container first
-                        const specificContent = tempDiv.querySelector('#full-truth-content');
-                        const contentToDisplay = specificContent ? specificContent.innerHTML : '';
-                        fullTruthContainer.innerHTML = contentToDisplay;
-                    }
-                } catch (e) {
-                    console.warn(`Could not fetch truth${index + 1}.html on click`, e);
-                }
-                }
-            }
-
-            if (fullTruthContainer.innerHTML.trim()) {
-                // Ensure the content is visible if it was hidden in the source file
-                const hiddenContent = fullTruthContainer.querySelector('#full-truth-content');
-                if (hiddenContent) hiddenContent.style.display = 'block';
-
-                fullTruthContainer.style.display = 'block';
-                revealBtn.innerHTML = '<i class="ph ph-caret-up"></i> Hide Full Truth';
-                
-                // Scroll to the new content
-                fullTruthContainer.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                alert("Full content not available for this truth.");
-            }
-        });
+        // Nav Buttons
+        learningStage.querySelector('#next-hack-btn').addEventListener('click', () => { if (index < truthsData.length - 1) displayHack(index + 1); });
+        learningStage.querySelector('#prev-hack-btn').addEventListener('click', () => { if (index > 0) displayHack(index - 1); });
     }
 
     function renderIntelligenceWing() {
