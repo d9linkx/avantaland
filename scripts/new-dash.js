@@ -2533,7 +2533,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </details>
 
                 <!-- Bottom Right: Tasks -->
-                <details class="action-card card-tasks" name="truth-accordion" open>
+                <details class="action-card card-tasks" name="truth-accordion">
                     <summary>
                         <div class="card-icon-wrapper"><i class="ph-duotone ph-list-checks"></i></div>
                         <span class="card-title">Action Tasks</span>
