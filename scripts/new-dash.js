@@ -2504,7 +2504,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="card-caret"><i class="ph-bold ph-caret-down"></i></div>
                     </summary>
                     <div class="card-content" id="audio-card-content">
-                        <p>Press play to listen to the audio version of this truth.</p>
+                        <p>Press play to listen to the full audio version of this truth.</p>
                         <div class="mini-player">
                             <button id="audio-play-btn" class="player-btn"><i class="ph-fill ph-play"></i></button>
                             <div class="player-status">Ready</div>

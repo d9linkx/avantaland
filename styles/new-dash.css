@@ -4668,16 +4668,16 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* Card-specific colors */
-.card-listen { background-color: #ffd12b; color: #3f3f3f; } /* Soft Amber */
+.card-listen { border: #ffd503 solid 2px; background-color: #fbfffe; color: #3f3f3f; } /* Soft Amber */
 .card-listen .card-icon-wrapper { background-color: #FEF3C7; color: #D97706; }
 
-.card-summary { background-color: #94b7a9; color: #3f3f3f; } /* Soft Green */
+.card-summary { border: #18b174 solid 2px; background-color: #fbfffe; color: #3f3f3f; } /* Soft Green */
 .card-summary .card-icon-wrapper { background-color: #aadac7; color: #2f2f2f; }
 
-.card-full-truth { background-color: #c9e5d2; color: #909090; } /* Soft Grey */
-.card-full-truth .card-icon-wrapper { background-color: #E2E8F0; color: #64748B; }
+.card-full-truth { border: #ff872b solid 2px; background-color: #fbfffe; color: #909090; } /* Soft Grey */
+.card-full-truth .card-icon-wrapper { background-color: #ff872b78; color: #64748B; }
 
-.card-tasks { background-color: #F5F3FF; color: #3f3f3f; } /* Soft Purple */
+.card-tasks { border: #7C3AED solid 2px; background-color: #fbfffe; color: #3f3f3f; } /* Soft Purple */
 .card-tasks .card-icon-wrapper { background-color: #EDE9FE; color: #7C3AED; }
 
 /* Pressed effect */
@@ -4690,14 +4690,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: #fff;
+    background: #ffd5036b;
     padding: 1rem;
     border-radius: 12px;
 }
 .player-btn {
     width: 48px;
     height: 48px;
-    border-radius: 50%;
+    border-radius: 20%;
     border: none;
     background: var(--brand-blue);
     color: white;
