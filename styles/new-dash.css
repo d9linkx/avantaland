@@ -4674,8 +4674,8 @@ input:checked + .slider:before { transform: translateX(20px); }
 .card-summary { background-color: #F0FDF4; } /* Soft Green */
 .card-summary .card-icon-wrapper { background-color: #DCFCE7; color: #16A34A; }
 
-.card-full-truth { background-color: #FEF2F2; } /* Soft Orange/Red */
-.card-full-truth .card-icon-wrapper { background-color: #FEE2E2; color: #DC2626; }
+.card-full-truth { background-color: #F1F5F9; } /* Soft Grey */
+.card-full-truth .card-icon-wrapper { background-color: #E2E8F0; color: #64748B; }
 
 .card-tasks { background-color: #F5F3FF; } /* Soft Purple */
 .card-tasks .card-icon-wrapper { background-color: #EDE9FE; color: #7C3AED; }
