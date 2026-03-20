@@ -2470,7 +2470,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (checklistEl) {
                         const h3 = checklistEl.querySelector('h3');
                         if (h3) {
-                            h3.textContent = 'How to fix this';
+                            h3.textContent = 'Act now';
                             const subtitle = document.createElement('p');
                             subtitle.className = 'checklist-subtitle';
                             subtitle.textContent = '(Only tick these off when you have actually done them)';

@@ -4668,7 +4668,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* Card-specific colors */
-.card-listen { background-color: #fffbec; color: #3f3f3f; } /* Soft Amber */
+.card-listen { background-color: #ffd12b; color: #3f3f3f; } /* Soft Amber */
 .card-listen .card-icon-wrapper { background-color: #FEF3C7; color: #D97706; }
 
 .card-summary { background-color: #94b7a9; color: #3f3f3f; } /* Soft Green */
