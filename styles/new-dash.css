@@ -3265,15 +3265,20 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 @media (min-width: 769px) {
+
+    .master-card {
+        margin-top: -2rem;
+    }
+
     .master-action {
-        font-size: 1.7rem;
+        font-size: 1.5rem;
         color: var(--text-primary);
         margin-bottom: 1.5rem;
         line-height: 1.6;
     }
 
     .executor-explanation {
-        font-size: 1.7rem;
+        font-size: 1.5rem;
         color: #64748B;
         line-height: 1.5;
     }
