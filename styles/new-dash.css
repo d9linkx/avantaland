@@ -78,6 +78,7 @@ body.zen-dashboard-body {
     font-size: 0.95rem;
     text-decoration: none;
     transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
 .nav-item:hover {
@@ -93,6 +94,12 @@ body.zen-dashboard-body {
 .nav-item i {
     font-size: 1.25rem;
 }
+
+.nav-item[data-target="home"] { border-color: #E2E8F0; }
+.nav-item[data-target="planner"] { border-color: #FCD34D; }
+.nav-item[data-target="business"] { border-color: #6EE7B7; }
+.nav-item[data-target="aveo"] { border-color: #C4B5FD; }
+.nav-item[data-target="profile"] { border-color: #94A3B8; }
 
 /* Accordion & Hack List */
 .hack-accordion {
@@ -749,6 +756,7 @@ body.zen-dashboard-body {
         display: flex;
         position: fixed;
         bottom: 0;
+        padding: 0% 0.3rem;
         left: 0;
         width: 100%;
         height: 80px;
@@ -777,8 +785,11 @@ body.zen-dashboard-body {
         height: 100%;
         cursor: pointer;
         background: none;
-        border: none;
-        padding: 0;
+        border: 2px solid transparent;
+        padding: 10px 0px;
+        border-radius: 7px;
+        margin: 4px 3px;
+        height: auto;
     }
 
     .mobile-nav-item i {
@@ -807,6 +818,13 @@ body.zen-dashboard-body {
         background-color: var(--brand-yellow);
         border-radius: 0 0 4px 4px;
     }
+
+    .mobile-nav-item[data-target="home"] { border-color: #E2E8F0; }
+    .mobile-nav-item[data-target="hacks"] { border-color: #E2E8F0; }
+    .mobile-nav-item[data-target="planner"] { border-color: #FCD34D; }
+    .mobile-nav-item[data-target="business"] { border-color: #6EE7B7; }
+    .mobile-nav-item[data-target="aveo"] { border-color: #C4B5FD; }
+    .mobile-nav-item[data-target="profile"] { border-color: #94A3B8; }
 }
 
 /* --- Mobile Elements (Hidden on Desktop) --- */
