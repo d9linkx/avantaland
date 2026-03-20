@@ -3110,7 +3110,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .master-action {
-    font-size: 1rem;
+    font-size: 1.3rem;
     color: var(--text-primary);
     margin-bottom: 1.5rem;
     line-height: 1.6;
@@ -3156,7 +3156,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Executor Card */
 .executor-card {
-    background: #FFFFFF;
+    background: #fff7d3;
     border-radius: 24px;
     padding: 1.5rem 2rem;
     margin-left: -4rem;
@@ -3180,10 +3180,11 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .executor-focus-badge {
     font-size: 0.7rem;
-    background: var(--brand-blue-light);
-    color: var(--brand-blue);
+    background: #fff184;
+    color: #64748B;
+    border: #008f58 solid 2px;
+    border-radius: 9px;
     padding: 4px 10px;
-    border-radius: 99px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -3197,8 +3198,8 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .executor-explanation {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+    font-size: 1.3rem;
+    color: #64748B;
     margin-top: 0;
     margin-bottom: 1.5rem;
     line-height: 1.5;

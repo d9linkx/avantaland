@@ -351,16 +351,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let motivation = "Clear these tasks to build momentum.";
         
         if (big3Tasks.length === 0) {
-            focusType = "Planning Mode";
+            focusType = "Plan Your Day";
             motivation = `Set your top 3 goals for today, tomorrow, or next week, ${firstName}. This will help you prioritize and execute better.`;
         } else if (taskTexts.match(/call|email|sell|close|\$|lead|prospect|client/)) {
-            focusType = "Revenue Focus";
+            focusType = "Focus on Your Revenue";
             motivation = `You're hunting today, ${firstName}. Prioritize the tasks that bring in cash.`;
         } else if (taskTexts.match(/build|fix|code|design|write|create|launch|develop/)) {
-            focusType = "Product Focus";
+            focusType = "Focus on Product";
             motivation = `Deep work mode. You are building the asset, ${firstName}.`;
         } else if (taskTexts.match(/plan|organize|meeting|review|hire|strategy/)) {
-            focusType = "Strategy Focus";
+            focusType = "Focus on your Strategy";
             motivation = `Setting the stage for scale. Keep it efficient, ${firstName}.`;
         }
 
