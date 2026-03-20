@@ -42,7 +42,7 @@ body.zen-dashboard-body {
 /* --- Left Sidebar (Hack Navigator) --- */
 .hack-navigator {
     background: var(--bg-surface);
-    border-right: 1px solid var(--border-color-soft);
+    border-right: 2px solid var(--border-color-soft);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -78,7 +78,7 @@ body.zen-dashboard-body {
     font-size: 0.95rem;
     text-decoration: none;
     transition: all 0.2s ease;
-    border: 1px solid transparent;
+    border: 2px solid transparent;
 }
 
 .nav-item:hover {
@@ -530,7 +530,7 @@ body.zen-dashboard-body {
 
 .widget-card {
     background: #FFFFFF;
-    border: 1px solid var(--border-color-soft);
+    border: 1px solid #9d9d9d;
     border-radius: 20px;
     padding: 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
@@ -3084,13 +3084,12 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Master Card */
 .master-card {
-    background: var(--brand-blue-light); /* Soft Electric Blue */
+    background: #d4fad5; /* Soft Electric Blue */
     border-radius: 28px;
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    border: 2px solid #797979a2;
     padding: 2rem;
     margin-left: -4rem;
     margin-right: -4rem;
-    box-shadow: 0 10px 40px rgba(0, 219, 135, 0.15); /* Soft Blue Glow */
     position: relative;
     overflow: hidden;
 }
@@ -3119,6 +3118,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .master-progress-container {
     background: rgba(255, 255, 255, 0.5);
+    border: #008f58 solid 1px;
     height: 8px;
     border-radius: 4px;
     margin-bottom: 1.5rem;
@@ -3135,11 +3135,11 @@ input:checked + .slider:before { transform: translateX(20px); }
 .btn-master-resume {
     background: var(--brand-blue);
     color: white;
-    border: none;
+    border: #797979 solid 2px;
     padding: 1rem 2rem;
     border-radius: 12px;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.125rem;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -3161,8 +3161,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     padding: 1.5rem 2rem;
     margin-left: -4rem;
     margin-right: -4rem;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    border: 2px solid rgba(0, 0, 0, 0.3);
 }
 
 .executor-header {
