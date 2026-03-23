@@ -528,9 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('nav-to-business').addEventListener('click', (e) => {
             e.preventDefault();
-            document.querySelectorAll('.sidebar-nav .nav-item').forEach(i => i.classList.remove('active'));
-            document.querySelector('.sidebar-nav .nav-item[data-target="business"]')?.classList.add('active');
-            renderBusinessDashboard();
+            showComingSoonModal('Business Dashboard');
         });
 
         const timerBtn = document.getElementById('btn-start-timer');
@@ -2400,10 +2398,18 @@ document.addEventListener('DOMContentLoaded', () => {
         navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
+                const target = item.dataset.target;
+
+                if (target === 'business') {
+                    showComingSoonModal('Business Dashboard');
+                    return;
+                } else if (target === 'aveo') {
+                    showComingSoonModal('Aveo 1 AI');
+                    return;
+                }
+
                 navItems.forEach(nav => nav.classList.remove('active'));
                 item.classList.add('active');
-                
-                const target = item.dataset.target;
                 
                 if (target === 'home') {
                     document.querySelectorAll('.hack-list-item.active').forEach(item => item.classList.remove('active'));
@@ -2416,10 +2422,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } else if (target === 'planner') {
                     renderPlanner();
-                } else if (target === 'business') {
-                    renderBusinessDashboard();
-                } else if (target === 'aveo') {
-                    toggleAveoDrawer(true);
                 } else if (target === 'profile') {
                     renderProfile();
                 }
@@ -2940,6 +2942,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const target = item.dataset.target;
                 
                 e.preventDefault();
+
+                if (target === 'business') {
+                    showComingSoonModal('Business Dashboard');
+                    return;
+                } else if (target === 'aveo') {
+                    showComingSoonModal('Aveo 1 AI');
+                    return;
+                }
+
                 setActiveNav(target);
 
                 if (target === 'hacks') {
@@ -2952,10 +2963,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderDashboardGrid();
                     } else if (target === 'planner') {
                         renderPlanner();
-                    } else if (target === 'business') {
-                        renderBusinessDashboard();
-                    } else if (target === 'aveo') {
-                        toggleAveoDrawer(true);
                     } else if (target === 'profile') {
                         renderProfile();
                     } else if (target === 'community') {
@@ -3244,6 +3251,31 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.querySelector('#confirm-logout').addEventListener('click', () => {
             window.location.href = 'onboardingdash.html';
         });
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) close();
+        });
+    }
+
+    // --- Helper: Coming Soon Modal ---
+    function showComingSoonModal(featureName) {
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'custom-modal-overlay active';
+        modalOverlay.innerHTML = `
+            <div class="custom-modal">
+                <div style="font-size: 3rem; color: var(--brand-blue); margin-bottom: 1rem;">
+                    <i class="ph-duotone ph-hourglass-high"></i>
+                </div>
+                <h3>Coming Soon</h3>
+                <p>The <strong>${featureName}</strong> feature is currently being built. Check back later!</p>
+                <div class="modal-actions">
+                    <button class="btn-modal btn-complete" style="width: 100%;">Got it</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modalOverlay);
+        
+        const close = () => modalOverlay.remove();
+        modalOverlay.querySelector('button').addEventListener('click', close);
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) close();
         });
