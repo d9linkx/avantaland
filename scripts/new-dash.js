@@ -2481,7 +2481,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         checklistContent = checklistEl.innerHTML;
                     }
 
-                    fullContentHTML = tempDiv.querySelector('#full-truth-content')?.innerHTML || '';
+                    // Robustly fetch full content using ID or class to ensure full text is displayed
+                    const fullContentEl = tempDiv.querySelector('#full-truth-content') || tempDiv.querySelector('.full-content');
+                    fullContentHTML = fullContentEl ? fullContentEl.innerHTML : '';
                 }
             } catch (e) {
                 console.warn(`Could not fetch truth${index + 1}.html`, e);
