@@ -404,9 +404,10 @@ body {
     margin: 28px 0;
     color: #fff;
     font-weight: 500;
-    font-size: 1.1rem; /* Make font slightly larger */
+    font-size: 3.1rem; /* Make font slightly larger */
     line-height: 1.6;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    
 }
 
 /* Color Variants */
@@ -415,7 +416,7 @@ body {
 }
 
 .quote-card.purple {
-    background: linear-gradient(135deg, #8b5cf6, #4c1d95);
+    background: linear-gradient(135deg, #8a5cf680, #4d1d9569);
 }
 
 .quote-card.green {
