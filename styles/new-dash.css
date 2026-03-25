@@ -4894,8 +4894,9 @@ input:checked + .slider:before { transform: translateX(20px); }
     padding: 20px;
     margin: 28px 0;
     color: #fff;
+    font-style: italic;
     font-weight: 500;
-    font-size: 1.1rem;
+    font-size: 3.1rem;
     line-height: 1.6;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
@@ -4905,7 +4906,9 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .content-wrapper .quote-card.purple {
-    background: linear-gradient(135deg, #8b5cf6, #4c1d95);
+    background: linear-gradient(135deg, #8a5cf64a, #9c5affa4);
+    border: 2px solid #9c5affa4;
+    padding: 48px; /* Slightly less padding to accommodate border */
 }
 
 .content-wrapper .quote-card.green {
@@ -4914,14 +4917,15 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .content-wrapper .quote-card p {
     color: #fff;
+    font-size: 2.5rem;
     margin: 0;
 }
 
 .content-wrapper .quote-card p.signature {
     text-align: right;
     font-style: italic;
-    font-size: 0.9em;
-    opacity: 0.8;
+    font-size: 2.5rem;
+    color: #e5e7eb; /* Light grey for signature */
     margin-top: 1rem;
     margin-bottom: 0;
 }
