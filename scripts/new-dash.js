@@ -2767,7 +2767,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </button>
             <button class="mobile-nav-item" data-target="hacks">
                 <i class="ph-duotone ph-list-dashes"></i>
-                <span>Hacks</span>
+                <span>Lessons</span>
             </button>
             <button class="mobile-nav-item" data-target="planner" id="mobile-nav-planner">
                 <i class="ph-duotone ph-calendar-check"></i>
@@ -2801,7 +2801,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                height: 30vh;
+                height: 60vh;
                 background: rgba(255, 255, 255, 0.9);
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
