@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>33 Brutal Lessons | Avantaland Academy</title>
+    <meta name="description" content="33 Brutal Lessons Successful Business Owners Wished They Knew Before Starting. A self-paced system to guide you from idea to launch.">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles/styles.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* Custom styles for 33lessons.html */
+        .pain-list li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        
+        .pain-list li::before {
+            content: '✖';
+            position: absolute;
+            left: 0;
+            color: #ef4444; /* Red for pain points */
+            font-weight: bold;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+        }
+
+        /* Circular Grid Layout for Changes Section */
+        .circle-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+
+        .impact-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .impact-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0;
+        }
+
+        .impact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-blue);
+        }
+
+        @media (min-width: 768px) {
+            .circle-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(3, auto);
+                gap: 1.5rem;
+                max-width: 900px;
+                margin: 3rem auto 0;
+            }
+
+            /* Positioning to form a circle-ish shape */
+            .impact-card:nth-child(1) { 
+                grid-column: 2 / 3; 
+                grid-row: 1; 
+                transform: translateY(20px);
+            }
+            .impact-card:nth-child(2) { 
+                grid-column: 1 / 2; 
+                grid-row: 2; 
+            }
+            .impact-card:nth-child(3) { 
+                grid-column: 3 / 4; 
+                grid-row: 2; 
+            }
+            .impact-card:nth-child(4) { 
+                grid-column: 1 / 2; 
+                grid-row: 3; 
+                margin-left: 2rem; /* Push in */
+            }
+            .impact-card:nth-child(5) { 
+                grid-column: 3 / 4; 
+                grid-row: 3; 
+                margin-right: 2rem; /* Push in */
+            }
+            
+            /* Center text alignment for the grid area generally */
+            .impact-card {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                min-height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero bg-light">
+            <div class="container text-center fade-in">
+                <h1 style="max-width: 1000px; margin: 0 auto 1.5rem;">33 Brutal Lessons Successful Business Owners Wished They Knew Before Starting</h1>
+                <p style="max-width: 800px; margin: 0 auto 2.5rem;">This is a self-paced system built around 33 simple, practical lessons that guide you from idea to launch, and from confusion to clarity. Whether you’re just starting, trying to launch, or struggling to grow, this shows you what to focus on, step by step.</p>
+                <a href="#join" class="btn btn-primary">Get the FREE Course</a>
+            </div>
+        </section>
+
+        <!-- The Real Reason -->
+        <section class="section-padding">
+            <div class="container">
+                <div class="grid-2" style="align-items: center;">
+                    <div class="fade-in">
+                        <img src="https://images.unsplash.com/photo-1537655780520-1e392ead81f2?auto=format&fit=crop&w=800&q=80" alt="Feeling Stuck">
+                    </div>
+                    <div class="fade-in">
+                        <h2>The real reason why you feel stuck</h2>
+                        <p>Starting or growing a business sounds simple… until you’re in it.</p>
+                        <p>You have ideas, but you’re not sure which one is worth pursuing. You try to move forward, but everything feels scattered. You watch videos, read threads, save posts… yet nothing connects.</p>
+                        <ul class="checklist">
+                            <li>One person says build an audience.</li>
+                            <li>Another says create an offer first.</li>
+                            <li>Someone else says just start selling.</li>
+                        </ul>
+                        <p>So you try a bit of everything. And end up making little to no real progress. The truth is, you’re trying your best, but you don’t have a clear path, or guide to show you how it's done.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gets Even Worse -->
+        <section class="section-padding bg-light">
+            <div class="container fade-in" style="max-width: 800px;">
+                <div class="text-center mb-1">
+                    <h2>And this is where it gets even worse</h2>
+                    <p>This is where most people stay stuck.</p>
+                </div>
+                <ul class="pain-list">
+                    <li>You keep second-guessing your decisions.</li>
+                    <li>You start things and don’t finish them.</li>
+                    <li>You feel like you’re always “almost there” but never actually moving forward.</li>
+                </ul>
+                <p class="mt-1">It gets frustrating, because deep down you know you’re capable of more, but you just don’t know what to focus on right now. And without that clarity, everything feels harder than it should be.</p>
+            </div>
+        </section>
+
+        <!-- Solution -->
+        <section class="section-padding">
+            <div class="container text-center fade-in">
+                <h2>This course fixes everything</h2>
+                <p class="mt-1">That’s exactly what this system fixes. Instead of throwing more information at you, it gives you structure.</p>
+                <div class="card" style="max-width: 800px; margin: 2rem auto; background: var(--text-main); color: white; border: none;">
+                    <p style="color: rgba(255,255,255,0.9); font-size: 1.25rem;">Each of these 33 simple yet brutal business lessons is focused on a real problem you’ll face while building and growing. These are 33 lessons successful business and product owners have learned the hard way and shared with you so you don't have to go through that same struggle.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="section-padding bg-light">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2>How it works</h2>
+                    <p>Once you sign up and sign in, you can access your personalized dashboard. Everything is designed to keep things simple and help you learn better, practice what you're learning, and get positive results.</p>
+                </div>
+
+                <!-- 1. Understanding your dashboard -->
+                <div class="grid-2" style="align-items: center; margin-bottom: 5rem;">
+                    <div class="fade-in">
+                        <i class="ph-duotone ph-layout feature-icon"></i>
+                        <h3>Understanding your dashboard</h3>
+                        <p>When you log in, you’ll see a message to <strong>“Continue from where you stopped”</strong>.</p>
+                        <p>You pick up exactly where you left off. You'll see the last lesson you took, the last things you practiced in that lesson, and the ones you haven't completed. You can also click on the “Lessons” menu to choose any other lesson that interests you.</p>
+                    </div>
+                    <div class="fade-in">
+                        <img src="https://images.unsplash.com/photo-1587614382346-4ec580e0859c?auto=format&fit=crop&w=800&q=80" alt="Dashboard Screenshot" style="border: 1px solid var(--border-color); box-shadow: var(--shadow-lg);">
+                    </div>
+                </div>
+
+                <!-- 2. Inside each lesson -->
+                <div class="grid-2" style="align-items: center; margin-bottom: 5rem;">
+                    <div class="fade-in">
+                        <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=800&q=80" alt="Lesson Screenshot" style="border: 1px solid var(--border-color); box-shadow: var(--shadow-lg);">
+                    </div>
+                    <div class="fade-in">
+                        <i class="ph-duotone ph-book-open-text feature-icon"></i>
+                        <h3>Inside each lesson</h3>
+                        <p>You choose how you want to learn:</p>
+                        <ul class="checklist" style="margin-top: 1rem;">
+                            <li><strong>Listen instead:</strong> Press play and listen to the audio recording without having to read the script.</li>
+                            <li><strong>Quick summary:</strong> Get the key idea in a short, clear format and move on to practice.</li>
+                            <li><strong>Read the full lesson:</strong> Go deeper with real explanations, examples, and insights so you understand what works and why.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 3. Apply what you're learning -->
+                <div class="grid-2" style="align-items: center; margin-bottom: 5rem;">
+                    <div class="fade-in">
+                        <i class="ph-duotone ph-check-circle feature-icon"></i>
+                        <h3>Apply what you're learning</h3>
+                        <p>Most courses give you information and leave you there. This one makes you act. Every lesson includes Action Tasks personalized to your needs. Simple things you must do to apply what you’ve just learned.</p>
+                        <p>If you’ve done it before, you tap on it to it off the list, and if you haven’t, you do it now and tick it off.</p>
+                        <p>Once you complete the action steps: <br><strong>👉 Click “Mark Lesson Complete”</strong><br> Then move on to the next lesson.</p>
+                    </div>
+                    <div class="fade-in">
+                        <img src="https://images.unsplash.com/photo-1559028006-44a3a5f49103?auto=format&fit=crop&w=800&q=80" alt="Action Tasks Screenshot" style="border: 1px solid var(--border-color); box-shadow: var(--shadow-lg);">
+                    </div>
+                </div>
+
+                <div class="grid-3 text-center fade-in">
+                    <div class="card" style="padding: 1.5rem;"><h4>No pressure.</h4></div>
+                    <div class="card" style="padding: 1.5rem;"><h4>No deadlines.</h4></div>
+                    <div class="card" style="padding: 1.5rem;"><h4>Progress at your own pace.</h4></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Changes -->
+        <section class="section-padding">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2>Changes you'll notice after this course</h2>
+                    <p>By the time you move through this, things won’t feel scattered anymore. You’ll have:</p>
+                </div>
+                
+                <div class="circle-grid fade-in">
+                    <div class="impact-card">
+                        <h3>A clear direction for your business</h3>
+                    </div>
+                    <div class="impact-card">
+                        <h3>A better understanding of what actually matters</h3>
+                    </div>
+                    <div class="impact-card">
+                        <h3>More confidence in your decisions</h3>
+                    </div>
+                    <div class="impact-card">
+                        <h3>A structured way to build forward</h3>
+                    </div>
+                    <div class="impact-card">
+                        <h3>Real progress you can track and improve on</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Who is this for -->
+        <section class="section-padding bg-light">
+            <div class="container fade-in" style="max-width: 800px;">
+                <div class="section-header">
+                    <h2>Who is this course for?</h2>
+                    <p>This is for you if:</p>
+                </div>
+                <div class="card">
+                    <ul class="checklist" style="font-size: 1.2rem;">
+                        <li>You want to start a business but don’t know where to begin</li>
+                        <li>You’ve started but feel stuck or unsure what to do next</li>
+                        <li>You’re trying to launch (or already launched) a product or service but nothing is working</li>
+                        <li>You feel overwhelmed by too much advice</li>
+                        <li>You want something simple, structured, and practical</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section id="join" class="cta-section">
+            <div class="container fade-in">
+                <h2>You don’t need more information. You need direction.</h2>
+                <p class="mt-1 mb-1">Start building and selling with clarity</p>
+                <div class="text-center mt-2">
+                    <a href="signup.html" class="btn btn-primary btn-primary-inverted">Get the FREE course</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <script src="scripts/script.js"></script>
+</body>
+</html>
