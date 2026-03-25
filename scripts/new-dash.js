@@ -2533,7 +2533,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="card-title">Get the Full Gist</span>
                         <div class="card-caret"><i class="ph-bold ph-caret-down"></i></div>
                     </summary>
-                    <div class="card-content" id="full-truth-container">${fullContentHTML}</div>
+                    <div class="card-content" id="full-truth-container"><div class="content-wrapper">${fullContentHTML}</div></div>
                 </details>
 
                 <!-- Bottom Right: Tasks -->

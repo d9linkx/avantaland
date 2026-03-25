@@ -323,3 +323,124 @@ body {
         padding-left: 1.5rem;
     }
 }
+
+.summary-card {
+    background: #f8f9fb;
+    border: 1px solid #e6e8ec;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin: 24px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.summary-card p {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.6;
+}
+
+.summary-card ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+}
+
+.summary-card li {
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+/* Subtle hover effect (desktop only) */
+@media (hover: hover) {
+    .summary-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        transition: all 0.2s ease;
+    }
+}
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+    .summary-card {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .summary-card p,
+    .summary-card li {
+        font-size: 14.5px;
+    }
+}
+
+/* SUMMARY CARDS */
+.summary-card {
+    background: #f8f9fb;
+    border: 1px solid #e6e8ec;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 24px 0;
+}
+
+.card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+/* QUOTE CARDS (image-style feel) */
+.quote-card {
+    border-radius: 14px;
+    padding: 20px;
+    margin: 28px 0;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1.1rem; /* Make font slightly larger */
+    line-height: 1.6;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+/* Color Variants */
+.quote-card.blue {
+    background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+}
+
+.quote-card.purple {
+    background: linear-gradient(135deg, #8b5cf6, #4c1d95);
+}
+
+.quote-card.green {
+    background: linear-gradient(135deg, #10b981, #065f46);
+}
+
+/* Ensure text inside quote card is white and styled correctly */
+.quote-card p {
+    color: #fff;
+    margin: 0;
+}
+
+.content-wrapper .quote-card ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.content-wrapper .quote-card li {
+    color: #fff;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .quote-card {
+        padding: 16px;
+        font-size: 14.5px;
+    }
+}
