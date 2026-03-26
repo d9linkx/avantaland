@@ -13,7 +13,16 @@
     --transition: all 0.3s ease;
     --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     --accent-blue: #00db87;
-    --accent-yellow: #00b771;
+    --accent-yellow: #00b771; /* Existing green-yellow, kept for compatibility */
+
+    /* Brutalist Theme Colors (derived from new-dash.css and brutalist styles) */
+    --brand-blue: #00db87; /* Matches --accent-blue */
+    --brand-blue-light: #e6fcf2;
+    --brand-blue-dark: #00b771; /* Darker green, used for master-title, btn-open-planner:hover */
+    --brand-yellow-actual: #e1c600; /* The specific yellow used in executor-focus-badge */
+    --brand-yellow-light: #fef9e6; /* Lighter yellow for backgrounds, adjusted to complement brand-yellow-actual */
+    --brand-yellow-dark: #008f58; /* Darker green, used for borders/buttons, btn-open-planner */
+    --text-primary: var(--text-main); /* Mapping for consistency with dashboard styles */
 }
 
 * {
@@ -46,7 +55,7 @@ img {
     max-width: 100%;
     height: auto;
     display: block;
-    border-radius: 12px;
+    border-radius: px;
 }
 
 h1 { font-size: clamp(3rem, 8vw, 5rem); margin-bottom: 1.5rem; }
@@ -464,7 +473,7 @@ ul { list-style: none; }
 /* Base card style for testimonials, info boxes, etc. */
 .card {
     background: #e9e9e9;
-    border-radius: 1px 100px 30px 1px;
+    border-radius: 1px 30px 1px 10px;
     padding: 1.5rem 2rem;
     border: 4px solid rgba(0, 0, 0, 0.436);
     display: flex;
@@ -482,7 +491,7 @@ ul { list-style: none; }
 .course-card {
     background: var(--lab-surface, #fff);
     border: 1px solid var(--border-color);
-    border-radius: 20px;
+    border-radius: 1px;
     transition: var(--transition);
     display: flex;
     flex-direction: column;
@@ -627,7 +636,7 @@ ul { list-style: none; }
 .master-title {
     font-size: 1.75rem;
     font-weight: 800;
-    color: #008f58; /* brand-blue-dark */
+    color: var(--brand-blue-dark); /* Now correctly references the defined variable */
     margin: 0 0 0.5rem 0;
 }
 
@@ -647,7 +656,7 @@ ul { list-style: none; }
 
 .executor-focus-badge {
     font-size: 1.2rem;
-    background: #e1c600;
+    background: var(--brand-yellow-actual); /* Now correctly references the defined variable */
     color: #333;
     border: #008f58 solid 2px;
     border-radius: 1px 100px 30px 1px;
@@ -661,7 +670,7 @@ ul { list-style: none; }
 .btn-open-planner {
     background: none;
     border: none;
-    color: #008f58;
+    color: var(--brand-yellow-dark); /* Now correctly references the defined variable */
     font-weight: 600;
     font-size: 1.2rem;
     font-style: italic;
@@ -691,11 +700,23 @@ ul { list-style: none; }
 
     .master-title { font-size: 2rem; }
 }
+
+/* New H2 Keyword Highlight */
+.h2-highlight {
+    display: inline-block;
+    background: var(--brand-yellow-actual); /* Now correctly references the defined variable */
+    color: #333; /* Dark text for contrast */
+    border: var(--brand-yellow-dark) solid 2px; /* Now correctly references the defined variable */
+    border-radius: 1px 10px 1px 1px; /* Slightly brutal rounded corners */
+    padding: 0.2em 0.6em;
+    line-height: 1.2; /* Ensure it doesn't break line height of H2 */
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
 /* Blog Card Styles */
 .blog-card {
     background: var(--lab-surface, #fff);
     border: 1px solid var(--border-color);
-    border-radius: 20px;
+    border-radius: 1px;
     transition: var(--transition);
     display: flex;
     flex-direction: column;
@@ -781,6 +802,7 @@ ul { list-style: none; }
 
 /* --- Stats Bar --- */
 .stats-bar {
+    background: #e9e9e9;
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
     padding: 40px 0;
@@ -788,15 +810,15 @@ ul { list-style: none; }
 
 .stat-item {
     text-align: center;
-    background-color: var(--accent-blue);
+    background-color: #008f58;
     color: #fff;
     padding: 2rem 1rem;
-    border-radius: 16px;
+    border-radius: 1px;
     transition: var(--transition);
 }
 
 .stat-item:hover {
-    background-color: #000;
+    background-color: #01774a;
     transform: translateY(-5px);
 }
 
