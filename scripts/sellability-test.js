@@ -239,8 +239,8 @@ const switchScreen = (screenName) => {
         const greeting = firstName ? `Dear ${firstName},` : 'Hello,';
 
         introScreen.innerHTML = `
-            <div class="container intro-container">
-                <div class="intro-card">
+            <div class="container intro-container executor-card">
+                <div class="intro-card-content">
                     <div class="intro-header">
                         <h2>${greeting}</h2>
                         <p>Think about the solution or business idea you're considering starting or already started.</p>
