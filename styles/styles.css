@@ -1084,12 +1084,20 @@ ul { list-style: none; }
 /* --- CTA Section --- */
 .cta-section {
     text-align: center;
-    padding: 100px 0;
-    background: var(--text-main);
+    border-top: 1px solid  var(--border-color);
+    border-bottom: 1px solid  var(--border-color);
 }
 
-.cta-section h2, .cta-section p { color: #fff; }
-.cta-section p { opacity: 0.8; }
+.cta-btns {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.cta-btns .btn {
+    min-width: 220px;
+}
 
 .signup-form {
     margin-top: 2rem;
@@ -1298,6 +1306,12 @@ footer {
     
     .btn-secondary { margin-left: 0; }
     .hero-btns .btn { width: 100%; }
+
+    .cta-btns {
+        flex-direction: column;
+        width: 100%;
+    }
+    .cta-btns .btn { width: 100%; }
 
     .btn-whatsapp {
         padding: 16px 24px;
