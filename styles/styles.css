@@ -58,7 +58,7 @@ img {
     border-radius: px;
 }
 
-h1 { font-size: clamp(3rem, 8vw, 5rem); margin-bottom: 1.5rem; }
+h1 { font-size: clamp(3rem, 6vw, 4rem); margin-bottom: 1.5rem; }
 h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; }
 h3 { font-size: clamp(1.5rem, 4vw, 2.5rem); margin-bottom: 1rem; }
 p { color: var(--text-light); font-size: 1.1rem; margin-bottom: 1.5rem; }
@@ -351,7 +351,7 @@ ul { list-style: none; }
 }
 
 .hero-text h1 {
-    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-size: clamp(3rem, 5vw, 4.5rem);
     line-height: 1.1;
     margin-bottom: 1.5rem;
     letter-spacing: -0.02em;
