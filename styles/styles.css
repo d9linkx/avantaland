@@ -470,6 +470,233 @@ ul { list-style: none; }
     margin-top: 3rem;
 }
 
+/* --- Course CTA Cards --- */
+.course-cta-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.course-cta-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-radius: 16px;
+    text-decoration: none;
+    transition: var(--transition-bounce);
+    border: 2px solid transparent;
+}
+
+.course-cta-card h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.course-cta-card i {
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+}
+
+.course-cta-card:hover {
+    transform: translateY(-3px);
+}
+
+.course-cta-card:hover i {
+    transform: translateX(5px);
+}
+
+/* Color Palette */
+.card-copywriting { border-color: #3b82f6; background-color: #eff6ff; }
+.card-ads { border-color: #10b981; background-color: #ecfdf5; }
+.card-trading { border-color: #f59e0b; background-color: #fffbeb; }
+.card-youtube { border-color: #ef4444; background-color: #fef2f2; }
+.card-entrepreneur { border-color: #8b5cf6; background-color: #f5f3ff; }
+.card-uiux { border-color: #ec4899; background-color: #fdf2f8; }
+
+@media (min-width: 1024px) {
+    .course-cta-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+    .course-cta-card {
+        aspect-ratio: 1 / 1;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 2.5rem;
+    }
+    .course-cta-card i {
+        align-self: flex-end;
+        font-size: 2rem;
+    }
+    .course-cta-card h4 {
+        font-size: 1.75rem;
+    }
+}
+
+/* --- How It Works (Accordion Cards) --- */
+.how-it-works-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.how-step-card {
+    background: #ffffff;
+    border: 2px solid var(--border-color-soft, #d4d4d4);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.how-step-card summary {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.how-step-card:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.how-step-card summary::-webkit-details-marker { display: none; }
+
+.how-step-card .step-header-info {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.how-step-card .step-badge {
+    background: #f8fafc;
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    font-weight: 800;
+    font-size: 0.7rem;
+    padding: 8px 16px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.how-step-card h4 { margin: 0; font-size: 1.1rem; color: var(--text-main); }
+.how-step-card summary i { font-size: 1.25rem; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: var(--text-light); }
+
+.how-step-card[open] { 
+    border-color: var(--accent-blue); 
+    background: linear-gradient(to bottom right, #ffffff, #f0fff4);
+    box-shadow: 0 20px 25px -5px rgba(0, 219, 135, 0.1); 
+}
+
+.how-step-card[open] .step-badge {
+    background: var(--accent-blue);
+    color: white;
+    border-color: var(--accent-blue);
+}
+
+.how-step-card[open] summary i { transform: rotate(180deg); color: var(--accent-blue); }
+
+.how-step-card .step-body {
+    padding: 0 2rem 2rem 5rem;
+    animation: slideDown 0.4s ease-out;
+}
+
+.how-step-card .step-body p { margin: 0; font-size: 1.05rem; line-height: 1.6; }
+
+@media (max-width: 768px) {
+    .how-step-card .step-header-info { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    .how-step-card .step-body { padding: 0 1.5rem 1.5rem 1.5rem; }
+    .how-step-card h4 { font-size: 1rem; }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Benefits Section Cards --- */
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.benefit-card {
+    background: #f7f7f7;
+    padding: 2rem;
+    border-radius: 1px;
+    border: 2px solid var(--border-color);
+    transition: var(--transition-bounce);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+}
+
+.benefit-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent-blue);
+    box-shadow: var(--shadow-lg);
+}
+
+.benefit-icon {
+    width: 86px;
+    height: 56px;
+    background: var(--brand-blue-light);
+    color: #008f58;
+    border: #cdcdcd solid 2px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.benefit-tag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #008f58;
+    background: var(--brand-blue-light);
+    padding: 4px 12px;
+    border: #008f58 solid 1px;
+    border-radius: 100px;
+    width: fit-content;
+    margin-bottom: 1rem;
+}
+
+.benefit-tag.after {
+    color: #e6fcf2;
+    background: #008f58;
+}
+
+.benefit-card h3 { font-size: 1.25rem; margin-bottom: 0.75rem; line-height: 1.3; color: var(--text-main); }
+.benefit-card p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; margin-bottom: 0; }
+
+@media (min-width: 768px) {
+    .benefits-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+}
+
+@media (min-width: 1024px) {
+    .benefits-grid { grid-template-columns: repeat(3, 1fr); }
+    .benefit-card { padding: 2.5rem; }
+}
+
 /* Base card style for testimonials, info boxes, etc. */
 .card {
     background: #e9e9e9;
