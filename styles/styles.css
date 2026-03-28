@@ -341,18 +341,24 @@ ul { list-style: none; }
     overflow: hidden;
 }
 
-.hero-content { 
+.glass-card { 
     position: relative; 
     z-index: 2; 
     background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: #008f58 solid 1px;
     border-radius: 48px;
     padding: 5rem 4rem;
     box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.08);
     margin: 0 auto;
     width: 100%;
+}
+
+/* Utility for sections containing glass cards and background blobs */
+.glass-section {
+    position: relative;
+    overflow: hidden;
 }
 
 .hero-grid-layout {
@@ -1257,7 +1263,7 @@ footer {
     .hero-grid-layout, .contact-grid, .grid-testimonials { grid-template-columns: 1fr; gap: 2rem; }
     
     .hero { text-align: center; margin-top: -85px; padding-bottom: 30px; }
-    .hero-content {
+    .glass-card {
         padding: 2.5rem 1.25rem;
         border: #008f58 solid 1px;
         border-radius: 32px;
