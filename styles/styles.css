@@ -777,6 +777,74 @@ ul { list-style: none; }
     margin-bottom: 0;
 }
 
+/* New styles for blog author in hero section */
+.blog-author-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 1.5rem; /* Adjust spacing as needed */
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-blue);
+    box-shadow: var(--shadow-sm);
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.author-name {
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 1.1rem;
+}
+
+.author-linkedin {
+    color: var(--text-light);
+    font-size: 1.2rem;
+    transition: var(--transition);
+}
+
+.author-linkedin:hover {
+    color: var(--accent-blue);
+    transform: scale(1.1);
+}
+
+/* Responsive adjustments for the author block */
+@media (max-width: 768px) {
+    .blog-author-hero {
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 1rem;
+    }
+
+    .author-info {
+        flex-direction: row; /* Keep name and LinkedIn inline */
+        gap: 6px;
+    }
+
+    .author-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .author-name {
+        font-size: 1rem;
+    }
+
+    .author-linkedin {
+        font-size: 1.1rem;
+    }
+}
 .course-card:hover img {
     transform: scale(1.05);
 }
