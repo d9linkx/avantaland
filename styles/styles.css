@@ -43,6 +43,10 @@ body {
     overflow-x: hidden;
 }
 
+main {
+    overflow-x: hidden;
+}
+
 /* --- Typography --- */
 h1, h2, h3, h4, h5 {
     font-weight: 800;
@@ -58,7 +62,6 @@ img {
     border-radius: px;
 }
 
-h1 { font-size: clamp(3rem, 6vw, 4rem); margin-bottom: 1.5rem; }
 h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; }
 h3 { font-size: clamp(1.5rem, 4vw, 2.5rem); margin-bottom: 1rem; }
 p { color: var(--text-light); font-size: 1.1rem; margin-bottom: 1.5rem; }
@@ -379,7 +382,7 @@ ul { list-style: none; }
     .hero {  padding-top: 160px; }
 
     .hero-text h1 {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
         margin-bottom: 1rem;
     }
 }
@@ -1292,16 +1295,6 @@ footer {
     .hero-social-proof { justify-content: center; flex-direction: column; gap: 0.5rem; }
     .hero-main-img { transform: rotate(0deg); margin-top: 2rem; }
     .floating-card { left: 50%; transform: translateX(-50%); bottom: -20px; width: 90%; animation: none; }
-
-    .hero-text h1 {
-        font-size: clamp(2.2rem, 7vw, 2.8rem);
-        line-height: 1.1;
-        margin-bottom: 1rem;
-    }
-    .hero-text p {
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-    }
     
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
     
