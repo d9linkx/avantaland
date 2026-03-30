@@ -1325,3 +1325,246 @@ footer {
         box-shadow: 0 10px 20px -5px rgba(37, 211, 102, 0.4);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+/* ===============================
+   SECTION FLOW IMPROVEMENTS
+=============================== */
+
+/* Make text feel like conversation, not blocks */
+.section-header p {
+    font-size: 1.15rem;
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+}
+
+/* Add breathing room between paragraphs */
+.section-header p + p {
+    margin-top: 0.5rem;
+}
+
+/* Slightly wider reading comfort on large screens */
+.section-header {
+    max-width: 760px;
+}
+
+/* ===============================
+   EXECUTOR CARD (STEP CARDS)
+=============================== */
+
+.executor-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.executor-explanation {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+/* Better spacing inside step cards */
+.executor-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Fix cramped header */
+.executor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* ===============================
+   MASTER CARD (STEP 3 + DASHBOARD)
+=============================== */
+
+.master-card p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.master-card .text-center p {
+    font-size: 0.95rem;
+}
+
+/* ===============================
+   CHECKLIST IMPROVEMENT
+=============================== */
+
+.checklist li {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ===============================
+   GRID RESPONSIVENESS FIXES
+=============================== */
+
+/* Tablet optimization */
+@media (max-width: 1024px) {
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-grid-layout {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+}
+
+/* ===============================
+   MOBILE OPTIMIZATION (IMPORTANT)
+=============================== */
+
+@media (max-width: 768px) {
+
+    /* Improve section spacing */
+    .section-padding {
+        padding: 3rem 0;
+    }
+
+    /* Make text feel readable on mobile */
+    .section-header {
+        margin-bottom: 2rem;
+        padding: 0 10px;
+    }
+
+    .section-header p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    /* Fix cards stacking too tightly */
+    .grid-2,
+    .grid-3 {
+        gap: 1.5rem;
+    }
+
+    /* Improve executor cards */
+    .executor-card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .executor-card h4 {
+        font-size: 1.15rem;
+    }
+
+    /* Make Step 3 icons cleaner */
+    .grid-3-mobile-compact {
+        gap: 1.25rem;
+    }
+
+    /* Dashboard section fix */
+    .hero-grid-layout {
+        gap: 2rem;
+    }
+
+    /* Improve checklist readability */
+    .checklist li {
+        font-size: 1rem;
+        padding-left: 1.8rem;
+    }
+
+    /* Reduce oversized highlight */
+    .h2-highlight {
+        padding: 0.15em 0.4em;
+        font-size: 0.9em;
+    }
+}
+
+/* ===============================
+   SMALL MOBILE (≤480px)
+=============================== */
+
+@media (max-width: 480px) {
+
+    .section-header h2 {
+        font-size: 1.6rem;
+        line-height: 1.2;
+    }
+
+    .section-header p {
+        font-size: 1rem;
+    }
+
+    .executor-focus-badge {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    .master-title {
+        font-size: 1.5rem;
+    }
+
+    .master-action {
+        font-size: 1rem;
+    }
+}
+
+/* ===============================
+   LARGE SCREEN POLISH (DESKTOP+)
+=============================== */
+
+@media (min-width: 1280px) {
+
+    .section-padding {
+        padding: 120px 0;
+    }
+
+    .section-header p {
+        font-size: 1.2rem;
+    }
+
+    .executor-explanation {
+        font-size: 1.1rem;
+    }
+}
+
+/* ===============================
+   MICRO-INTERACTIONS (SUBTLE UX BOOST)
+=============================== */
+
+/* Smooth hover lift */
+.executor-card,
+.master-card,
+.card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.executor-card:hover,
+.master-card:hover,
+.card:hover {
+    transform: translateY(-6px);
+}
+
+/* Progress bar animation */
+.master-progress-bar {
+    transition: width 1s ease-in-out;
+}
+
+/* ===============================
+   READABILITY BOOST (VERY IMPORTANT)
+=============================== */
+
+/* Limit long line length */
+.container {
+    max-width: 1100px;
+}
+
+/* Improve paragraph rhythm globally */
+p {
+    line-height: 1.75;
+}
