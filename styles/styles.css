@@ -349,7 +349,7 @@ ul { list-style: none; }
     -webkit-backdrop-filter: blur(20px);
     border: #008f58 solid 1px;
     border-radius: 48px;
-    padding: 5rem 4rem;
+    padding: 2rem 2rem;
     box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.08);
     margin: 0 auto;
     width: 100%;
