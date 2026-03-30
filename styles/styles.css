@@ -62,9 +62,9 @@ img {
     border-radius: px;
 }
 
-h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; }
-h3 { font-size: clamp(1.5rem, 4vw, 2.5rem); margin-bottom: 1rem; }
-p { color: var(--text-light); font-size: 1.1rem; margin-bottom: 1.5rem; }
+h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: 1rem; }
+h3 { font-size: clamp(1.35rem, 3.5vw, 2rem); margin-bottom: 1rem; }
+p { color: var(--text-light); font-size: 1rem; margin-bottom: 1.5rem; }
 
 a { text-decoration: none; color: inherit; transition: var(--transition); }
 ul { list-style: none; }
@@ -373,7 +373,7 @@ ul { list-style: none; }
 
 /* Default for desktop */
 .hero-text h1 {
-    font-size: 3rem;
+    font-size: 2.75rem;
 }
 
 /* For screens smaller than 768px (Tablets/Phones) */
@@ -382,7 +382,7 @@ ul { list-style: none; }
     .hero {  padding-top: 160px; }
 
     .hero-text h1 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         margin-bottom: 1rem;
     }
 }
@@ -1274,7 +1274,7 @@ footer {
     .desktop-nav, .nav-actions .btn { display: none; }
     .mobile-menu-btn { display: flex; }
     
-    h1 { font-size: clamp(2.2rem, 5vw, 2.8rem); }
+    h1 { font-size: clamp(2rem, 5vw, 2.5rem); }
     h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
     p { font-size: 1rem; }
     
