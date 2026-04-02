@@ -8,6 +8,91 @@
     <link rel="icon" type="image/png" href="images/15.png" sizes="100x100">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* --- Curriculum Grid & Accordion Logic --- */
+        .curriculum-grid { margin-top: 3rem; }
+        .mobile-only-icon { display: none; }
+
+        @media (min-width: 1025px) {
+            .curriculum-grid {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 1rem;
+                justify-content: center;
+            }
+            .curriculum-grid .card {
+                padding: 1.5rem 1rem !important;
+                cursor: default;
+            }
+            .curriculum-grid .card summary {
+                list-style: none;
+                pointer-events: none;
+            }
+            .curriculum-grid .card summary::-webkit-details-marker { display: none; }
+            .curriculum-grid .card h4 { font-size: 1.1rem; min-height: 3em; display: flex; align-items: center; }
+        }
+
+        @media (max-width: 1024px) {
+            .curriculum-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .curriculum-grid .card {
+                padding: 0 !important;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+            .curriculum-grid .card summary {
+                padding: 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                cursor: pointer;
+                list-style: none;
+                user-select: none;
+            }
+            .curriculum-grid .card summary::-webkit-details-marker { display: none; }
+            .curriculum-grid .card .card-body {
+                padding: 0 1.5rem 1.5rem;
+                border-top: 1px solid rgba(0,0,0,0.05);
+                padding-top: 1.5rem;
+            }
+            .mobile-only-icon { 
+                display: block; 
+                font-size: 1.25rem; 
+                transition: transform 0.3s ease;
+            }
+            .curriculum-grid .card[open] .mobile-only-icon { transform: rotate(180deg); }
+        }
+
+        /* --- Who is it for Styling --- */
+        .who-is-for-section {
+            background-color: #dbe3e0;
+            border: #5a5a5a 1px solid;
+            border-radius: 60px;
+            margin: 0 15px;
+        }
+        .who-is-for-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .who-card {
+            background: #fff !important;
+            border: 1px solid rgb(86, 86, 86) !important;
+            border-radius: 24px !important;
+            padding: 2.5rem 2rem !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 219, 135, 0.1) !important;
+            transition: var(--transition-bounce) !important;
+        }
+        .who-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--brand-blue) !important;
+            box-shadow: 0 20px 40px -10px rgba(0, 219, 135, 0.2) !important;
+        }
+        .who-card h4 { color: #5a5a5a; margin-bottom: 1rem; }
+    </style>
 </head>
 <body>
     <div id="header-placeholder"></div>
@@ -16,11 +101,21 @@
         <section class="hero">
             <div class="container glass-card hero-grid-layout">
                 <div class="hero-text">
-                    <p class="benefit-tag">Passive Income</p>
-                    <h1>Build a <span class="text-gradient">Faceless YouTube</span> Empire</h1>
+                    <h1>Build a <span class="text-gradient">YouTube Automation</span> Empire</h1>
                     <p>Create channels that generate income streams while you sleep—without ever showing your face, using a camera, or recording your voice.</p>
-                    <div class="hero-btns">
-                        <a href="enroll.html?course=youtube" class="btn btn-primary">Enroll Now</a>
+                    
+                    <div class="hero-social-proof mb-1" style="justify-content: flex-start;">
+                        <div class="avatars">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Creator">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" alt="Creator">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Creator">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Creator">
+                        </div>
+                        <div class="social-text">Join <span>1,200+</span> automation experts</div>
+                    </div>
+
+                    <div class="hero-btns mt-2">
+                        <a href="enroll.html?course=youtube" class="btn btn-primary">Start Your Channel</a>
                         <a href="#curriculum" class="btn btn-secondary">View Curriculum</a>
                     </div>
                 </div>
@@ -38,27 +133,161 @@
             <div class="hero-background-element"></div>
         </section>
 
+        <section class="section-padding who-is-for-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Who is this <span class="text-gradient">course for?</span></h2>
+                    <p>(Hint: If you recognize yourself in any of these, you have the "YouTube DNA.")</p>
+                </div>
+                <div class="who-is-for-grid">
+                    <div class="card who-card">
+                        <h4>The Camera-Shy Creator</h4>
+                        <p>You have great ideas but hate the spotlight. You want to build a brand without ever showing your face or revealing your identity.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The Efficiency Junkie</h4>
+                        <p>You don't want to spend 20 hours editing. You want to learn how to use AI and automated workflows to produce high-quality content in minutes.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The Side-Hustle Hunter</h4>
+                        <p>You have a 9-to-5 but want a digital asset that works for you while you sleep. You're looking for a scalable source of passive income.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The Data-Driven Strategist</h4>
+                        <p>You love numbers and patterns. You see YouTube as a giant puzzle where keywords and algorithm triggers lead to massive views.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The AI Early Adopter</h4>
+                        <p>You're fascinated by tools like ChatGPT and Midjourney. You want to monetize these skills by building a fully AI-powered content empire.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The Digital Nomad</h4>
+                        <p>You want a "portable" income. A YouTube channel pays you in USD no matter where you are in the world—all you need is a laptop.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="curriculum" class="section-padding bg-light glass-section">
             <div class="container glass-card">
                 <div class="section-header">
-                    <h2>The Automation Blueprint</h2>
-                    <span class="executor-focus-badge mb-1">Work Smarter, Not Harder</span>
+                    <h2>The Phased Empire Blueprint</h2>
+                    <span class="executor-focus-badge mb-1">From Zero to Monetized</span>
                 </div>
-                <div class="grid-3">
-                    <div class="card">
-                        <div class="floating-icon mb-1"><i class="ph ph-magnifying-glass"></i></div>
-                        <h4>Viral Niche Research</h4>
-                        <p>How to identify low-competition, high-CPM niches that are ready to explode.</p>
+                <div class="curriculum-grid">
+                    <details class="card" name="curriculum-phases" open>
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 1</span>
+                                <h4>Niche & Profit Logic</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>Identify the gold mines before you start mining.</p>
+                            <ul class="checklist">
+                                <li><strong>High-CPM Research:</strong> Finding niches that pay $20+ per 1k views.</li>
+                                <li><strong>Competitor Audits:</strong> Stealing what works, ignoring what doesn't.</li>
+                                <li><strong>Brand Identity:</strong> Crafting a channel name and logo that stick.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="card" name="curriculum-phases">
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 2</span>
+                                <h4>The AI Content Stack</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>Master the tools that replace an entire production team.</p>
+                            <ul class="checklist">
+                                <li><strong>Script Automation:</strong> Writing viral scripts with AI precision.</li>
+                                <li><strong>Voice Selection:</strong> Human-sounding VO tools that bypass detectors.</li>
+                                <li><strong>AI Editing:</strong> Generating visuals and assembling videos on autopilot.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="card" name="curriculum-phases">
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 3</span>
+                                <h4>Click-Through Formula</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>Mastering the two most important factors: Thumbnails & Titles.</p>
+                            <ul class="checklist">
+                                <li><strong>Visual Psychology:</strong> Design tricks that force the click.</li>
+                                <li><strong>The Hook Theory:</strong> Retaining 70%+ of viewers in the first 30 seconds.</li>
+                                <li><strong>A/B Testing:</strong> Using data to swap low-performing covers.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="card" name="curriculum-phases">
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 4</span>
+                                <h4>Algorithm Hacking</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>How to trigger the "Suggested Video" surge.</p>
+                            <ul class="checklist">
+                                <li><strong>SEO Mastery:</strong> Keywords, tags, and hidden metadata secrets.</li>
+                                <li><strong>Velocity Strategy:</strong> How to get 10k views in the first 24 hours.</li>
+                                <li><strong>Community Tab:</strong> Engaging your fans to boost reach.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="card" name="curriculum-phases">
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 5</span>
+                                <h4>The Multiplier Effect</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>Scaling from one channel to a network.</p>
+                            <ul class="checklist">
+                                <li><strong>Hiring Blueprints:</strong> Outsourcing the work for $5/video.</li>
+                                <li><strong>Triple Monetization:</strong> Affiliates & Sponsorships beyond AdSense.</li>
+                                <li><strong>Asset Exit:</strong> How to sell a channel for 24x its monthly profit.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding glass-section">
+            <div class="container">
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <h3>How you'll learn</h3>
+                        <ul class="checklist">
+                            <li><strong>LIVE Lab Demonstrations:</strong> Watch a channel being built from scratch.</li>
+                            <li><strong>Tool Mastery:</strong> Get the exact AI prompts and editing templates we use.</li>
+                            <li><strong>Direct Feedback:</strong> Get your thumbnails and niches audited by mentors.</li>
+                            <li><strong>The Inner Circle:</strong> Network with other high-earning channel owners.</li>
+                        </ul>
                     </div>
-                    <div class="card">
-                        <div class="floating-icon mb-1"><i class="ph ph-robot"></i></div>
-                        <h4>AI Content Stack</h4>
-                        <p>Master the tools to automate scriptwriting, voiceovers, and video editing.</p>
-                    </div>
-                    <div class="card">
-                        <div class="floating-icon mb-1"><i class="ph ph-rocket-launch"></i></div>
-                        <h4>Algorithm Mastery</h4>
-                        <p>The SEO and thumbnail strategies required to get your first 100,000 views.</p>
+                    <div class="glass-card">
+                        <h3>Tools you will need</h3>
+                        <ul class="checklist">
+                            <li><strong>A Laptop:</strong> Essential for managing your studio and tools.</li>
+                            <li><strong>Reliable Internet:</strong> For uploading high-res content.</li>
+                            <li><strong>The Automation Stack:</strong> We'll provide links to our recommended AI suite.</li>
+                            <li><strong>Persistence:</strong> The algorithm rewards consistency over everything.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -91,18 +320,56 @@
         </section>
 
         <section class="section-padding bg-light glass-section">
-            <div class="container glass-card fade-in text-center" style="max-width: 900px;">
-                <h2>Your Passive Empire Starts Here</h2>
-                <p>Join the YouTube Automation Lab and launch your first channel this month.</p>
+            <div class="container" style="max-width: 600px;">
+                <div class="section-header">
+                    <h2>Tuition & Fees</h2>
+                    <p>Unlock the secrets to passive YouTube income.</p>
+                </div>
+                <div class="card text-center" style="border-color: var(--accent-blue); background: var(--brand-blue-light);">
+                    <span class="executor-focus-badge mb-1">Automation Lab</span>
+                    <h3>₦30,000</h3>
+                    <p><strong>1 Month</strong> intensive training + <strong>Mentorship</strong>. Everything you need to launch and scale.</p>
+                    <a href="enroll.html?course=youtube" class="btn btn-primary" style="width: 100%;">Enroll Now</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding bg-light glass-section">
+            <div class="container glass-card fade-in text-center" style="max-width: 700px;">
+                <h2>Ready to build your asset?</h2>
+                <p>Join the YouTube Automation Lab and start earning passively.</p>
                 <div class="cta-btns mt-3">
-                    <a href="enroll.html?course=youtube" class="btn btn-primary">Join the Academy</a>
-                    <a href="contact.html" class="btn btn-secondary">Speak to an Advisor</a>
+                    <a href="enroll.html?course=youtube" class="btn btn-primary">Enroll in YouTube Automation</a>
+                    <a href="contact.html" class="btn btn-secondary">Ask a Question</a>
                 </div>
             </div>
         </section>
     </main>
 
+    <div class="mobile-enroll-bar">
+        <a href="enroll.html?course=youtube" class="btn btn-primary">Enroll Now</a>
+    </div>
+
     <div id="footer-placeholder"></div>
     <script src="scripts/script.js"></script>
+    <script>
+        // Ensure all curriculum phases stay open on desktop
+        const curriculumGrid = document.querySelector('.curriculum-grid');
+        const phases = curriculumGrid.querySelectorAll('details');
+        
+        const handlePhases = () => {
+            if (window.innerWidth > 1024) {
+                phases.forEach(p => {
+                    p.setAttribute('open', '');
+                    p.removeAttribute('name'); 
+                });
+            } else {
+                phases.forEach(p => p.setAttribute('name', 'curriculum-phases')); 
+            }
+        };
+
+        window.addEventListener('resize', handlePhases);
+        window.addEventListener('load', handlePhases);
+    </script>
 </body>
 </html>

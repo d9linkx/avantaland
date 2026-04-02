@@ -8,6 +8,91 @@
     <link rel="icon" type="image/png" href="images/15.png" sizes="100x100">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* --- Curriculum Grid & Accordion Logic --- */
+        .curriculum-grid { margin-top: 3rem; }
+        .mobile-only-icon { display: none; }
+
+        @media (min-width: 1025px) {
+            .curriculum-grid {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 1rem;
+                justify-content: center;
+            }
+            .curriculum-grid .card {
+                padding: 1.5rem 1rem !important;
+                cursor: default;
+            }
+            .curriculum-grid .card summary {
+                list-style: none;
+                pointer-events: none;
+            }
+            .curriculum-grid .card summary::-webkit-details-marker { display: none; }
+            .curriculum-grid .card h4 { font-size: 1.1rem; min-height: 3em; display: flex; align-items: center; }
+        }
+
+        @media (max-width: 1024px) {
+            .curriculum-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .curriculum-grid .card {
+                padding: 0 !important;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+            .curriculum-grid .card summary {
+                padding: 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                cursor: pointer;
+                list-style: none;
+                user-select: none;
+            }
+            .curriculum-grid .card summary::-webkit-details-marker { display: none; }
+            .curriculum-grid .card .card-body {
+                padding: 0 1.5rem 1.5rem;
+                border-top: 1px solid rgba(0,0,0,0.05);
+                padding-top: 1.5rem;
+            }
+            .mobile-only-icon { 
+                display: block; 
+                font-size: 1.25rem; 
+                transition: transform 0.3s ease;
+            }
+            .curriculum-grid .card[open] .mobile-only-icon { transform: rotate(180deg); }
+        }
+
+        /* --- Who is it for Styling --- */
+        .who-is-for-section {
+            background-color: #dbe3e0;
+            border: #5a5a5a 1px solid;
+            border-radius: 60px;
+            margin: 0 15px;
+        }
+        .who-is-for-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .who-card {
+            background: #fff !important;
+            border: 1px solid rgb(86, 86, 86) !important;
+            border-radius: 24px !important;
+            padding: 2.5rem 2rem !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 219, 135, 0.1) !important;
+            transition: var(--transition-bounce) !important;
+        }
+        .who-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--brand-blue) !important;
+            box-shadow: 0 20px 40px -10px rgba(0, 219, 135, 0.2) !important;
+        }
+        .who-card h4 { color: #5a5a5a; margin-bottom: 1rem; }
+    </style>
 </head>
 <body>
     <div id="header-placeholder"></div>
@@ -16,10 +101,20 @@
         <section class="hero">
             <div class="container glass-card hero-grid-layout">
                 <div class="hero-text">
-                    <p class="benefit-tag">Financial Freedom</p>
-                    <h1>Master <span class="text-gradient">SMC Trading</span></h1>
+                    <h1>Master <span class="text-gradient">SMC Trading</span> & Trade Like Banks</h1>
                     <p>Learn Smart Money Concepts to trade the financial markets like the institutions do. Stop being the liquidity and start following the big money.</p>
-                    <div class="hero-btns">
+                    
+                    <div class="hero-social-proof mb-1" style="justify-content: flex-start;">
+                        <div class="avatars">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Trader">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Trader">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Trader">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Trader">
+                        </div>
+                        <div class="social-text">Join <span>3,500+</span> funded traders</div>
+                    </div>
+
+                    <div class="hero-btns mt-2">
                         <a href="enroll.html?course=trading" class="btn btn-primary">Enroll Now</a>
                         <a href="#curriculum" class="btn btn-secondary">View Curriculum</a>
                     </div>
@@ -38,27 +133,161 @@
             <div class="hero-background-element"></div>
         </section>
 
+        <section class="section-padding who-is-for-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Who is this <span class="text-gradient">course for?</span></h2>
+                    <p>(Hint: If you recognize yourself in any of these, you have the "Trader DNA.")</p>
+                </div>
+                <div class="who-is-for-grid">
+                    <div class="card who-card">
+                        <h4>The Indicator-Weary Trader</h4>
+                        <p>You've tried RSI, MACD, and EMA crossovers, only to realize they lag. You're ready to learn how price actually moves without the clutter.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The Funding Seeker</h4>
+                        <p>You have the discipline but lack the capital. You want a professional roadmap to pass prop firm challenges and manage 6-figure accounts.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The 9-to-5 Escapist</h4>
+                        <p>You want a skill that grants you time and location freedom. You need a reliable, logic-based system that works around your current schedule.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The Analytical Mind</h4>
+                        <p>You love data and logic. You see the markets as a giant puzzle of supply and demand, and you want to follow the footsteps of the 1%.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The Disciplined Stoic</h4>
+                        <p>You know trading is 20% strategy and 80% psychology. You're ready to master your emotions and execute with robotic precision.</p>
+                    </div>
+                    <div class="card who-card">
+                        <h4>The Wealth Builder</h4>
+                        <p>You aren't looking for a "get rich quick" scheme. You want a high-leverage professional skill that compounds your capital over years.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="curriculum" class="section-padding bg-light glass-section">
             <div class="container glass-card">
                 <div class="section-header">
-                    <h2>Institutional Order Flow</h2>
-                    <span class="executor-focus-badge mb-1">Trade with Precision</span>
+                    <h2>The Phased Institutional Roadmap</h2>
+                    <span class="executor-focus-badge mb-1">From Retail to Professional</span>
                 </div>
-                <div class="grid-3">
-                    <div class="card">
-                        <div class="floating-icon mb-1"><i class="ph ph-cube"></i></div>
-                        <h4>Order Blocks</h4>
-                        <p>Identify exactly where big banks are placing their trades to join the move early.</p>
+                <div class="curriculum-grid">
+                    <details class="card" name="curriculum-phases" open>
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 1</span>
+                                <h4>Institutional Logic</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>Understand why the market moves before looking at a candle.</p>
+                            <ul class="checklist">
+                                <li><strong>Market Structure:</strong> Mapping swing points correctly.</li>
+                                <li><strong>The Fractal Nature:</strong> How M1 relates to Daily.</li>
+                                <li><strong>Premium vs Discount:</strong> Buying cheap, selling high.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="card" name="curriculum-phases">
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 2</span>
+                                <h4>Liquidity Mastery</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>Learn to spot where retail traders are being trapped.</p>
+                            <ul class="checklist">
+                                <li><strong>Engineered Liquidity:</strong> Spotting the "fake" breakouts.</li>
+                                <li><strong>Inducement:</strong> Why your "perfect" setups fail.</li>
+                                <li><strong>The Power of 3:</strong> Accumulation, Manipulation, Distribution.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="card" name="curriculum-phases">
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 3</span>
+                                <h4>The SMC Entry Suite</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>High-precision entries with stop losses under 5 pips.</p>
+                            <ul class="checklist">
+                                <li><strong>Order Blocks:</strong> Finding the footprint of big banks.</li>
+                                <li><strong>Fair Value Gaps:</strong> Trading the imbalances.</li>
+                                <li><strong>The Breaker:</strong> Mastering the high-probability reversal.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="card" name="curriculum-phases">
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 4</span>
+                                <h4>Risk Engineering</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>Protecting your capital like a hedge fund manager.</p>
+                            <ul class="checklist">
+                                <li><strong>Dynamic RR:</strong> How to target 1:5 and 1:10 setups.</li>
+                                <li><strong>Trade Management:</strong> Partial profits and break-even rules.</li>
+                                <li><strong>The 1% Rule:</strong> Calculating position size for prop firms.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="card" name="curriculum-phases">
+                        <summary>
+                            <div>
+                                <span class="benefit-tag">Phase 5</span>
+                                <h4>Funded Trader Roadmap</h4>
+                            </div>
+                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                        </summary>
+                        <div class="card-body">
+                            <p>Your step-by-step path to managing $100k+ in capital.</p>
+                            <ul class="checklist">
+                                <li><strong>Prop Firm Prep:</strong> Rules, drawdowns, and payout cycles.</li>
+                                <li><strong>Psychology of Scale:</strong> Trading big numbers without fear.</li>
+                                <li><strong>Trade Journaling:</strong> Data-driven performance audits.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding glass-section">
+            <div class="container">
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <h3>How you'll learn</h3>
+                        <ul class="checklist">
+                            <li><strong>LIVE Market Analysis:</strong> Watch us analyze charts in real-time.</li>
+                            <li><strong>Trade Breakdown PDF:</strong> Get detailed notes on every trade taken.</li>
+                            <li><strong>The Trading Floor:</strong> Join our private community of expert traders.</li>
+                            <li><strong>Mentorship Calls:</strong> Get your losing trades audited by professionals.</li>
+                        </ul>
                     </div>
-                    <div class="card">
-                        <div class="floating-icon mb-1"><i class="ph ph-waves"></i></div>
-                        <h4>Liquidity Hunts</h4>
-                        <p>Learn to spot "Stop Hunts" and use retail trader errors to your advantage.</p>
-                    </div>
-                    <div class="card">
-                        <div class="floating-icon mb-1"><i class="ph ph-shield-check"></i></div>
-                        <h4>Risk Management</h4>
-                        <p>Protect your capital with institutional-grade risk-to-reward ratios (min 1:3).</p>
+                    <div class="glass-card">
+                        <h3>Tools you will need</h3>
+                        <ul class="checklist">
+                            <li><strong>TradingView Account:</strong> For high-level chart analysis.</li>
+                            <li><strong>A Laptop:</strong> Essential for precision charting.</li>
+                            <li><strong>Discord:</strong> Access to our "Inner Circle" alerts and calls.</li>
+                            <li><strong>Deep Patience:</strong> The market only pays those who wait.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -91,18 +320,64 @@
         </section>
 
         <section class="section-padding bg-light glass-section">
-            <div class="container glass-card fade-in text-center" style="max-width: 900px;">
-                <h2>Stop Guessing the Market</h2>
-                <p>Join the SMC Trading Lab and learn to see the charts like a 1% trader.</p>
+            <div class="container" style="max-width: 900px;">
+                <div class="section-header">
+                    <h2>Tuition & Fees</h2>
+                    <p>Select the track that fits your schedule and capital goals.</p>
+                </div>
+                <div class="grid-2">
+                    <div class="card text-center" style="border-color: var(--accent-blue);">
+                        <span class="executor-focus-badge mb-1">Standard Track</span>
+                        <h3>₦60,000</h3>
+                        <p><strong>2 Months</strong> of paced, foundational mastery. Recommended for beginners.</p>
+                        <a href="enroll.html?course=trading" class="btn btn-secondary" style="width: 100%;">Select Track</a>
+                    </div>
+                    <div class="card text-center" style="border-color: var(--brand-blue-dark); background: var(--brand-blue-light);">
+                        <span class="executor-focus-badge mb-1" style="background: var(--brand-blue-dark); color: white;">Intensive Class</span>
+                        <h3>₦100,000</h3>
+                        <p><strong>1 Month</strong> fast-track to prop firm funding. High-speed mastery.</p>
+                        <a href="enroll.html?course=trading" class="btn btn-primary" style="width: 100%;">Select Track</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding bg-light glass-section">
+            <div class="container glass-card fade-in text-center" style="max-width: 700px;">
+                <h2>Stop Being the Liquidity.</h2>
+                <p>Join the SMC Trading Lab and start trading with institutional precision.</p>
                 <div class="cta-btns mt-3">
-                    <a href="enroll.html?course=trading" class="btn btn-primary">Join the Academy</a>
-                    <a href="contact.html" class="btn btn-secondary">Speak to an Advisor</a>
+                    <a href="enroll.html?course=trading" class="btn btn-primary">Enroll in SMC Trading</a>
+                    <a href="contact.html" class="btn btn-secondary">Message an Advisor</a>
                 </div>
             </div>
         </section>
     </main>
 
+    <div class="mobile-enroll-bar">
+        <a href="enroll.html?course=trading" class="btn btn-primary">Enroll Now</a>
+    </div>
+
     <div id="footer-placeholder"></div>
     <script src="scripts/script.js"></script>
+    <script>
+        // Ensure all curriculum phases stay open on desktop
+        const curriculumGrid = document.querySelector('.curriculum-grid');
+        const phases = curriculumGrid.querySelectorAll('details');
+        
+        const handlePhases = () => {
+            if (window.innerWidth > 1024) {
+                phases.forEach(p => {
+                    p.setAttribute('open', '');
+                    p.removeAttribute('name'); 
+                });
+            } else {
+                phases.forEach(p => p.setAttribute('name', 'curriculum-phases')); 
+            }
+        };
+
+        window.addEventListener('resize', handlePhases);
+        window.addEventListener('load', handlePhases);
+    </script>
 </body>
 </html>
