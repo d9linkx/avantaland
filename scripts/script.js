@@ -87,12 +87,21 @@ function startEarlyBirdTimer() {
         localStorage.setItem('earlyBirdExpiry', expiry);
     }
 
+    let timerInterval;
+
     const updateTimer = () => {
         const now = new Date().getTime();
         const distance = expiry - now;
 
         if (distance < 0) {
-            timerEl.innerHTML = "00:00:00";
+            const bar = document.querySelector('.mobile-enroll-bar');
+            if (bar) {
+                const timerContainer = bar.querySelector('.timer-container');
+                if (timerContainer) timerContainer.remove();
+                const enrollBtn = bar.querySelector('.btn');
+                if (enrollBtn) enrollBtn.textContent = 'Enroll at Standard Price';
+            }
+            if (timerInterval) clearInterval(timerInterval);
             return;
         }
 
@@ -103,7 +112,7 @@ function startEarlyBirdTimer() {
         timerEl.innerHTML = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     };
 
-    setInterval(updateTimer, 1000);
+    timerInterval = setInterval(updateTimer, 1000);
     updateTimer();
 }
 

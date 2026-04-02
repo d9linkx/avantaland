@@ -203,12 +203,32 @@
     <div id="footer-placeholder"></div>
     <script src="scripts/script.js"></script>
     <script>
+        const isEarlyBird = () => {
+            const expiry = localStorage.getItem('earlyBirdExpiry');
+            return expiry ? new Date().getTime() < parseInt(expiry) : true;
+        };
+
         const courseData = {
-            copywriting: { name: "Copywriting", hasOptions: true },
-            trading: { name: "SMC Trading", hasOptions: true },
-            uiux: { name: "UIUX Design", hasOptions: true },
-            ads: { name: "Ad Management", price: 20000, duration: "1 Week" },
-            youtube: { name: "YouTube Automation", price: 30000, duration: "1 Month + Mentorship" },
+            copywriting: { 
+                name: "Copywriting", 
+                hasOptions: true,
+                opt1: isEarlyBird() ? { price: 60000, label: "2 Months Detailed (₦60k)" } : { price: 100000, label: "2 Months Detailed (₦100k)" },
+                opt2: isEarlyBird() ? { price: 100000, label: "1 Month Intensive (₦100k)" } : { price: 150000, label: "1 Month Intensive (₦150k)" }
+            },
+            trading: { 
+                name: "SMC Trading", 
+                hasOptions: true,
+                opt1: isEarlyBird() ? { price: 60000, label: "2 Months Detailed (₦60k)" } : { price: 100000, label: "2 Months Detailed (₦100k)" },
+                opt2: isEarlyBird() ? { price: 100000, label: "1 Month Intensive (₦100k)" } : { price: 150000, label: "1 Month Intensive (₦150k)" }
+            },
+            uiux: { 
+                name: "UIUX Design", 
+                hasOptions: true,
+                opt1: isEarlyBird() ? { price: 60000, label: "2 Months Detailed (₦60k)" } : { price: 100000, label: "2 Months Detailed (₦100k)" },
+                opt2: isEarlyBird() ? { price: 100000, label: "1 Month Intensive (₦100k)" } : { price: 150000, label: "1 Month Intensive (₦150k)" }
+            },
+            ads: { name: "Ad Management", price: isEarlyBird() ? 20000 : 35000, duration: "1 Week" },
+            youtube: { name: "YouTube Automation", price: isEarlyBird() ? 30000 : 50000, duration: "1 Month + Mentorship" },
             entrepreneurship: { name: "Entrepreneurship", price: 0, duration: "Limited Cohort" }
         };
 
@@ -222,6 +242,18 @@
         if (preSelected && courseData[preSelected]) {
             selectedCourses.push(preSelected);
         }
+
+        // Update grid price tags based on early bird status
+        document.querySelectorAll('.course-chip').forEach(chip => {
+            const c = chip.dataset.course;
+            const info = courseData[c];
+            const priceTag = chip.querySelector('.price-tag');
+            if (info.hasOptions) {
+                priceTag.innerText = `From ${isEarlyBird() ? '60k' : '100k'}`;
+            } else if (info.price > 0) {
+                priceTag.innerText = `${(info.price / 1000)}k (${info.duration})`;
+            }
+        });
 
         // Step Navigation Logic
         function updateStep() {
@@ -284,8 +316,8 @@
                     div.className = 'duration-selector fade-in';
                     div.innerHTML = `
                         <h5 class="mb-1">Select duration for ${info.name}:</h5>
-                        <label class="mr-2"><input type="radio" name="dur_${c}" value="60000" checked onchange="calculateTotal()"> 2 Months Detailed (₦60k)</label><br>
-                        <label><input type="radio" name="dur_${c}" value="100000" onchange="calculateTotal()"> 1 Month Intensive (₦100k)</label>
+                        <label class="mr-2"><input type="radio" name="dur_${c}" value="${info.opt1.price}" checked onchange="calculateTotal()"> ${info.opt1.label}</label><br>
+                        <label><input type="radio" name="dur_${c}" value="${info.opt2.price}" onchange="calculateTotal()"> ${info.opt2.label}</label>
                     `;
                     durationContainer.appendChild(div);
                 }
