@@ -1624,30 +1624,34 @@ p {
 /* --- Mobile Sticky Enroll Bar --- */
 .mobile-enroll-bar {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: 20px;
+    left: 20px;
+    width: auto;
+    max-width: calc(100% - 40px);
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    padding: 12px 20px;
-    border-top: 1px solid var(--border-color);
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.08);
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
     z-index: 9999;
     display: none;
     box-sizing: border-box;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
 }
 
 @media (max-width: 768px) {
-    .mobile-enroll-bar { display: flex; }
-    body { padding-bottom: 110px; }
+    .mobile-enroll-bar { display: inline-flex; }
+    body { padding-bottom: 0; }
 }
 
 .mobile-enroll-bar .btn {
-    width: 100%;
+    width: auto;
+    padding: 8px 16px;
+    font-size: 0.85rem;
     margin: 0;
     justify-content: center;
 }
@@ -1655,15 +1659,13 @@ p {
 .timer-container {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
+    gap: 4px;
+    font-size: 0.75rem;
     font-weight: 800;
 }
 
 .timer-label {
-    color: #EF4444;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    display: none;
 }
 
 #early-bird-timer {
@@ -1677,5 +1679,5 @@ p {
 
 .timer-container i {
     color: #EF4444;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
 }

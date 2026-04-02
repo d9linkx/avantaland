@@ -18,11 +18,18 @@
             padding: 3rem;
         }
 
+        @media (max-width: 1024px) {
+            .section-padding { padding-top: 120px; }
+            .calculator-card { margin-top: 40px; }
+        }
+
         @media (max-width: 768px) {
+            .section-padding { padding-top: 100px; }
             .calculator-card {
                 grid-template-columns: 1fr;
                 padding: 2rem 1.5rem;
                 gap: 2rem;
+                margin-top: 20px;
             }
         }
 
