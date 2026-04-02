@@ -381,7 +381,7 @@
 
             try {
                 // Replace this URL with your published AppScript Web App URL
-                const response = await fetch('https://script.google.com/macros/s/AKfycbxsppzSTnBtLb-3UU_D4j92Zfcm7tUdmjVVaux0Kt4Pb3ChR06uIL0nIVP9igrTr0EXMw/exec', { method: 'POST', body: formData });
+                const response = await fetch('https://script.google.com/macros/s/AKfycbwcyD7SQcP_GTs6hrGG3k6tjtpjvN9XimlEkdyOlw-jUUvV5e2hpXViVRVlEFRkLhkN-w/exec', { method: 'POST', body: formData });
                 const result = await response.json();
                 if (result.result === 'success') {
                     window.location.href = 'success.html';
