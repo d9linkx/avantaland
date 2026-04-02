@@ -71,6 +71,40 @@ function initializeSiteFunctionality() {
             }
         });
     });
+
+    // --- Early Bird Countdown ---
+    startEarlyBirdTimer();
+}
+
+function startEarlyBirdTimer() {
+    const timerEl = document.getElementById('early-bird-timer');
+    if (!timerEl) return;
+
+    // Use a persistent expiry date (48 hours from first visit)
+    let expiry = localStorage.getItem('earlyBirdExpiry');
+    if (!expiry) {
+        expiry = new Date().getTime() + (48 * 60 * 60 * 1000);
+        localStorage.setItem('earlyBirdExpiry', expiry);
+    }
+
+    const updateTimer = () => {
+        const now = new Date().getTime();
+        const distance = expiry - now;
+
+        if (distance < 0) {
+            timerEl.innerHTML = "00:00:00";
+            return;
+        }
+
+        const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+        timerEl.innerHTML = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    };
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
 }
 
 async function loadTemplate(url, elementId) {
