@@ -2404,7 +2404,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showComingSoonModal('Business Dashboard');
                     return;
                 } else if (target === 'aveo') {
-                    showComingSoonModal('Aveo 1 AI');
+                    toggleAveoDrawer(true);
                     return;
                 }
 
@@ -2949,7 +2949,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showComingSoonModal('Business Dashboard');
                     return;
                 } else if (target === 'aveo') {
-                    showComingSoonModal('Aveo 1 AI');
+                    toggleAveoDrawer(true);
                     return;
                 }
 
@@ -2999,6 +2999,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.querySelector('.aveo-drawer')) return;
 
         const firstName = currentState.profile.name ? currentState.profile.name.split(' ')[0] : 'Founder';
+        // Maintain conversation history for the session
+        let chatHistory = [];
 
         const drawer = document.createElement('div');
         drawer.className = 'aveo-drawer';
@@ -3019,8 +3021,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
             <div class="aveo-chips">
-                <button class="aveo-chip">Why does this hack matter?</button>
-                <button class="aveo-chip">Give me a script</button>
+                <button class="aveo-chip" data-cmd="explain_lesson">Why does this hack matter?</button>
+                <button class="aveo-chip" data-cmd="get_script">Give me a script</button>
                 <button class="aveo-chip">I'm stuck</button>
             </div>
             <div class="aveo-input-area">
@@ -3031,38 +3033,48 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(drawer);
 
         // Event Listeners
-        drawer.querySelector('.aveo-close').addEventListener('click', () => toggleAveoDrawer(false));
+        drawer.querySelector('.aveo-close').addEventListener('click', () => {
+            toggleAveoDrawer(false);
+            // Clear history on close if you want fresh starts, or keep it. Let's keep it.
+        });
         
         const input = drawer.querySelector('#aveo-input');
         const sendBtn = drawer.querySelector('#aveo-send');
         const chips = drawer.querySelectorAll('.aveo-chip');
 
-        // Proactive Logic: Check on load
-        const checkProactive = () => {
-            const hour = new Date().getHours();
-            const tasks = currentState.planner.tasks || [];
-            const completed = tasks.filter(t => t.completed).length;
-            
-            // If past 12 PM and 0% completion
-            if (hour >= 12 && tasks.length > 0 && completed === 0) {
-                const msgContainer = document.getElementById('aveo-messages');
-                // Only add if not already there
-                if (msgContainer.children.length <= 1) {
-                    addAveoMessage(`<strong>Aveo 1:</strong> It's past midday and you haven't crushed a single task in your Big 3. Remember your goal: "${currentState.profile.dreamResult || 'Financial Freedom'}". Stop procrastinating, ${firstName}.`, 'ai');
-                }
-            }
-        };
-        // Run check when drawer opens
-
         const sendMessage = async (text) => {
             if (!text.trim()) return;
             
+            // Pre-process special commands from chips
+            let messageToSend = text;
+            if (text === "Why does this hack matter?") {
+                const currentTruth = truthsData[currentState.currentHackIndex];
+                messageToSend = `Explain why Lesson ${currentState.currentHackIndex + 1}: "${currentTruth.title}" is critical for my goal of ${currentState.profile.dreamResult || 'building a business'}.`;
+            } else if (text === "Give me a script") {
+                const currentTruth = truthsData[currentState.currentHackIndex];
+                messageToSend = `Based on the lesson "${currentTruth.title}", give me a practical outreach or sales script I can use immediately to get results.`;
+            } else if (text === "I'm stuck") {
+                messageToSend = `I'm feeling stuck or overwhelmed. Give me one high-leverage move I should make right now based on my current focus.`;
+            }
+
             // Add User Message
-            addAveoMessage(text, 'user');
+            addAveoMessage(messageToSend, 'user');
             input.value = '';
 
-            // Show Typing Indicator (Mock)
-            const typingId = addAveoMessage('<div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>', 'ai');
+            // Show Typing Indicator
+            const typingId = addAveoMessage(`
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>`, 'ai');
+            
+            // Auto-scroll to bottom
+            const messagesContainer = document.getElementById('aveo-messages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Build Conversation History for the AI
+            const historyContext = chatHistory.slice(-6); // Last 3 exchanges
 
             // Prepare Context
             const currentTruth = truthsData[currentState.currentHackIndex];
@@ -3070,18 +3082,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const plannerState = plannerTasks.map(t => `- ${t.text} [${t.completed ? 'DONE' : 'PENDING'}]`).join('\n');
             
             const systemPrompt = `You are Aveo 1, an elite business strategist and AI mentor for ${currentState.profile.name}. 
-            Your goal is to help them achieve: "${currentState.profile.dreamResult}".
+            The founder's ultimate goal is: "${currentState.profile.dreamResult}".
+            Their primary skill is: "${currentState.profile.primarySkill || 'Entrepreneurship'}".
             
             Current Context:
-            - They are working on Lesson ${currentState.currentHackIndex + 1}: "${currentTruth.title}".
-            - Their current tasks:
+            - Active Lesson: Truth #${currentState.currentHackIndex + 1} - "${currentTruth.title}".
+            - Current Planner:
             ${plannerState}
             
             Guidelines:
-            - Be concise, direct, and high-energy.
-            - Act like a senior partner, not a generic assistant.
-            - Push them to execute. If they are stuck, give a specific next step.
-            - Do not use fluff. Get straight to the value.`;
+            - Be ruthlessly direct and high-energy. No fluff. 
+            - Act like an early-stage startup partner, not a customer service bot.
+            - If the founder is falling behind on their Top 3 tasks, call them out.
+            - Always relate advice back to their Dream Result.
+            - Use bold text for emphasis on actions.`;
+
+            const fullMessages = [
+                { role: "system", content: systemPrompt },
+                ...historyContext,
+                { role: "user", content: messageToSend }
+            ];
 
             try {
                 const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -3093,11 +3113,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         'X-Title': 'Avantaland Dashboard'
                     },
                     body: JSON.stringify({
-                        model: "openai/gpt-3.5-turbo", // Or any other model supported by OpenRouter
-                        messages: [
-                            { role: "system", content: systemPrompt },
-                            { role: "user", content: text }
-                        ],
+                        model: "google/gemini-2.0-flash-001", // Fast and intelligent for chat
+                        messages: fullMessages,
                         stream: true
                     })
                 });
@@ -3135,23 +3152,25 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const content = json.choices[0].delta.content || '';
                                 aiText += content;
                                 
-                                // Simple markdown parsing for bolding
-                                const formattedText = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                                streamMsgDiv.innerHTML = formattedText;
+                                // Parse for bolding and line breaks
+                                streamMsgDiv.innerHTML = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                                               .replace(/\n/g, '<br>');
                                 
-                                // Auto-scroll
-                                const container = document.getElementById('aveo-messages');
-                                container.scrollTop = container.scrollHeight;
+                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
                             } catch (e) { }
                         }
                     }
                 }
+                
+                // Add to history
+                chatHistory.push({ role: "user", content: messageToSend });
+                chatHistory.push({ role: "assistant", content: aiText });
 
             } catch (e) {
                 console.error(e);
                 const typingMsg = document.getElementById(typingId);
                 if (typingMsg) typingMsg.remove();
-                addAveoMessage("<strong>Aveo 1:</strong> Connection offline. But you shouldn't be. Get back to work.", 'ai');
+                addAveoMessage("<strong>Aveo 1:</strong> Connection to the strategy lab is offline. I'm busy calculating your next move—get back to your tasks in the meantime.", 'ai');
             }
         };
 
