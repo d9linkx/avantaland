@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let motivation = "Clear these tasks to build momentum.";
         
         if (big3Tasks.length === 0) {
-            focusType = "Plan Your Day";
+            focusType = "Planner";
             motivation = `Set your top 3 goals for today, tomorrow, or next week, ${firstName}. This will help you prioritize and execute better.`;
         } else if (taskTexts.match(/call|email|sell|close|\$|lead|prospect|client/)) {
             focusType = "Focus on Your Revenue";
