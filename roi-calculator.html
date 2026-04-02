@@ -24,8 +24,14 @@
                 padding: 2rem 1.5rem;
                 gap: 2rem;
             }
+        }
 
-           
+        @media (max-width: 480px) {
+            .calculator-card {
+                padding: 1.5rem 1rem;
+                gap: 1.5rem;
+            }
+            .stat-massive { font-size: 2.2rem !important; }
         }
 
         .input-section {
@@ -88,8 +94,9 @@
         .stat-massive {
             font-size: 3rem;
             font-weight: 800;
-            color: var(--text-main);
+            color: var(--text-primary);
             margin: 0.5rem 0;
+            overflow-wrap: break-word;
         }
 
         .roi-badge {
@@ -141,11 +148,24 @@
                     <p id="res-increase" style="color: var(--accent-blue); font-weight: 700;">+ ₦1,000,000 monthly increase</p>
                     
                     <div class="roi-badge" id="res-roi">1,667% Return on Course</div>
-                    <p style="font-size: 0.85rem; margin-top: 1.5rem; opacity: 0.8;">Based on average high-income hourly rates for skilled freelancers in 2026.</p>
                     
-                    <div class="mt-2">
-                        <a href="enroll.html" id="cta-link" class="btn btn-primary" style="width: 100%;">Master this Skill</a>
-                    </div>
+                    <!-- Integrated Registration Form -->
+                    <form id="roi-registration-form" style="margin-top: 2rem; text-align: left;">
+                        <div class="form-group mb-1">
+                            <input type="text" name="firstName" class="settings-input" placeholder="First Name" required style="background: white;">
+                        </div>
+                        <div class="form-group mb-1">
+                            <input type="email" name="email" class="settings-input" placeholder="Email Address" required style="background: white;">
+                        </div>
+                        <!-- Hidden tracking fields for calculation data -->
+                        <input type="hidden" name="skillSelected" id="hidden-skill">
+                        <input type="hidden" name="projectedIncome" id="hidden-projected">
+                        <input type="hidden" name="roiPercentage" id="hidden-roi">
+                        
+                        <button type="submit" id="roi-submit-btn" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">Secure My Spot</button>
+                    </form>
+
+                    <p style="font-size: 0.8rem; margin-top: 1.5rem; opacity: 0.7;">Based on 2026 average high-income hourly rates.</p>
                 </div>
             </div>
         </div>
@@ -164,7 +184,8 @@
         const resProjected = document.getElementById('res-projected');
         const resIncrease = document.getElementById('res-increase');
         const resRoi = document.getElementById('res-roi');
-        const ctaLink = document.getElementById('cta-link');
+        
+        const roiForm = document.getElementById('roi-registration-form');
 
         let activeRate = 15000;
         let activeFee = 60000;
@@ -189,8 +210,11 @@
             resProjected.innerText = `₦${projected.toLocaleString()}`;
             resIncrease.innerText = increase > 0 ? `+ ₦${increase.toLocaleString()} monthly increase` : `Refine your target hours`;
             resRoi.innerText = increase > 0 ? `${roi.toLocaleString()}% Return on Investment` : `Break-even path`;
-            
-            ctaLink.href = `enroll.html?course=${activeSkill}`;
+
+            // Sync hidden inputs for form submission
+            document.getElementById('hidden-skill').value = activeSkill;
+            document.getElementById('hidden-projected').value = projected.toLocaleString();
+            document.getElementById('hidden-roi').value = roi + '%';
 
             // Animation trigger
             resProjected.classList.remove('price-update-animation');
@@ -211,6 +235,31 @@
                 calculate();
             });
         });
+
+        // Form Submission Logic
+        roiForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('roi-submit-btn');
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = "Processing...";
+            submitBtn.disabled = true;
+
+            const formData = new FormData(roiForm);
+            // Map fields to match your AppScript expectations
+            formData.append('coursesSelected', 'ROI Lead: ' + activeSkill);
+            formData.append('totalPrice', 'Projected: ₦' + document.getElementById('hidden-projected').value);
+
+            try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbwcyD7SQcP_GTs6hrGG3k6tjtpjvN9XimlEkdyOlw-jUUvV5e2hpXViVRVlEFRkLhkN-w/exec', { method: 'POST', body: formData });
+                const result = await response.json();
+                if (result.result === 'success') {
+                    window.location.href = `enroll.html?course=${activeSkill}`;
+                }
+            } catch (error) {
+                console.error(error);
+                window.location.href = `enroll.html?course=${activeSkill}`;
+            }
+        };
 
         calculate();
     </script>
