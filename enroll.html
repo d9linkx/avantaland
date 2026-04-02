@@ -180,8 +180,8 @@
                     <!-- Navigation -->
                     <div class="btn-nav">
                         <button type="button" class="btn btn-secondary" id="prev-btn" style="display:none;">Back</button>
-                        <button type="button" class="btn btn-primary" id="next-btn">Next Step</button>
-                        <button type="submit" class="btn btn-primary" id="submit-btn" style="display:none;">Enroll Now</button>
+                        <button type="button" class="btn btn-primary" id="next-btn">Next</button>
+                        <button type="submit" class="btn btn-primary" id="submit-btn" style="display:none;">finish</button>
                     </div>
                 </form>
             </div>
@@ -336,8 +336,7 @@
                 const response = await fetch('https://script.google.com/macros/s/AKfycbwSnwZt2a1ZSu3S7aBwRRS6aEggbZAGDWTUKbHLa4A3DNZamt_kvLvvIp77e8-ZfsW2/exec', { method: 'POST', body: formData });
                 const result = await response.json();
                 if (result.result === 'success') {
-                    alert('Enrollment Successful! Check your email for next steps.');
-                    window.location.href = 'index.html';
+                    window.location.href = 'success.html';
                 }
             } catch (error) {
                 console.error(error);

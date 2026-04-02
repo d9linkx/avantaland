@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Congratulations! | Avantaland Academy</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="icon" type="image/png" href="images/15.png" sizes="100x100">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .success-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: var(--brand-blue-light);
+            color: var(--accent-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 2rem;
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .next-steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+            text-align: left;
+        }
+        .step-mini-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .step-mini-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: var(--text-main);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .nav-quick-links {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-quick-links h4 { margin-bottom: 1.5rem; font-size: 0.9rem; text-transform: uppercase; color: var(--text-light); letter-spacing: 1px; }
+        .quick-nav-grid { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    </style>
+</head>
+<body class="bg-light">
+    <div id="header-placeholder"></div>
+
+    <main class="section-padding">
+        <div class="container text-center" style="max-width: 800px;">
+            <div class="glass-card p-5 fade-in">
+                <div class="success-icon-wrapper">
+                    <i class="ph-fill ph-check-circle"></i>
+                </div>
+                <h1>You're <span class="text-gradient">Almost There!</span></h1>
+                <p class="mt-1" style="font-size: 1.2rem;">Your application for the Academy has been received. We've sent a <strong>welcome email</strong> with your payment link and next steps.</p>
+
+                <div class="next-steps-grid">
+                    <div class="step-mini-card">
+                        <div class="step-number">1</div>
+                        <h5>Check Inbox</h5>
+                        <p style="font-size: 0.9rem; margin-bottom: 0;">Look for an email from Avantaland Academy. Check spam if not found.</p>
+                    </div>
+                    <div class="step-mini-card">
+                        <div class="step-number">2</div>
+                        <h5>Complete Payment</h5>
+                        <p style="font-size: 0.9rem; margin-bottom: 0;">Use the secure link in the email to pay your subsidized course fee.</p>
+                    </div>
+                    <div class="step-mini-card">
+                        <div class="step-number">3</div>
+                        <h5>Send Proof</h5>
+                        <p style="font-size: 0.9rem; margin-bottom: 0;">Reply to the email or message us on WhatsApp with a screenshot.</p>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="https://wa.me/2347070989034" class="btn btn-whatsapp" style="margin: 0 auto; width: fit-content;">
+                        <i class="ph ph-whatsapp-logo"></i> Confirm via WhatsApp
+                    </a>
+                </div>
+
+                <div class="nav-quick-links">
+                    <h4>Explore more of Avantaland</h4>
+                    <div class="quick-nav-grid">
+                        <a href="index.html" class="btn btn-secondary">
+                            <i class="ph ph-house"></i> Home
+                        </a>
+                        <a href="courses.html" class="btn btn-secondary">
+                            <i class="ph ph-graduation-cap"></i> Other Courses
+                        </a>
+                        <a href="index.html#how-it-works" class="btn btn-secondary">
+                            <i class="ph ph-info"></i> How it Works
+                        </a>
+                        <a href="index.html#join" class="btn btn-secondary">
+                            <i class="ph ph-question"></i> FAQs
+                        </a>
+                        <a href="contact.html" class="btn btn-secondary">
+                            <i class="ph ph-envelope"></i> Help Desk
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+    <script src="scripts/script.js"></script>
+    <script>
+        // Simple celebration effect on load
+        window.addEventListener('load', () => {
+            console.log("Welcome to the Academy!");
+        });
+    </script>
+</body>
+</html>
