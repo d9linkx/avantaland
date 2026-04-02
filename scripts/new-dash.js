@@ -3081,14 +3081,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const plannerTasks = currentState.planner.tasks || [];
             const plannerState = plannerTasks.map(t => `- ${t.text} [${t.completed ? 'DONE' : 'PENDING'}]`).join('\n');
             
-            const systemPrompt = `You are Aveo 1, an elite business strategist and AI mentor for ${currentState.profile.name}. 
+            const systemPrompt = `You are Aveo 1, the high-leverage AI strategist for Avantaland Academy. 
+            You are an elite, slightly cynical, but highly effective business mentor for ${currentState.profile.name}.
             The founder's ultimate goal is: "${currentState.profile.dreamResult}".
             Their primary skill is: "${currentState.profile.primarySkill || 'Entrepreneurship'}".
             
             Current Context:
-            - Active Lesson: Truth #${currentState.currentHackIndex + 1} - "${currentTruth.title}".
-            - Current Planner:
-            ${plannerState}
+            - Active Mastery Focus: Truth #${currentState.currentHackIndex + 1} ("${currentTruth.title}")
+            - Execution Status:
+            ${plannerState || 'The founder has not set their Big 3 tasks yet. Challenge them to focus.'}
             
             Guidelines:
             - Be ruthlessly direct and high-energy. No fluff. 
@@ -3096,7 +3097,8 @@ document.addEventListener('DOMContentLoaded', () => {
             - If the founder is falling behind on their Top 3 tasks, call them out.
             - Always relate advice back to their Dream Result.
             - Use bold text for emphasis on actions.`;
-
+            // Aveo's Motto: "Execution is the only currency that matters in this Lab."
+            
             const fullMessages = [
                 { role: "system", content: systemPrompt },
                 ...historyContext,
@@ -3104,63 +3106,32 @@ document.addEventListener('DOMContentLoaded', () => {
             ];
 
             try {
-                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                const response = await fetch('/api/chat', {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer YOUR_OPENROUTER_API_KEY', // Replace with valid Key
-                        'HTTP-Referer': window.location.origin,
-                        'X-Title': 'Avantaland Dashboard'
-                    },
-                    body: JSON.stringify({
-                        model: "google/gemini-2.0-flash-001", // Fast and intelligent for chat
-                        messages: fullMessages,
-                        stream: true
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages: fullMessages })
                 });
 
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || 'API call failed');
+                }
 
                 // Remove typing indicator before streaming starts
                 const typingMsg = document.getElementById(typingId);
                 if (typingMsg) typingMsg.remove();
 
-                // Create a new message bubble for the stream
-                const streamMsgId = addAveoMessage('', 'ai');
-                const streamMsgDiv = document.getElementById(streamMsgId);
+                const data = await response.json();
+                const aiText = data.choices[0].message.content;
+
+                // Create AI message bubble with the full response
+                const streamMsgId = addAveoMessage(
+                    aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                          .replace(/\n/g, '<br>'), 
+                    'ai'
+                );
                 
-                // Handle Streaming Response
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let aiText = '';
-                let buffer = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    
-                    buffer += decoder.decode(value, { stream: true });
-                    const lines = buffer.split('\n');
-                    buffer = lines.pop(); // Keep incomplete line in buffer
-
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            const jsonStr = line.slice(6);
-                            if (jsonStr === '[DONE]') continue;
-                            try {
-                                const json = JSON.parse(jsonStr);
-                                const content = json.choices[0].delta.content || '';
-                                aiText += content;
-                                
-                                // Parse for bolding and line breaks
-                                streamMsgDiv.innerHTML = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                                               .replace(/\n/g, '<br>');
-                                
-                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                            } catch (e) { }
-                        }
-                    }
-                }
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 
                 // Add to history
                 chatHistory.push({ role: "user", content: messageToSend });
