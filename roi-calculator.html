@@ -109,6 +109,30 @@
             font-weight: 700;
             margin-top: 1rem;
         }
+
+        /* Beautiful Input Design */
+        .settings-input {
+            width: 100%;
+            padding: 0.9rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fff;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .settings-input:hover {
+            border-color: #cbd5e1;
+        }
+        .settings-input:focus {
+            border-color: var(--accent-blue);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(0, 219, 135, 0.15), inset 0 2px 4px rgba(0,0,0,0.01);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -152,10 +176,10 @@
                     <!-- Integrated Registration Form -->
                     <form id="roi-registration-form" style="margin-top: 2rem; text-align: left;">
                         <div class="form-group mb-1">
-                            <input type="text" name="firstName" class="settings-input" placeholder="First Name" required style="background: white;">
+                            <input type="text" name="firstName" class="settings-input" placeholder="First Name" required>
                         </div>
                         <div class="form-group mb-1">
-                            <input type="email" name="email" class="settings-input" placeholder="Email Address" required style="background: white;">
+                            <input type="email" name="email" class="settings-input" placeholder="Email Address" required>
                         </div>
                         <!-- Hidden tracking fields for calculation data -->
                         <input type="hidden" name="skillSelected" id="hidden-skill">
