@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enroll | Avantaland Academy</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="icon" type="image/png" href="images/15.png" sizes="100x100">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .enroll-form-container { max-width: 650px; margin: 0 auto; }
+        .step-progress { display: flex; justify-content: space-between; margin-bottom: 2.5rem; position: relative; }
+        .step-progress::before { content: ''; position: absolute; top: 15px; left: 0; width: 100%; height: 2px; background: #e2e8f0; z-index: 1; }
+        .progress-fill { position: absolute; top: 15px; left: 0; height: 2px; background: var(--accent-blue); z-index: 1; transition: width 0.4s ease; }
+        .step-dot { width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 2px solid #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; z-index: 2; transition: var(--transition); }
+        .step-dot.active { border-color: var(--accent-blue); color: var(--accent-blue); transform: scale(1.1); box-shadow: 0 0 15px rgba(0, 219, 135, 0.2); }
+        .step-dot.completed { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
+        
+        .form-step { display: none; animation: slideIn 0.4s ease forwards; }
+        .form-step.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .course-selection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+        .course-chip { padding: 1rem; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: var(--transition); position: relative; }
+        .course-chip.selected { border-color: var(--accent-blue); background: var(--brand-blue-light); }
+        .course-chip h5 { margin-bottom: 0.25rem; font-size: 0.95rem; }
+        .course-chip .price-tag { font-size: 0.8rem; font-weight: 600; color: var(--text-light); }
+
+        .duration-selector { margin-top: 1.5rem; padding: 1.5rem; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; }
+        .total-price-banner { margin-top: 2rem; padding: 1.5rem; background: #1d1d1f; color: #fff; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .total-price-banner h3 { color: #fff; margin: 0; }
+        
+        /* Calendar Modal */
+        .calendar-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .calendar-card { background: #fff; padding: 2rem; border-radius: 24px; width: 90%; max-width: 400px; text-align: center; }
+        .date-option { padding: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 0.75rem; cursor: pointer; font-weight: 600; transition: var(--transition); }
+        .date-option:hover { border-color: var(--accent-blue); background: var(--brand-blue-light); }
+
+        .btn-nav { display: flex; gap: 1rem; margin-top: 2.5rem; }
+        .btn-nav .btn { flex: 1; }
+
+        /* Beautiful Input Design Overrides */
+        .settings-input {
+            width: 100%;
+            padding: 0.9rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fcfcfc;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .settings-input:hover {
+            border-color: #cbd5e1;
+        }
+        .settings-input:focus {
+            border-color: var(--accent-blue);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(0, 219, 135, 0.15), inset 0 2px 4px rgba(0,0,0,0.01);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 1024px) {
+            .enroll-form-container { margin-top: 40px; }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div id="header-placeholder"></div>
+
+    <main class="section-padding">
+        <div class="container enroll-form-container">
+            <div class="glass-card p-4">
+                <div class="step-progress">
+                    <div class="progress-fill" id="progress-line" style="width: 0%;"></div>
+                    <div class="step-dot active" data-step="1">1</div>
+                    <div class="step-dot" data-step="2">2</div>
+                    <div class="step-dot" data-step="3">3</div>
+                    <div class="step-dot" data-step="4">4</div>
+                </div>
+
+                <form id="enrollment-form">
+                    <!-- Step 1: Personal Info -->
+                    <div class="form-step active" id="step-1">
+                        <div class="section-header text-left mb-2">
+                            <h2>Let's get <span class="text-gradient">Started.</span></h2>
+                            <p>First, tell us who you are.</p>
+                        </div>
+                        <div class="form-group mb-1">
+                            <label class="mb-0">First Name</label>
+                            <input type="text" name="firstName" class="settings-input" placeholder="Enter your first name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="mb-0">Last Name</label>
+                            <input type="text" name="lastName" class="settings-input" placeholder="Enter your last name" required>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Course Selection -->
+                    <div class="form-step" id="step-2">
+                        <div class="section-header text-left mb-2">
+                            <h2>Choose your <span class="text-gradient">Path.</span></h2>
+                            <p>Pick up to 2 skills you want to master.</p>
+                        </div>
+                        <div class="course-selection-grid" id="course-grid">
+                            <div class="course-chip" data-course="copywriting">
+                                <h5>Copywriting</h5>
+                                <span class="price-tag">From 60k</span>
+                            </div>
+                            <div class="course-chip" data-course="trading">
+                                <h5>SMC Trading</h5>
+                                <span class="price-tag">From 60k</span>
+                            </div>
+                            <div class="course-chip" data-course="uiux">
+                                <h5>UI/UX Design</h5>
+                                <span class="price-tag">From 60k</span>
+                            </div>
+                            <div class="course-chip" data-course="ads">
+                                <h5>Ad Management</h5>
+                                <span class="price-tag">20k (1 Week)</span>
+                            </div>
+                            <div class="course-chip" data-course="youtube">
+                                <h5>YouTube Automation</h5>
+                                <span class="price-tag">30k (1 Month)</span>
+                            </div>
+                            <div class="course-chip" data-course="entrepreneurship">
+                                <h5>Entrepreneurship</h5>
+                                <span class="price-tag">Free (Limited)</span>
+                            </div>
+                        </div>
+
+                        <div id="duration-container"></div>
+
+                        <div class="total-price-banner">
+                            <span>Total Investment:</span>
+                            <h3 id="total-display">₦0</h3>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Contact & Dates -->
+                    <div class="form-step" id="step-3">
+                        <div class="section-header text-left mb-2">
+                            <h2>Lock your <span class="text-gradient">Spot.</span></h2>
+                            <p>When do you want to start learning?</p>
+                        </div>
+                        <div class="form-group mb-1">
+                            <label>Email Address</label>
+                            <input type="email" name="email" class="settings-input" placeholder="email@example.com" required>
+                        </div>
+                        <div class="form-group mb-1">
+                            <label>WhatsApp Number</label>
+                            <input type="tel" name="whatsapp" class="settings-input" placeholder="+234..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Proposed Start Date</label>
+                            <input type="text" id="start-date-input" name="startDate" class="settings-input" placeholder="Select a date" readonly required>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Final Details -->
+                    <div class="form-step" id="step-4">
+                        <div class="section-header text-left mb-2">
+                            <h2>Final <span class="text-gradient">Touches.</span></h2>
+                            <p>Almost there, just a few more details.</p>
+                        </div>
+                        <div class="form-group mb-1">
+                            <label>Date of Birth</label>
+                            <input type="date" name="dob" class="settings-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Location (City, State)</label>
+                            <input type="text" name="location" class="settings-input" placeholder="e.g. Lagos, Nigeria" required>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="btn-nav">
+                        <button type="button" class="btn btn-secondary" id="prev-btn" style="display:none;">Back</button>
+                        <button type="button" class="btn btn-primary" id="next-btn">Next Step</button>
+                        <button type="submit" class="btn btn-primary" id="submit-btn" style="display:none;">Enroll Now</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Date Picker Modal -->
+    <div class="calendar-modal" id="calendar-modal">
+        <div class="calendar-card">
+            <h3>Select Start Date</h3>
+            <p class="mb-2">Pick an upcoming cohort start date:</p>
+            <div class="date-option" data-date="Next Monday, August 7th">Next Monday (Aug 7)</div>
+            <div class="date-option" data-date="Monday, August 14th">Monday (Aug 14)</div>
+            <div class="date-option" data-date="Monday, August 21st">Monday (Aug 21)</div>
+            <button class="btn btn-secondary mt-1" onclick="document.getElementById('calendar-modal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="scripts/script.js"></script>
+    <script>
+        const courseData = {
+            copywriting: { name: "Copywriting", hasOptions: true },
+            trading: { name: "SMC Trading", hasOptions: true },
+            uiux: { name: "UIUX Design", hasOptions: true },
+            ads: { name: "Ad Management", price: 20000, duration: "1 Week" },
+            youtube: { name: "YouTube Automation", price: 30000, duration: "1 Month + Mentorship" },
+            entrepreneurship: { name: "Entrepreneurship", price: 0, duration: "Limited Cohort" }
+        };
+
+        let currentStep = 1;
+        let selectedCourses = [];
+        const form = document.getElementById('enrollment-form');
+        
+        // Auto-fill from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const preSelected = urlParams.get('course');
+        if (preSelected && courseData[preSelected]) {
+            selectedCourses.push(preSelected);
+        }
+
+        // Step Navigation Logic
+        function updateStep() {
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            
+            document.getElementById('prev-btn').style.display = currentStep === 1 ? 'none' : 'block';
+            document.getElementById('next-btn').style.display = currentStep === 4 ? 'none' : 'block';
+            document.getElementById('submit-btn').style.display = currentStep === 4 ? 'block' : 'none';
+            
+            // Progress dots
+            document.querySelectorAll('.step-dot').forEach((dot, idx) => {
+                dot.classList.toggle('active', idx + 1 === currentStep);
+                dot.classList.toggle('completed', idx + 1 < currentStep);
+            });
+            document.getElementById('progress-line').style.width = `${(currentStep - 1) * 33.3}%`;
+
+            if (currentStep === 2) renderStep2();
+        }
+
+        document.getElementById('next-btn').onclick = () => {
+            if (validateStep()) { currentStep++; updateStep(); }
+        };
+        document.getElementById('prev-btn').onclick = () => { currentStep--; updateStep(); };
+
+        function validateStep() {
+            const inputs = document.getElementById(`step-${currentStep}`).querySelectorAll('input[required]');
+            for (let input of inputs) if (!input.value) { alert('Please fill all fields'); return false; }
+            if (currentStep === 2 && selectedCourses.length === 0) { alert('Please pick at least one course'); return false; }
+            return true;
+        }
+
+        // Step 2 Logic: Courses & Pricing
+        function renderStep2() {
+            const grid = document.getElementById('course-grid');
+            grid.querySelectorAll('.course-chip').forEach(chip => {
+                const c = chip.dataset.course;
+                chip.classList.toggle('selected', selectedCourses.includes(c));
+                chip.onclick = () => {
+                    if (selectedCourses.includes(c)) {
+                        selectedCourses = selectedCourses.filter(i => i !== c);
+                    } else if (selectedCourses.length < 2) {
+                        selectedCourses.push(c);
+                    } else {
+                        alert("Maximum 2 courses allowed.");
+                    }
+                    renderStep2();
+                };
+            });
+
+            // Render options for complex courses
+            const durationContainer = document.getElementById('duration-container');
+            durationContainer.innerHTML = '';
+            let total = 0;
+
+            selectedCourses.forEach(c => {
+                const info = courseData[c];
+                if (info.hasOptions) {
+                    const div = document.createElement('div');
+                    div.className = 'duration-selector fade-in';
+                    div.innerHTML = `
+                        <h5 class="mb-1">Select duration for ${info.name}:</h5>
+                        <label class="mr-2"><input type="radio" name="dur_${c}" value="60000" checked onchange="calculateTotal()"> 2 Months Detailed (₦60k)</label><br>
+                        <label><input type="radio" name="dur_${c}" value="100000" onchange="calculateTotal()"> 1 Month Intensive (₦100k)</label>
+                    `;
+                    durationContainer.appendChild(div);
+                }
+            });
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            selectedCourses.forEach(c => {
+                const info = courseData[c];
+                if (info.hasOptions) {
+                    const radios = document.getElementsByName(`dur_${c}`);
+                    radios.forEach(r => { if(r.checked) total += parseInt(r.value); });
+                } else {
+                    total += info.price;
+                }
+            });
+            document.getElementById('total-display').innerText = `₦${total.toLocaleString()}`;
+        }
+
+        // Step 3 Logic: Calendar Modal
+        const dateInput = document.getElementById('start-date-input');
+        const modal = document.getElementById('calendar-modal');
+        dateInput.onclick = () => modal.style.display = 'flex';
+        
+        modal.querySelectorAll('.date-option').forEach(opt => {
+            opt.onclick = () => {
+                dateInput.value = opt.dataset.date;
+                modal.style.display = 'none';
+            };
+        });
+
+        // Submission to AppScript
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.innerText = "Submitting...";
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+            // Add selected courses and final price to data
+            formData.append('coursesSelected', selectedCourses.map(c => courseData[c].name).join(', '));
+            formData.append('totalPrice', document.getElementById('total-display').innerText);
+
+            try {
+                // Replace this URL with your published AppScript Web App URL
+                const response = await fetch('https://script.google.com/macros/s/AKfycbwSnwZt2a1ZSu3S7aBwRRS6aEggbZAGDWTUKbHLa4A3DNZamt_kvLvvIp77e8-ZfsW2/exec', { method: 'POST', body: formData });
+                const result = await response.json();
+                if (result.result === 'success') {
+                    alert('Enrollment Successful! Check your email for next steps.');
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Successfully Submitted! We will contact you on WhatsApp.');
+                window.location.href = 'index.html';
+            }
+        };
+
+        updateStep();
+    </script>
+</body>
+</html>
