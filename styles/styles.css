@@ -171,7 +171,7 @@ ul { list-style: none; }
 }
 
 .btn-secondary {
-    background-color: transparent;
+    background-color: #00db87;
     color: var(--text-main);
     border: 2px solid var(--border-color);
     margin-left: 10px;
@@ -727,21 +727,48 @@ ul { list-style: none; }
     .benefit-card { padding: 2.5rem; }
 }
 
-/* Base card style for testimonials, info boxes, etc. */
-.card {
-    background: #e9e9e9;
-    border-radius: 1px 30px 1px 10px;
-    padding: 1.5rem 2rem;
-    border: 4px solid rgba(0, 0, 0, 0.436);
+/* Modern Testimonial Cards */
+.testimonial-card {
+    background: #00db87;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 2.5rem;
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
-    transition: all 0.3s ease;
+    transition: var(--transition-bounce);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-.card:hover {
-    transform: translateY(-4px);
-    border-color: #008f58;
+.testimonial-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--accent-blue);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Decorative Quote Mark */
+.testimonial-card::before {
+    content: '“';
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    font-size: 5rem;
+    font-family: serif;
+    color: var(--brand-blue-light);
+    line-height: 1;
+    z-index: 0;
+}
+
+.testimonial-card p {
+    font-size: 1.05rem;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text-main);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 2rem;
+    flex-grow: 1;
 }
 
 /* New, redesigned course card */
@@ -1335,9 +1362,9 @@ footer {
     p { font-size: 1rem; }
     
     .section-padding { padding: 1rem 0; }
-    
+
     .hero-grid-layout, .contact-grid, .grid-testimonials { grid-template-columns: 1fr; gap: 2rem; }
-    
+
     .hero { text-align: center; margin-top: -85px; padding-bottom: 30px; }
     .glass-card {
         padding: 2rem 1.25rem;
