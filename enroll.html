@@ -384,7 +384,8 @@
                 const response = await fetch('https://script.google.com/macros/s/AKfycbwNnH3oz5Icnminp-de9UPx5J0okbjrq3B6aoU7N1yRlN1F-icqr7ekTct_aqbRwFfp/exec', { method: 'POST', body: formData });
                 const result = await response.json();
                 if (result.result === 'success') {
-                    window.location.href = 'success.html';
+                    const name = formData.get('firstName');
+                    window.location.href = `enroll-success.html?name=${encodeURIComponent(name)}`;
                 }
             } catch (error) {
                 console.error(error);
