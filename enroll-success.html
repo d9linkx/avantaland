@@ -49,11 +49,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 10px;
             outline: none;
         }
+        .next-steps summary h3 { font-size: 1.25rem; flex: 1; text-align: left; }
         .next-steps summary::-webkit-details-marker { display: none; }
         .next-steps[open] summary i { transform: rotate(180deg); }
-        .next-steps summary i { transition: transform 0.3s ease; font-size: 1.25rem; color: var(--text-light); }
+        .next-steps summary i { transition: transform 0.3s ease; font-size: 1.25rem; color: var(--text-light); flex-shrink: 0; }
         .next-steps .steps-container { margin-top: 1.5rem; animation: slideDown 0.4s ease-out; }
 
         @keyframes slideDown {
@@ -68,6 +70,7 @@
         }
         @media (max-width: 768px) {
             .success-card { padding: 2.5rem 1.5rem; width: auto; margin: 0 15px; }
+            .step-item { gap: 1rem; }
             .next-steps { padding: 1.5rem; margin-top: 2rem; border-radius: 16px; }
             .icon-celebration { font-size: 3rem; }
             h1 { font-size: 1.8rem; }
