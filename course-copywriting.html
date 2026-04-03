@@ -503,13 +503,53 @@
     <div id="footer-placeholder"></div>
     <script src="scripts/script.js"></script>
     <script>
-        // Handle curriculum phase behavior across devices
-        const phases = document.querySelectorAll('.curriculum-card');
+        document.addEventListener('DOMContentLoaded', () => {
+            const phases = document.querySelectorAll('.curriculum-card');
+            const track = document.getElementById('curriculum-track');
+            const dotsContainer = document.getElementById('curriculum-dots');
+            const prevBtn = document.getElementById('curriculum-prev');
+            const nextBtn = document.getElementById('curriculum-next');
 
-        const handlePhases = () => {
-            // Always enable exclusive accordion mode for a clean dropdown experience
+            // Enable exclusive accordion
             phases.forEach(p => p.setAttribute('name', 'curriculum-phases'));
-        };
+
+            // Create Dots
+            phases.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => {
+                    track.scrollTo({
+                        left: phases[i].offsetLeft - track.offsetLeft,
+                        behavior: 'smooth'
+                    });
+                });
+                dotsContainer.appendChild(dot);
+            });
+
+            // Update Active Dot on Scroll
+            track.addEventListener('scroll', () => {
+                const index = Math.round(track.scrollLeft / (phases[0].offsetWidth + 24));
+                const dots = dotsContainer.querySelectorAll('.carousel-dot');
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            });
+
+            // Navigation Buttons
+            nextBtn.addEventListener('click', () => {
+                track.scrollBy({
+                    left: phases[0].offsetWidth + 24,
+                    behavior: 'smooth'
+                });
+            });
+
+            prevBtn.addEventListener('click', () => {
+                track.scrollBy({
+                    left: -(phases[0].offsetWidth + 24),
+                    behavior: 'smooth'
+                });
+            });
+        });
 
         window.addEventListener('resize', handlePhases);
         window.addEventListener('load', handlePhases);
