@@ -16,6 +16,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 3rem;
             padding: 3rem;
+            width: 100%;
         }
 
         @media (max-width: 1024px) {
@@ -30,15 +31,18 @@
                 padding: 2rem 1.5rem;
                 gap: 2rem;
                 margin-top: 20px;
+                width: auto;
             }
         }
 
         @media (max-width: 480px) {
             .calculator-card {
-                padding: 1.5rem 1rem;
+                padding: 1.5rem 1.25rem;
                 gap: 1.5rem;
             }
-            .stat-massive { font-size: 2.2rem !important; }
+            .stat-massive { font-size: 2rem !important; word-break: break-all; }
+            .skill-selector { grid-template-columns: 1fr; }
+            .currency-switcher { flex-wrap: wrap; }
         }
 
         .input-section {
@@ -155,6 +159,7 @@
             color: var(--text-primary);
             margin: 0.5rem 0;
             overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         .roi-badge {

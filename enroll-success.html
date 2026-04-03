@@ -43,10 +43,34 @@
             border: 1px solid #e2e8f0;
             margin-top: 3rem;
         }
+        .next-steps summary {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            outline: none;
+        }
+        .next-steps summary::-webkit-details-marker { display: none; }
+        .next-steps[open] summary i { transform: rotate(180deg); }
+        .next-steps summary i { transition: transform 0.3s ease; font-size: 1.25rem; color: var(--text-light); }
+        .next-steps .steps-container { margin-top: 1.5rem; animation: slideDown 0.4s ease-out; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .step-item {
             display: flex;
             gap: 1.5rem;
             margin-bottom: 2rem;
+        }
+        @media (max-width: 768px) {
+            .success-card { padding: 2.5rem 1.5rem; width: auto; margin: 0 15px; }
+            .next-steps { padding: 1.5rem; margin-top: 2rem; border-radius: 16px; }
+            .icon-celebration { font-size: 3rem; }
+            h1 { font-size: 1.8rem; }
         }
         .step-item:last-child { margin-bottom: 0; }
         .step-number {
@@ -78,23 +102,28 @@
                     <h1>You're in, <span id="user-name" class="text-gradient">Founder</span>!</h1>
                     <p class="welcome-msg">Your enrollment details have been secured. Welcome to the 1%.</p>
                     
-                    <div class="next-steps">
-                        <h3 class="mb-2">What happens next?</h3>
-                        <div class="step-item">
-                            <div class="step-number">1</div>
-                            <div class="step-content">
-                                <h4>Check your Email</h4>
-                                <p>We've sent a confirmation and your unique payment link to the address you provided.</p>
+                    <details class="next-steps" open>
+                        <summary>
+                            <h3 class="mb-0">What happens next?</h3>
+                            <i class="ph ph-caret-down"></i>
+                        </summary>
+                        <div class="steps-container">
+                            <div class="step-item">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Check your Email</h4>
+                                    <p>We've sent a confirmation and your unique payment link to the address you provided.</p>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Complete the Setup</h4>
+                                    <p>Follow the instructions in the email to finalize your subsidized tuition and lock your spot in the upcoming cohort.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="step-item">
-                            <div class="step-number">2</div>
-                            <div class="step-content">
-                                <h4>Complete the Setup</h4>
-                                <p>Follow the instructions in the email to finalize your subsidized tuition and lock your spot in the upcoming cohort.</p>
-                            </div>
-                        </div>
-                    </div>
+                    </details>
 
                     <div class="mt-4">
                         <a href="index.html" class="btn btn-secondary">Return Home</a>
