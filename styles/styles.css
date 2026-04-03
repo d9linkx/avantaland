@@ -1340,10 +1340,10 @@ footer {
     
     .hero { text-align: center; margin-top: -85px; padding-bottom: 30px; }
     .glass-card {
-        padding: 2.5rem 1.25rem;
+        padding: 2rem 1.25rem;
         border: #008f58 solid 1px;
         border-radius: 32px;
-        margin: 0 15px;
+        margin: 0 10px;
         width: auto;
     }
     .hero-btns { flex-direction: column; width: 100%; }

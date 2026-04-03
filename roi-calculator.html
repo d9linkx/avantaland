@@ -28,21 +28,29 @@
             .section-padding { padding-top: 100px; }
             .calculator-card {
                 grid-template-columns: 1fr;
-                padding: 2rem 1.5rem;
+                padding: 1.5rem 1.25rem;
                 gap: 2rem;
                 margin-top: 20px;
                 width: auto;
+                margin: 0 10px;
             }
         }
 
         @media (max-width: 480px) {
             .calculator-card {
-                padding: 1.5rem 1.25rem;
+                padding: 1.25rem 1rem;
                 gap: 1.5rem;
             }
-            .stat-massive { font-size: 1.8rem !important; overflow-wrap: anywhere; }
+            .stat-massive { font-size: 1.6rem !important; overflow-wrap: anywhere; }
+            .result-section { padding: 1.5rem 1rem; }
             .skill-selector { grid-template-columns: 1fr; }
             .currency-switcher { flex-wrap: wrap; }
+
+            .calc-group label {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1px;
+            }
         }
 
         .input-section {
@@ -67,9 +75,10 @@
             display: flex;
             gap: 0.5rem;
             background: #f1f5f9;
-            padding: 4px;
+            width: 100%;
             border-radius: 12px;
-            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
         }
         .curr-btn {
             flex: 1;
@@ -114,7 +123,6 @@
         }
 
         .calc-group label {
-            display: flex;
             justify-content: space-between;
             font-weight: 700;
             color: var(--text-main);
@@ -145,6 +153,14 @@
             text-align: center;
             font-weight: 700;
             transition: var(--transition);
+        }
+
+        select.settings-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2em;
         }
 
         .skill-opt.active {
@@ -211,12 +227,12 @@
             <div class="glass-card calculator-card fade-in">
                 <div class="input-section">
                     <div class="calc-group">
-                        <label>Select Currency</label>
-                        <div class="currency-switcher">
-                            <button class="curr-btn active" data-curr="NGN" data-symbol="₦" data-ratio="1">Naira</button>
-                            <button class="curr-btn" data-curr="GHS" data-symbol="GH₵" data-ratio="0.062">Cedis</button>
-                            <button class="curr-btn" data-curr="USD" data-symbol="$" data-ratio="0.00062">USD</button>
-                        </div>
+                        <label>Target Currency</label>
+                        <select id="currency-select" class="settings-input">
+                            <option value="NGN" data-symbol="₦" data-ratio="1">Naira (₦)</option>
+                            <option value="GHS" data-symbol="GH₵" data-ratio="0.062">Cedis (GH₵)</option>
+                            <option value="USD" data-symbol="$" data-ratio="0.00062">USD ($)</option>
+                        </select>
                     </div>
 
                     <div class="calc-group">
@@ -230,14 +246,14 @@
                     </div>
 
                     <div class="calc-group">
-                        <label>Select Skill Path</label>
-                        <div class="filter-group">
-                            <button class="filter-btn active" data-filter="all">All</button>
-                            <button class="filter-btn" data-filter="marketing">Marketing</button>
-                            <button class="filter-btn" data-filter="finance">Finance</button>
-                            <button class="filter-btn" data-filter="design">Design</button>
-                            <button class="filter-btn" data-filter="content">Content</button>
-                        </div>
+                        <label>Skill Category</label>
+                        <select id="filter-select" class="settings-input mb-1">
+                            <option value="all">All Skills</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="finance">Finance</option>
+                            <option value="design">Design</option>
+                            <option value="content">Content</option>
+                        </select>
                         <div class="skill-selector" id="skill-grid">
                             <!-- Dynamically injected -->
                         </div>
@@ -275,6 +291,8 @@
         const incomeInput = document.getElementById('input-income');
         const hoursInput = document.getElementById('input-hours');
         const skillGrid = document.getElementById('skill-grid');
+        const currencySelect = document.getElementById('currency-select');
+        const filterSelect = document.getElementById('filter-select');
         
         const valIncome = document.getElementById('val-income');
         const valHours = document.getElementById('val-hours');
@@ -345,26 +363,19 @@
             resProjected.classList.add('price-update-animation');
         }
 
-        // Event Listeners for Currency and Filter
-        document.querySelectorAll('.curr-btn').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('.curr-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                activeCurr = btn.dataset.curr;
-                activeSymbol = btn.dataset.symbol;
-                activeRatio = parseFloat(btn.dataset.ratio);
-                calculate();
-            };
-        });
+        // Event Listeners for Dropdowns
+        currencySelect.onchange = (e) => {
+            const opt = e.target.options[e.target.selectedIndex];
+            activeCurr = e.target.value;
+            activeSymbol = opt.dataset.symbol;
+            activeRatio = parseFloat(opt.dataset.ratio);
+            calculate();
+        };
 
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                activeFilter = btn.dataset.filter;
-                renderSkills();
-            };
-        });
+        filterSelect.onchange = (e) => {
+            activeFilter = e.target.value;
+            renderSkills();
+        };
 
         incomeInput.addEventListener('input', calculate);
         hoursInput.addEventListener('input', calculate);
