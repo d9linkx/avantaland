@@ -175,6 +175,11 @@ ul { list-style: none; }
     color: var(--text-main);
     border: 2px solid var(--border-color);
     margin-left: 10px;
+    padding: 1.2rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .btn-secondary:hover {
@@ -769,6 +774,41 @@ ul { list-style: none; }
     z-index: 1;
     margin-bottom: 2rem;
     flex-grow: 1;
+}
+
+/* Refined Pricing & Track Cards */
+.pricing-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 32px;
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: var(--transition-bounce);
+    height: 100%;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+}
+
+.pricing-card:hover {
+    transform: translateY(-12px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-blue);
+}
+
+.pricing-card.featured {
+    border: 2px solid var(--accent-blue);
+    background: var(--brand-blue-light);
+}
+
+.pricing-card .price-amount {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 1rem 0;
+    letter-spacing: -0.02em;
 }
 
 /* New, redesigned course card */

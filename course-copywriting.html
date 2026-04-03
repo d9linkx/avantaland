@@ -9,27 +9,89 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        /* --- Curriculum Grid & Accordion Logic --- */
-        .curriculum-grid { margin-top: 3rem; }
-        .mobile-only-icon { display: none; }
+        /* --- Modern Curriculum Grid --- */
+        .curriculum-grid { 
+            margin-top: 3rem; 
+        }
+
+        .curriculum-card {
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: var(--transition-bounce);
+            box-shadow: var(--shadow-sm);
+            height: fit-content;
+        }
+
+        .curriculum-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .curriculum-card summary {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+            gap: 1rem;
+        }
+
+        .curriculum-card summary::-webkit-details-marker { display: none; }
+
+        .curriculum-card .phase-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: left;
+        }
+
+        .curriculum-card h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .curriculum-card .card-body {
+            padding: 0 1.5rem 1.5rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding-top: 1.5rem;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .curriculum-card[open] {
+            border-color: var(--accent-blue);
+            background: linear-gradient(to bottom right, #ffffff, #f0fff4);
+        }
+
+        .curriculum-card summary i {
+            font-size: 1.5rem;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--text-light);
+            flex-shrink: 0;
+        }
+
+        .curriculum-card[open] summary i {
+            transform: rotate(180deg);
+            color: var(--accent-blue);
+        }
 
         @media (min-width: 1025px) {
             .curriculum-grid {
-                display: grid;
-                grid-template-columns: repeat(5, 1fr);
-                gap: 1rem;
+                display: flex;
+                flex-wrap: wrap;
                 justify-content: center;
+                gap: 2rem;
             }
-            .curriculum-grid .card {
-                padding: 1.5rem 1rem !important;
-                cursor: default;
+            .curriculum-card {
+                flex: 0 1 calc(33.333% - 2rem);
             }
-            .curriculum-grid .card summary {
-                list-style: none;
-                pointer-events: none; /* Disable toggle on desktop */
-            }
-            .curriculum-grid .card summary::-webkit-details-marker { display: none; }
-            .curriculum-grid .card h4 { font-size: 1.1rem; min-height: 3em; display: flex; align-items: center; }
+            .curriculum-card h4 { min-height: 2.6em; display: flex; align-items: center; }
         }
 
         @media (max-width: 1024px) {
@@ -38,32 +100,7 @@
                 flex-direction: column;
                 gap: 1rem;
             }
-            .curriculum-grid .card {
-                padding: 0 !important;
-                border-radius: 12px;
-                overflow: hidden;
-            }
-            .curriculum-grid .card summary {
-                padding: 1.5rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                cursor: pointer;
-                list-style: none;
-                user-select: none;
-            }
-            .curriculum-grid .card summary::-webkit-details-marker { display: none; }
-            .curriculum-grid .card .card-body {
-                padding: 0 1.5rem 1.5rem;
-                border-top: 1px solid rgba(0,0,0,0.05);
-                padding-top: 1.5rem;
-            }
-            .mobile-only-icon { 
-                display: block; 
-                font-size: 1.25rem; 
-                transition: transform 0.3s ease;
-            }
-            .curriculum-grid .card[open] .mobile-only-icon { transform: rotate(180deg); }
+            .curriculum-card h4 { min-height: auto; }
         }
 
         /* --- Who is it for Styling --- */
@@ -214,13 +251,13 @@
                     <span class="executor-focus-badge mb-1">Curriculum Overview</span>
                 </div>
                 <div class="curriculum-grid">
-                    <details class="card" name="curriculum-phases" open>
+                    <details class="curriculum-card" name="curriculum-phases" open>
                         <summary>
-                            <div>
+                            <div class="phase-header">
                                 <span class="benefit-tag">Phase 1</span>
                                 <h4>The Psychology of the "Yes"</h4>
                             </div>
-                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                            <i class="ph ph-caret-down"></i>
                         </summary>
                         <div class="card-body">
                             <p>Before you write a single word, you have to understand how people think.</p>
@@ -233,13 +270,13 @@
                         </div>
                     </details>
 
-                    <details class="card" name="curriculum-phases">
+                    <details class="curriculum-card" name="curriculum-phases">
                         <summary>
-                            <div>
+                            <div class="phase-header">
                                 <span class="benefit-tag">Phase 2</span>
                                 <h4>The Architect’s Blueprint</h4>
                             </div>
-                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                            <i class="ph ph-caret-down"></i>
                         </summary>
                         <div class="card-body">
                             <p>Great copy isn't "written"; it is assembled. We give you the skeleton.</p>
@@ -252,13 +289,13 @@
                         </div>
                     </details>
 
-                    <details class="card" name="curriculum-phases">
+                    <details class="curriculum-card" name="curriculum-phases">
                         <summary>
-                            <div>
+                            <div class="phase-header">
                                 <span class="benefit-tag">Phase 3</span>
                                 <h4>The Profit Platforms</h4>
                             </div>
-                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                            <i class="ph ph-caret-down"></i>
                         </summary>
                         <div class="card-body">
                             <p>Where the money is actually made in the digital world.</p>
@@ -271,13 +308,13 @@
                         </div>
                     </details>
 
-                    <details class="card" name="curriculum-phases">
+                    <details class="curriculum-card" name="curriculum-phases">
                         <summary>
-                            <div>
+                            <div class="phase-header">
                                 <span class="benefit-tag">Phase 4</span>
                                 <h4>The Polishing & Proof</h4>
                             </div>
-                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                            <i class="ph ph-caret-down"></i>
                         </summary>
                         <div class="card-body">
                             <p>Turning a rough draft into a professional masterpiece.</p>
@@ -290,13 +327,13 @@
                         </div>
                     </details>
 
-                    <details class="card" name="curriculum-phases">
+                    <details class="curriculum-card" name="curriculum-phases">
                         <summary>
-                            <div>
+                            <div class="phase-header">
                                 <span class="benefit-tag">Phase 5</span>
                                 <h4>The "Earning" Roadmap</h4>
                             </div>
-                            <i class="ph ph-caret-down mobile-only-icon"></i>
+                            <i class="ph ph-caret-down"></i>
                         </summary>
                         <div class="card-body">
                             <p>Because learning is useless if you don’t get paid.</p>
@@ -369,16 +406,16 @@
                     <p>Select the track that fits your schedule and goals.</p>
                 </div>
                 <div class="grid-2">
-                    <div class="card text-center" style="border-color: var(--accent-blue);">
+                    <div class="pricing-card">
                         <span class="executor-focus-badge mb-1">Standard Track</span>
-                        <h3>₦60,000</h3>
-                        <p><strong>2 Months</strong> of detailed, paced learning. Ideal for beginners.</p>
+                        <div class="price-amount">₦60,000</div>
+                        <p class="mb-2"><strong>2 Months</strong> of detailed, paced learning. Ideal for beginners starting from scratch.</p>
                         <a href="enroll.html?course=copywriting" class="btn btn-secondary" style="width: 100%;">Select Track</a>
                     </div>
-                    <div class="card text-center" style="border-color: var(--brand-blue-dark); background: var(--brand-blue-light);">
+                    <div class="pricing-card featured">
                         <span class="executor-focus-badge mb-1" style="background: var(--brand-blue-dark); color: white;">Intensive Class</span>
-                        <h3>₦100,000</h3>
-                        <p><strong>1 Month</strong> high-speed mastery. For those who need to earn fast.</p>
+                        <div class="price-amount">₦100,000</div>
+                        <p class="mb-2"><strong>1 Month</strong> high-speed immersive mastery. For those who need to launch and earn fast.</p>
                         <a href="enroll.html?course=copywriting" class="btn btn-primary" style="width: 100%;">Select Track</a>
                     </div>
                 </div>
@@ -391,24 +428,24 @@
                     <h2>Success stories</h2>
                     <p>What our graduates are achieving in the real world.</p>
                 </div>
-                <div class="grid-3">
-                    <div class="card">
-                        <p style="font-style: italic;">"I went from zero knowledge to landing a $500 monthly retainer client before the 2-month course even ended. The scripts provided actually work!"</p> 
+                <div class="grid-2">
+                    <div class="testimonial-card fade-in">
+                        <p>"I went from zero knowledge to landing a $500 monthly retainer client before the 2-month course even ended. The scripts provided actually work!"</p> 
                         <div class="testimonial-author">
                             <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Student">
                             <div>
-                                <h5 class="mb-0" style="font-size: 1rem;">Tunde A.</h5>
+                                <h5 class="mb-0">Tunde A.</h5>
                                 <small style="color: var(--text-light);">Freelance Writer</small>
                             </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <p style="font-style: italic;">"The 1-month intensive was exactly what I needed to pivot from my retail job. I'm now writing landing pages for a tech agency in the UK."</p>
+                    <div class="testimonial-card fade-in">
+                        <p>"The 1-month intensive was exactly what I needed to pivot from my retail job. I'm now writing landing pages for a tech agency in the UK."</p>
                         <div class="testimonial-author">
                             <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Student">
                             <div>
-                                <h5 class="mb-0" style="font-size: 1rem;">Blessing O.</h5>
-                                <small style="color: var(--text-light);">Conversion Copywriter</small>
+                                <h5 class="mb-0">Blessing O.</h5>
+                                <small style="color: var(--text-light);">Conversion Writer</small>
                             </div>
                         </div>
                     </div>
@@ -466,19 +503,12 @@
     <div id="footer-placeholder"></div>
     <script src="scripts/script.js"></script>
     <script>
-        // Ensure all curriculum phases stay open on desktop
-        const curriculumGrid = document.querySelector('.curriculum-grid');
-        const phases = curriculumGrid.querySelectorAll('details');
-        
+        // Handle curriculum phase behavior across devices
+        const phases = document.querySelectorAll('.curriculum-card');
+
         const handlePhases = () => {
-            if (window.innerWidth > 1024) {
-                phases.forEach(p => {
-                    p.setAttribute('open', '');
-                    p.removeAttribute('name'); // Disable exclusive mode
-                });
-            } else {
-                phases.forEach(p => p.setAttribute('name', 'curriculum-phases')); // Re-enable exclusive mode
-            }
+            // Always enable exclusive accordion mode for a clean dropdown experience
+            phases.forEach(p => p.setAttribute('name', 'curriculum-phases'));
         };
 
         window.addEventListener('resize', handlePhases);
