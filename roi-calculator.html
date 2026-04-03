@@ -58,6 +58,57 @@
             text-align: center;
         }
 
+        /* Currency Switcher */
+        .currency-switcher {
+            display: flex;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+        .curr-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+        .curr-btn.active {
+            background: white;
+            color: var(--accent-blue);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Modern Filter */
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .filter-btn {
+            padding: 6px 16px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        .filter-btn.active {
+            background: var(--text-main);
+            color: white;
+            border-color: var(--text-main);
+        }
+
         .calc-group label {
             display: flex;
             justify-content: space-between;
@@ -155,7 +206,16 @@
             <div class="glass-card calculator-card fade-in">
                 <div class="input-section">
                     <div class="calc-group">
-                        <label>Current Monthly Income (₦) <span id="val-income">200,000</span></label>
+                        <label>Select Currency</label>
+                        <div class="currency-switcher">
+                            <button class="curr-btn active" data-curr="NGN" data-symbol="₦" data-ratio="1">Naira</button>
+                            <button class="curr-btn" data-curr="GHS" data-symbol="GH₵" data-ratio="0.062">Cedis</button>
+                            <button class="curr-btn" data-curr="USD" data-symbol="$" data-ratio="0.00062">USD</button>
+                        </div>
+                    </div>
+
+                    <div class="calc-group">
+                        <label>Current Monthly Income (<span class="curr-symbol">₦</span>) <span id="val-income">200,000</span></label>
                         <input type="range" id="input-income" min="50000" max="1000000" step="10000" value="200000">
                     </div>
 
@@ -166,37 +226,31 @@
 
                     <div class="calc-group">
                         <label>Select Skill Path</label>
-                        <div class="skill-selector">
-                            <div class="skill-opt active" data-skill="copywriting" data-rate="15000" data-fee="60000">Copywriting</div>
-                            <div class="skill-opt" data-skill="ads" data-rate="12000" data-fee="20000">Ad Management</div>
+                        <div class="filter-group">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="marketing">Marketing</button>
+                            <button class="filter-btn" data-filter="finance">Finance</button>
+                            <button class="filter-btn" data-filter="design">Design</button>
+                            <button class="filter-btn" data-filter="content">Content</button>
+                        </div>
+                        <div class="skill-selector" id="skill-grid">
+                            <!-- Dynamically injected -->
                         </div>
                     </div>
                 </div>
 
                 <div class="result-section">
                     <p style="text-transform: uppercase; letter-spacing: 1px; font-weight: 700; opacity: 0.7;">Projected Monthly Income</p>
-                    <div class="stat-massive" id="res-projected">₦1,200,000</div>
-                    <p id="res-increase" style="color: var(--accent-blue); font-weight: 700;">+ ₦1,000,000 monthly increase</p>
+                    <div class="stat-massive" id="res-projected">₦0</div>
+                    <p id="res-increase" style="color: var(--accent-blue); font-weight: 700;">+ ₦0 monthly increase</p>
                     
-                    <div class="roi-badge" id="res-roi">1,667% Return on Course</div>
+                    <div class="roi-badge" id="res-roi">0% Return on Investment</div>
                     
-                    <!-- Integrated Registration Form -->
-                    <form id="roi-registration-form" style="margin-top: 2rem; text-align: left;">
-                        <div class="form-group mb-1">
-                            <input type="text" name="firstName" class="settings-input" placeholder="First Name" required>
-                        </div>
-                        <div class="form-group mb-1">
-                            <input type="email" name="email" class="settings-input" placeholder="Email Address" required>
-                        </div>
-                        <!-- Hidden tracking fields for calculation data -->
-                        <input type="hidden" name="skillSelected" id="hidden-skill">
-                        <input type="hidden" name="projectedIncome" id="hidden-projected">
-                        <input type="hidden" name="roiPercentage" id="hidden-roi">
-                        
-                        <button type="submit" id="roi-submit-btn" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">Secure My Spot</button>
-                    </form>
+                    <div style="margin-top: 2rem;">
+                        <a href="enroll.html" id="enroll-link" class="btn btn-primary" style="width: 100%;">Secure My Spot</a>
+                    </div>
 
-                    <p style="font-size: 0.8rem; margin-top: 1.5rem; opacity: 0.7;">Based on 2026 average high-income hourly rates.</p>
+                    <p style="font-size: 0.8rem; margin-top: 1.5rem; opacity: 0.7;">Based on 2026 entry-level specialist rates.</p>
                 </div>
             </div>
         </div>
@@ -205,9 +259,17 @@
     <div id="footer-placeholder"></div>
     <script src="scripts/script.js"></script>
     <script>
+        const courseData = {
+            copywriting: { name: "Copywriting", rate: 7500, fee: 60000, cat: "marketing" },
+            ads: { name: "Ad Management", rate: 6000, fee: 20000, cat: "marketing" },
+            trading: { name: "SMC Trading", rate: 10000, fee: 60000, cat: "finance" },
+            uiux: { name: "UI/UX Design", rate: 7000, fee: 60000, cat: "design" },
+            youtube: { name: "YouTube Automation", rate: 8500, fee: 30000, cat: "content" }
+        };
+
         const incomeInput = document.getElementById('input-income');
         const hoursInput = document.getElementById('input-hours');
-        const skillOpts = document.querySelectorAll('.skill-opt');
+        const skillGrid = document.getElementById('skill-grid');
         
         const valIncome = document.getElementById('val-income');
         const valHours = document.getElementById('val-hours');
@@ -216,36 +278,61 @@
         const resIncrease = document.getElementById('res-increase');
         const resRoi = document.getElementById('res-roi');
         
-        const roiForm = document.getElementById('roi-registration-form');
+        const enrollLink = document.getElementById('enroll-link');
 
-        let activeRate = 15000;
+        let activeRate = 7500;
         let activeFee = 60000;
         let activeSkill = 'copywriting';
+        let activeCurr = 'NGN';
+        let activeSymbol = '₦';
+        let activeRatio = 1;
+        let activeFilter = 'all';
+
+        function renderSkills() {
+            skillGrid.innerHTML = '';
+            Object.keys(courseData).forEach(key => {
+                const skill = courseData[key];
+                if (activeFilter === 'all' || skill.cat === activeFilter) {
+                    const opt = document.createElement('div');
+                    opt.className = `skill-opt ${activeSkill === key ? 'active' : ''}`;
+                    opt.innerText = skill.name;
+                    opt.onclick = () => {
+                        activeSkill = key;
+                        activeRate = skill.rate;
+                        activeFee = skill.fee;
+                        renderSkills();
+                        calculate();
+                    };
+                    skillGrid.appendChild(opt);
+                }
+            });
+        }
 
         function calculate() {
             const currentIncome = parseInt(incomeInput.value);
             const targetHours = parseInt(hoursInput.value);
             
             // Update Labels
-            valIncome.innerText = currentIncome.toLocaleString();
+            valIncome.innerText = Math.round(currentIncome * activeRatio).toLocaleString();
             valHours.innerText = targetHours;
+            document.querySelectorAll('.curr-symbol').forEach(el => el.innerText = activeSymbol);
 
             // Calculations: Rate * Hours * 4 weeks
             const projected = activeRate * targetHours * 4;
             const increase = projected - currentIncome;
             
             // ROI = (Monthly Increase / Course Fee) * 100
-            const roi = Math.round((increase / activeFee) * 100);
+            const roi = activeFee > 0 ? Math.round((increase / activeFee) * 100) : 0;
 
             // Update UI
-            resProjected.innerText = `₦${projected.toLocaleString()}`;
-            resIncrease.innerText = increase > 0 ? `+ ₦${increase.toLocaleString()} monthly increase` : `Refine your target hours`;
+            resProjected.innerText = `${activeSymbol}${Math.round(projected * activeRatio).toLocaleString()}`;
+            resIncrease.innerText = increase > 0 
+                ? `+ ${activeSymbol}${Math.round(increase * activeRatio).toLocaleString()} monthly increase` 
+                : `Refine your target hours`;
             resRoi.innerText = increase > 0 ? `${roi.toLocaleString()}% Return on Investment` : `Break-even path`;
 
-            // Sync hidden inputs for form submission
-            document.getElementById('hidden-skill').value = activeSkill;
-            document.getElementById('hidden-projected').value = projected.toLocaleString();
-            document.getElementById('hidden-roi').value = roi + '%';
+            // Update Enrollment Link
+            enrollLink.href = `enroll.html?course=${activeSkill}`;
 
             // Animation trigger
             resProjected.classList.remove('price-update-animation');
@@ -253,45 +340,31 @@
             resProjected.classList.add('price-update-animation');
         }
 
+        // Event Listeners for Currency and Filter
+        document.querySelectorAll('.curr-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.curr-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeCurr = btn.dataset.curr;
+                activeSymbol = btn.dataset.symbol;
+                activeRatio = parseFloat(btn.dataset.ratio);
+                calculate();
+            };
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeFilter = btn.dataset.filter;
+                renderSkills();
+            };
+        });
+
         incomeInput.addEventListener('input', calculate);
         hoursInput.addEventListener('input', calculate);
 
-        skillOpts.forEach(opt => {
-            opt.addEventListener('click', () => {
-                skillOpts.forEach(o => o.classList.remove('active'));
-                opt.classList.add('active');
-                activeRate = parseInt(opt.dataset.rate);
-                activeFee = parseInt(opt.dataset.fee);
-                activeSkill = opt.dataset.skill;
-                calculate();
-            });
-        });
-
-        // Form Submission Logic
-        roiForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const submitBtn = document.getElementById('roi-submit-btn');
-            const originalText = submitBtn.innerText;
-            submitBtn.innerText = "Processing...";
-            submitBtn.disabled = true;
-
-            const formData = new FormData(roiForm);
-            // Map fields to match your AppScript expectations
-            formData.append('coursesSelected', 'ROI Lead: ' + activeSkill);
-            formData.append('totalPrice', 'Projected: ₦' + document.getElementById('hidden-projected').value);
-
-            try {
-                const response = await fetch('https://script.google.com/macros/s/AKfycbwcyD7SQcP_GTs6hrGG3k6tjtpjvN9XimlEkdyOlw-jUUvV5e2hpXViVRVlEFRkLhkN-w/exec', { method: 'POST', body: formData });
-                const result = await response.json();
-                if (result.result === 'success') {
-                    window.location.href = `enroll.html?course=${activeSkill}`;
-                }
-            } catch (error) {
-                console.error(error);
-                window.location.href = `enroll.html?course=${activeSkill}`;
-            }
-        };
-
+        renderSkills();
         calculate();
     </script>
 </body>
