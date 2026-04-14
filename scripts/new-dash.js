@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.dashboardApp = (function() { // Wrap in IIFE and expose globally
     // --- Data Structure for all 33 Truths ---
     const truthsData = [
         { id: 0, title: "You are unqualified; no amount of prep survives first contact" },
@@ -37,14 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // --- DOM Elements ---
-    const hackListContainer = document.querySelector('.hack-list');
-    const learningStage = document.querySelector('.learning-stage');
-    const masteryGaugeProgress = document.querySelector('.progress-gauge-thin .progress');
-    const masteryGaugeValue = document.querySelector('.progress-gauge-thin-value');
-    const dailyPillText = document.querySelector('.daily-pill-card p');
+    let learningStage; // Will be set in init
+    let sidebarMasteryPercent;
+    let sidebarMasteryProgressBar;
+    let dailyTruthText;
+    let headerCreditsBalance;
+
     const feedbackNotes = document.getElementById('feedback-notes');
 
     // --- State ---
+    // Initial state structure, will be loaded from localStorage
     let currentState = {
         progress: {},
         checklist: {},
@@ -136,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error("Error loading state from localStorage", e);
         }
-        console.log("Dashboard loaded with state:", currentState); // Debugging line
     }
 
     function saveState() {
@@ -145,8 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('bizLabFeedbackNotes', currentState.notes);
         localStorage.setItem('bizLabPlanner', JSON.stringify(currentState.planner));
         localStorage.setItem('bizLabProfile', JSON.stringify(currentState.profile));
-        localStorage.setItem('bizLabLastVisit', JSON.stringify(currentState.lastVisit));
-        updateSidebarProfileDisplay();
+        localStorage.setItem('bizLabLastVisit', JSON.stringify(currentState.lastVisit)); // This is for internal tracking
+        updateDashboardHeader(); // Update UI elements that reflect state
     }
 
     // --- Cloud Sync Logic ---
@@ -183,59 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }).then(res => console.log("Cloud Sync initiated")).catch(err => console.error("Sync failed", err));
     }
 
-    function updateSidebarProfileDisplay() {
-        const sidebarProfile = document.querySelector('.sidebar-profile');
-        if (sidebarProfile && currentState.profile) {
-            // Update click handler to navigate to profile view within SPA
-            sidebarProfile.removeAttribute('onclick');
-            sidebarProfile.onclick = (e) => {
-                e.preventDefault();
-                renderProfile();
-                document.querySelectorAll('.sidebar-nav .nav-item').forEach(i => i.classList.remove('active'));
-                document.querySelector('.sidebar-nav .nav-item[data-target="profile"]')?.classList.add('active');
-            };
-
-            const p = currentState.profile;
-            // Use image if available, else fallback to initial
-            const avatarHtml = p.avatar 
-                ? `<img src="${p.avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">`
-                : `<div class="profile-avatar">${p.name.charAt(0).toUpperCase()}</div>`;
-            
-            sidebarProfile.innerHTML = `
-                ${avatarHtml}
-                <div class="profile-info">
-                    <span class="profile-name">${p.name}</span>
-                    <span class="profile-role">${p.primarySkill || 'Founder'}</span>
-                </div>
-            `;
-        }
-        
-        // Update Mobile Nav Profile Icon
-        const mobileProfile = document.querySelector('.mobile-nav-item[data-target="profile"]');
-        if (mobileProfile && currentState.profile) {
-            const p = currentState.profile;
-            // Check if we need to update icon to image
-            const icon = mobileProfile.querySelector('i');
-            const existingImg = mobileProfile.querySelector('img');
-            
-            if (p.avatar) {
-                if (icon) icon.remove();
-                if (existingImg) {
-                    existingImg.src = p.avatar;
-                } else {
-                    const img = document.createElement('img');
-                    img.src = p.avatar;
-                    img.style.width = '24px';
-                    img.style.height = '24px';
-                    img.style.borderRadius = '50%';
-                    img.style.objectFit = 'cover';
-                    img.style.marginBottom = '4px';
-                    mobileProfile.insertBefore(img, mobileProfile.firstChild);
-                }
-            }
-        }
-    }
-
     function setupEventListeners() {
         feedbackNotes.value = currentState.notes;
         feedbackNotes.addEventListener('input', (e) => {
@@ -246,13 +194,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Rendering Functions ---
 
-    function renderDashboardGrid() {
+    function renderDashboardGrid() { // This is the "My Learning" view
         learningStage.innerHTML = `
-            <div class="dashboard-header"></div>
-            <div class="dashboard-grid"></div>
+            <!-- Content from new-dashboard.html's main area will be here -->
+            <!-- The existing header is outside this, so we only render the grid content -->
         `;
-        updateDashboardHeader();
-
         const gridContainer = learningStage.querySelector('.dashboard-grid');
 
         // --- Card 1: Next Hack ---
@@ -261,10 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
         renderIntelligenceWing();
     }
 
-    async function updateDashboardHeader() {
-        const header = learningStage.querySelector('.dashboard-header');
-        if (!header) return;
-
+    async function updateDashboardHeader() { // Updates elements in new-dashboard.html's fixed header/aside
+        // Update Welcome message in main header
+        const welcomeHeader = document.querySelector('main header h2');
+        const welcomeSub = document.querySelector('main header p');
         const firstName = currentState.profile.name ? currentState.profile.name.split(' ')[0] : 'Founder';
 
         // --- 1. Master Card Logic ---
@@ -304,41 +250,48 @@ document.addEventListener('DOMContentLoaded', () => {
         const isStartOfJourney = nextHackIndex === 0 && (!currentState.progress || Object.keys(currentState.progress).length === 0);
         
         let welcomeHook = `Welcome back, ${firstName}. You were last here ${lastVisitStr}.`;
-        let actionText = `${firstName}, you're currently mastering Lesson ${String(nextHackIndex + 1).padStart(2, '0')}. You have ${tasksRemaining} tasks remaining before you're ready for the next level.`;
-        let btnText = `Resume <i class="ph ph-arrow-right"></i>`;
+        let subText = `You have ${tasksRemaining} tasks remaining for Lesson ${String(nextHackIndex + 1).padStart(2, '0')}.`;
 
         if (isStartOfJourney) {
             welcomeHook = `Welcome to the Lab, ${firstName}. Let's build your empire.`;
-            if (tasksRemaining === totalTasks) {
-                actionText = `Your journey begins now. Lesson 1 lays the foundation for everything.`;
-                btnText = `Start Lesson 1 <i class="ph ph-arrow-right"></i>`;
-            }
+            subText = `Your journey begins now. Lesson 1 lays the foundation for everything.`;
+        } else if (tasksRemaining === 0 && totalTasks > 0) {
+            subText = `Boom! Lesson ${nextHackIndex + 1} is crushed. Ready to dominate the next one, ${firstName}?`;
+        } else if (totalTasks === 0 && !isStartOfJourney) { // If no checklist for current lesson
+            subText = `Ready to start Lesson ${nextHackIndex + 1}, ${firstName}? The market is waiting.`;
         }
 
-        if (tasksRemaining === 0 && totalTasks > 0) {
-             actionText = `Boom! Lesson ${nextHackIndex + 1} is crushed. Ready to dominate the next one, ${firstName}? The market is waiting.`;
-        } else if (totalTasks === 0 && !isStartOfJourney) {
-             actionText = `Ready to start Lesson ${nextHackIndex + 1}, ${firstName}? The market is waiting.`;
+        if (welcomeHeader) welcomeHeader.textContent = welcomeHook;
+        if (welcomeSub) welcomeSub.textContent = subText;
+
+        // Update Mastery Progress in Sidebar
+        if (sidebarMasteryPercent) {
+            const completedTruthsCount = Object.keys(currentState.progress).length;
+            const totalTruths = truthsData.length;
+            const overallMasteryPercentage = totalTruths > 0 ? Math.round((completedTruthsCount / totalTruths) * 100) : 0;
+            sidebarMasteryPercent.textContent = `${overallMasteryPercentage}%`;
+        }
+        if (sidebarMasteryProgressBar) {
+            const completedTruthsCount = Object.keys(currentState.progress).length;
+            const totalTruths = truthsData.length;
+            const overallMasteryPercentage = totalTruths > 0 ? Math.round((completedTruthsCount / totalTruths) * 100) : 0;
+            sidebarMasteryProgressBar.style.width = `${overallMasteryPercentage}%`;
         }
 
-        // Master Card HTML
-        const masterCard = document.createElement('div');
-        masterCard.className = 'master-card';
-        
-        masterCard.innerHTML = `
-            <div class="master-card-content">
-                <p class="master-hook">${welcomeHook}</p>
-                <h3 class="master-title">Lesson ${nextHackIndex + 1}</h3>
-                <p class="master-action">${actionText}</p>
-                <div class="master-progress-container">
-                    <div class="master-progress-bar" style="width: ${progressPercent}%"></div>
-                </div>
-                <button class="btn-master-resume">${btnText}</button>
-            </div>
-        `;
-        
-        masterCard.querySelector('.btn-master-resume').addEventListener('click', () => displayHack(nextHackIndex));
-        header.appendChild(masterCard);
+        // Update Credits Balance in Header
+        if (headerCreditsBalance) {
+            // Placeholder for actual credit logic
+            headerCreditsBalance.textContent = `120 Credits`;
+        }
+
+        // Update Daily Truth
+        if (dailyTruthText) {
+            const randomIndex = Math.floor(Math.random() * truthsData.length);
+            dailyTruthText.textContent = `"${truthsData[randomIndex].title}"`;
+        }
+
+        // The "Master Card" and "Executor Card" are part of the main content grid,
+        // so they will be rendered by renderDashboardGrid, not updateDashboardHeader.
 
         // --- 2. Daily Executor Card Logic ---
         const plannerTasks = currentState.planner.tasks || [];
@@ -388,8 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="btn-open-planner">Go to tasks <i class="ph ph-arrow-right"></i></button>
         `;
 
-        executorCard.querySelector('.btn-open-planner').addEventListener('click', renderPlanner);
-        header.appendChild(executorCard);
     }
 
     function formatLastVisit(timestamp) {
@@ -408,34 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             return `${date.toLocaleDateString()} at ${timeStr}`;
         }
-    }
-
-    function renderProfileRightSidebar() {
-        const wing = document.querySelector('.intelligence-wing');
-        if (!wing) return;
-        
-        wing.innerHTML = `
-            <div class="widget-card">
-                <h3><i class="ph ph-cloud-check" style="color: var(--success-color);"></i> Data Health</h3>
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem;">
-                    <div style="width: 12px; height: 12px; background: var(--success-color); border-radius: 50%; box-shadow: 0 0 8px var(--success-color);"></div>
-                    <span style="font-weight: 600; color: var(--text-primary);">Synced to Cloud</span>
-                </div>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Your progress is safe.</p>
-            </div>
-
-            <div class="widget-card" style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); color: white; border: none;">
-                <h3 style="color: #94A3B8; border-bottom-color: rgba(255,255,255,0.1);">Account Value</h3>
-                <div style="margin-top: 1rem;">
-                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--brand-yellow);">$11.00</div>
-                    <p style="font-size: 0.9rem; color: #CBD5E1; margin-top: 0.5rem; line-height: 1.5;">
-                        You joined at $3.<br>
-                        Current market value: $11.<br>
-                        <strong style="color: white;">Your founder status is locked.</strong>
-                    </p>
-                </div>
-            </div>
-        `;
     }
 
     // --- CEO Execution Planner Logic ---
@@ -526,11 +449,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        document.getElementById('nav-to-business').addEventListener('click', (e) => {
-            e.preventDefault();
-            showComingSoonModal('Business Dashboard');
-        });
-
         const timerBtn = document.getElementById('btn-start-timer');
         if (timerBtn) timerBtn.addEventListener('click', togglePlannerTimer);
         
@@ -538,9 +456,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('btn-timeline').addEventListener('click', openTimelineModal);
         document.getElementById('btn-focus-tools').addEventListener('click', openFocusConfigModal);
         document.getElementById('btn-daily-review').addEventListener('click', openDailyReviewModal);
-
-        // Restore default right sidebar
-        renderIntelligenceWing();
     }
 
     function setupAudioPlayer(truthIndex) {
@@ -598,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function renderBusinessDashboard() {
+    function renderBusinessDashboard() { // This is the "Business Dashboard" view
         if (!window.Sortable) {
             const script = document.createElement('script');
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js';
@@ -667,6 +582,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const addLeadBtn = document.getElementById('btn-add-lead');
         if (addLeadBtn) addLeadBtn.addEventListener('click', addLead);
+    }
+
+    function renderCourseCatalog() { // New "Course Catalog" view
+        learningStage.innerHTML = `
+            <div class="p-8 text-center">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Course Catalog</h2>
+                <p class="text-slate-500 text-lg mb-8">Explore a wide range of courses designed to boost your entrepreneurial skills.</p>
+                <div class="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg inline-flex items-center gap-2">
+                    <i class="ph-duotone ph-hourglass-high text-2xl"></i>
+                    <span>This feature is currently under development. Check back soon for exciting new courses!</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderSkillPaths() { // New "Skill Paths" view
+        learningStage.innerHTML = `
+            <div class="p-8 text-center">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Skill Paths</h2>
+                <p class="text-slate-500 text-lg mb-8">Master specific skill sets with our guided learning paths.</p>
+                <div class="bg-purple-50 border border-purple-200 text-purple-800 p-4 rounded-lg inline-flex items-center gap-2">
+                    <i class="ph-duotone ph-sparkle text-2xl"></i>
+                    <span>Skill Paths are coming soon! Stay tuned for personalized learning journeys.</span>
+                </div>
+            </div>
+        `;
     }
 
     function renderPlannerTasks() {
@@ -2438,16 +2379,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentState.currentHackIndex = index;
         const truth = truthsData[index];
 
-        // Update active state in navigator
-        document.querySelectorAll('.hack-list-item').forEach(item => {
-            item.classList.toggle('active', parseInt(item.dataset.index) === index);
-        });
-
-        // Update active state in sidebar nav
-        document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
-        const hacksNav = document.querySelector('.sidebar-nav .nav-item[data-target="hacks"]');
-        if (hacksNav) hacksNav.classList.add('active');
-
         // Determine mastery state
         const isMastered = !!currentState.progress[index];
 
@@ -2650,25 +2581,6 @@ document.addEventListener('DOMContentLoaded', () => {
         learningStage.querySelector('#prev-hack-btn').addEventListener('click', () => { if (index > 0) displayHack(index - 1); });
     }
 
-    function renderIntelligenceWing() {
-        // Update Mastery Gauge
-        const completedCount = Object.keys(currentState.progress).length;
-        const total = truthsData.length;
-        const percentage = Math.round((completedCount / total) * 100);
-        
-        const radius = 52;
-        const circumference = 2 * Math.PI * radius;
-        const offset = circumference - (percentage / 100) * circumference;
-
-        masteryGaugeProgress.style.strokeDasharray = `${circumference} ${circumference}`;
-        masteryGaugeProgress.style.strokeDashoffset = offset;
-        masteryGaugeValue.textContent = `${percentage}%`;
-
-        // Update Daily Pill
-        const randomIndex = Math.floor(Math.random() * truthsData.length);
-        dailyPillText.textContent = `"${truthsData[randomIndex].title}"`;
-    }
-
     // --- State Change Handlers ---
 
     function handleChecklistChange(truthIndex, checkIndex, isChecked) {
@@ -2682,7 +2594,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(syncTimeout);
         syncTimeout = setTimeout(syncToCloud, 2000);
         
-        renderHackNavigator(); // Update dot color
+        // No hack navigator in this layout, so no dot color update needed here.
         
         // Note: The updateCompleteButton logic is now handled directly within the event listener 
         // inside displayHack to ensure it has the correct scope and context.
@@ -2697,8 +2609,7 @@ document.addEventListener('DOMContentLoaded', () => {
         syncToCloud(); // Important milestone, sync immediately
 
         // Update persistent UI elements immediately
-        renderHackNavigator();
-        renderIntelligenceWing();
+        updateDashboardHeader(); // Update mastery progress in sidebar
 
         // After a short delay, advance to the next available truth
         setTimeout(() => {
@@ -2715,284 +2626,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('storage', (e) => {
         if (e.key === 'bizLabProgress') location.reload();
     });
-
-    // --- Mobile View Setup ---
-    function setupMobileView() {
-        const container = document.querySelector('.workstation-container');
-        // Avoid duplicates if re-run
-        if (!container || document.querySelector('.mobile-top-bar')) return;
-
-        // Create Mobile Header
-        const mobileHeader = document.createElement('div');
-        mobileHeader.className = 'mobile-top-bar';
-        mobileHeader.innerHTML = `
-            <a href="index.html" class="logo"><img src="images/avblack.png" alt="Avantaland Logo" class="mobile-logo"></a>
-            <div class="mobile-user-menu" style="position: relative;">
-                <button id="mobile-menu-trigger" style="background:none; border:none; color:var(--text-primary); cursor:pointer; padding: 0.5rem;">
-                    <i class="ph-bold ph-caret-down" style="font-size: 1.5rem;"></i>
-                </button>
-                <div id="mobile-user-dropdown" class="mobile-dropdown-menu">
-                    <a href="index.html" class="mobile-dropdown-item"><i class="ph-bold ph-globe"></i> Return to Website</a>
-                    <button id="mobile-logout-btn" class="mobile-dropdown-item" style="color: #EF4444;"><i class="ph-bold ph-sign-out"></i> Logout</button>
-                </div>
-            </div>
-        `;
-
-        const trigger = mobileHeader.querySelector('#mobile-menu-trigger');
-        const dropdown = mobileHeader.querySelector('#mobile-user-dropdown');
-        
-        trigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle('active');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!mobileHeader.contains(e.target)) {
-                dropdown.classList.remove('active');
-            }
-        });
-
-        mobileHeader.querySelector('#mobile-logout-btn').addEventListener('click', handleLogout);
-
-        // Insert at top of container
-        container.insertBefore(mobileHeader, container.firstChild);
-
-        // Create Bottom Navigation
-        const bottomNav = document.createElement('div');
-        bottomNav.className = 'mobile-bottom-nav';
-        bottomNav.innerHTML = `
-            <button class="mobile-nav-item active" data-target="home">
-                <i class="ph-duotone ph-house"></i>
-                <span>Home</span>
-            </button>
-            <button class="mobile-nav-item" data-target="hacks">
-                <i class="ph-duotone ph-list-dashes"></i>
-                <span>Lessons</span>
-            </button>
-            <button class="mobile-nav-item" data-target="planner" id="mobile-nav-planner">
-                <i class="ph-duotone ph-calendar-check"></i>
-                <span>Planner</span>
-            </button>
-            <button class="mobile-nav-item" data-target="business">
-                <i class="ph-duotone ph-briefcase"></i>
-                <span>Business</span>
-            </button>
-            <button class="mobile-nav-item" data-target="aveo">
-                <i class="ph-duotone ph-robot"></i>
-                <span>Aveo 1</span>
-            </button>
-            <button class="mobile-nav-item" data-target="profile">
-                <i class="ph-duotone ph-user-circle"></i>
-                <span>Profile</span>
-            </button>
-        `;
-        document.body.appendChild(bottomNav);
-
-        // Create Overlay
-        const overlay = document.createElement('div');
-        overlay.className = 'mobile-overlay';
-        document.body.appendChild(overlay);
-
-        // Inject CSS for Hacks Drawer
-        const style = document.createElement('style');
-        style.innerHTML = `
-            .hacks-drawer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: 60vh;
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-                border-radius: 24px 24px 0 0;
-                box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
-                z-index: 2000;
-                transform: translateY(100%);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                display: flex;
-                flex-direction: column;
-            }
-            .hacks-drawer.active {
-                transform: translateY(0);
-            }
-            .drawer-header {
-                padding: 1rem;
-                border-bottom: 1px solid rgba(0,0,0,0.05);
-            }
-            .search-container {
-                background: rgba(0,0,0,0.05);
-                border-radius: 12px;
-                padding: 0.5rem 1rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            .search-container input {
-                border: none;
-                background: transparent;
-                width: 100%;
-                outline: none;
-                font-size: 1rem;
-                color: var(--text-primary);
-            }
-            .drawer-list {
-                overflow-y: auto;
-                flex: 1;
-                padding: 0.5rem 0;
-            }
-            .drawer-item {
-                padding: 0.75rem 1.5rem;
-                border-bottom: 1px solid rgba(41, 121, 255, 0.1);
-                font-size: 0.95rem;
-                color: var(--text-primary);
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            .drawer-item.active {
-                color: var(--brand-blue);
-                font-weight: 600;
-            }
-            .drawer-item.active::before {
-                content: '';
-                display: block;
-                width: 6px;
-                height: 6px;
-                background: var(--brand-yellow);
-                border-radius: 50%;
-            }
-            body.drawer-open {
-                overflow: hidden !important;
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Create Hacks Drawer
-        const drawer = document.createElement('div');
-        drawer.className = 'hacks-drawer';
-        drawer.innerHTML = `
-            <div class="drawer-header">
-                <div class="search-container">
-                    <i class="ph ph-magnifying-glass"></i>
-                    <input type="text" placeholder="Find a lesson..." id="hack-search-input">
-                </div>
-            </div>
-            <div class="drawer-list" id="hacks-drawer-list"></div>
-        `;
-        document.body.appendChild(drawer);
-
-        // Toggle Logic
-        const sidebar = document.querySelector('.hack-navigator');
-        const overlayEl = document.querySelector('.mobile-overlay');
-        const navItems = bottomNav.querySelectorAll('.mobile-nav-item');
-
-        function setActiveNav(target) {
-            navItems.forEach(item => item.classList.remove('active'));
-            const activeItem = bottomNav.querySelector(`[data-target="${target}"]`);
-            if (activeItem) activeItem.classList.add('active');
-        }
-
-        function toggleSidebar(show) {
-            if (show) {
-                sidebar.classList.add('active');
-                overlayEl.classList.add('active');
-            } else {
-                sidebar.classList.remove('active');
-                overlayEl.classList.remove('active');
-            }
-        }
-
-        const drawerList = drawer.querySelector('#hacks-drawer-list');
-        const searchInput = drawer.querySelector('#hack-search-input');
-
-        function renderDrawerItems(filter = '') {
-            drawerList.innerHTML = '';
-            truthsData.forEach((truth, index) => {
-                if (truth.title.toLowerCase().includes(filter.toLowerCase()) || String(index + 1).includes(filter)) {
-                    const item = document.createElement('div');
-                    item.className = `drawer-item ${currentState.currentHackIndex === index ? 'active' : ''}`;
-                    item.innerHTML = `${String(index + 1).padStart(2, '0')}. ${truth.title}`;
-                    item.addEventListener('click', () => {
-                        displayHack(index);
-                        toggleDrawer(false);
-                    });
-                    drawerList.appendChild(item);
-                }
-            });
-        }
-        renderDrawerItems();
-
-        searchInput.addEventListener('input', (e) => renderDrawerItems(e.target.value));
-
-        function toggleDrawer(show) {
-            if (show) {
-                drawer.classList.add('active');
-                overlayEl.classList.add('active');
-                document.body.classList.add('drawer-open');
-                renderDrawerItems(); // Re-render to show active state
-            } else {
-                drawer.classList.remove('active');
-                overlayEl.classList.remove('active');
-                document.body.classList.remove('drawer-open');
-            }
-        }
-
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                const target = item.dataset.target;
-                
-                e.preventDefault();
-
-                if (target === 'business') {
-                    showComingSoonModal('Business Dashboard');
-                    return;
-                } else if (target === 'aveo') {
-                    toggleAveoDrawer(true);
-                    return;
-                }
-
-                setActiveNav(target);
-
-                if (target === 'hacks') {
-                    toggleSidebar(false);
-                    toggleDrawer(true);
-                } else {
-                    toggleSidebar(false);
-                    toggleDrawer(false);
-                    if (target === 'home') {
-                        renderDashboardGrid();
-                    } else if (target === 'planner') {
-                        renderPlanner();
-                    } else if (target === 'profile') {
-                        renderProfile();
-                    } else if (target === 'community') {
-                        alert(`${target.charAt(0).toUpperCase() + target.slice(1)} feature coming soon!`);
-                    }
-                }
-            });
-        });
-        
-        overlayEl.addEventListener('click', () => {
-            toggleSidebar(false);
-            toggleDrawer(false);
-            setActiveNav('home'); // Revert to home when closing sidebar via overlay
-        });
-
-        // Close menu when clicking a link in sidebar (Event delegation)
-        sidebar.addEventListener('click', (e) => {
-            if (e.target.closest('.nav-item') || e.target.closest('.hack-list-item') || e.target.closest('.sidebar-profile')) {
-                if (window.innerWidth <= 1024) {
-                    toggleSidebar(false);
-                    // Keep 'hacks' active or switch to home? 
-                    // Usually clicking a hack opens it in the view, so maybe switch to home/view state visually?
-                    // For now, let's leave it as is or switch to home to indicate content view.
-                    // setActiveNav('home'); 
-                }
-            }
-        });
-    }
 
     // --- Aveo 1 AI Agent Logic ---
     function setupAveoDrawer() {
@@ -3182,7 +2815,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return id;
     }
 
-    // --- Helper Functions ---
+    // --- Helper Functions (not all used in this adapted version) ---
     function createPowerCard(category, title, iconClass, colorClass, href = null) {
         const card = document.createElement(href ? 'a' : 'div');
         if (href) {
@@ -3198,10 +2831,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function findNextUncompletedHack() {
-        // Find the first index that is not marked as true in progress
-        const firstUncompleted = truthsData.findIndex(truth => !currentState.progress[truth.id]);
-        // If all are completed, it returns -1. Default to the last hack.
-        return firstUncompleted !== -1 ? firstUncompleted : truthsData.length - 1;
     }
 
     function getUrgentPlannerTask() {
@@ -3273,5 +2902,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    init();
-});
+    // Expose public functions
+    return {
+        initializeDashboardApp: initializeDashboardApp,
+        renderView: function(viewName, data) {
+            switch (viewName) {
+                case 'dashboard-grid':
+                    renderDashboardGrid();
+                    break;
+                case 'course-catalog':
+                    renderCourseCatalog();
+                    break;
+                case 'skill-paths':
+                    renderSkillPaths();
+                    break;
+                case 'business-dashboard':
+                    renderBusinessDashboard();
+                    break;
+                case 'aveo-ai':
+                    toggleAveoDrawer(true);
+                    break;
+                case 'lesson': // For individual lessons
+                    displayHack(data);
+                    break;
+                case 'planner':
+                    renderPlanner();
+                    break;
+                case 'profile':
+                    renderProfile();
+                    break;
+                default:
+                    console.warn('Unknown view:', viewName);
+                    learningStage.innerHTML = `<div class="p-8 text-center text-slate-500"><h2>Coming Soon!</h2><p>This section is under construction.</p></div>`;
+            }
+            // Ensure header is updated whenever a new view is rendered
+            updateDashboardHeader();
+        }
+    };
+})();

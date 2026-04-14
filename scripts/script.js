@@ -30,6 +30,74 @@ function initializeSiteFunctionality() {
         });
     }
 
+    // Expose new-dash.js functions globally for script.js to use
+    // This assumes new-dash.js is loaded before this part of script.js executes.
+    const dashboardApp = window.dashboardApp || {};
+
+    // --- Dashboard Interactions (new-dashboard.html) ---
+    const dashSidebar = document.querySelector('aside.lg\\:flex');
+    const dashToggle = document.querySelector('.lg\\:hidden button');
+
+    if (dashToggle && dashSidebar) {
+        dashToggle.addEventListener('click', () => {
+            const isHidden = dashSidebar.classList.contains('hidden');
+            if (isHidden) {
+                dashSidebar.classList.remove('hidden');
+                dashSidebar.classList.add('flex', 'z-[110]', 'shadow-2xl');
+            } else {
+                dashSidebar.classList.add('hidden');
+                dashSidebar.classList.remove('flex', 'z-[110]', 'shadow-2xl');
+            }
+        });
+
+        // Auto-close dashboard sidebar on mobile when a link is clicked
+        const dashNavLinks = dashSidebar.querySelectorAll('nav a');
+        dashNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                // Handle active state
+                dashNavLinks.forEach(l => l.classList.remove('sidebar-active', 'text-[#2E7D32]', 'bg-[#ECFDF5]', 'border-r-4', 'border-[#2E7D32]'));
+                link.classList.add('sidebar-active', 'text-[#2E7D32]', 'bg-[#ECFDF5]', 'border-r-4', 'border-[#2E7D32]');
+
+                if (window.innerWidth < 1024) {
+                    dashSidebar.classList.add('hidden');
+                    dashSidebar.classList.remove('flex', 'z-[110]', 'shadow-2xl');
+                }
+
+                // Call new-dash.js functions based on data-target
+                const target = link.dataset.target;
+                if (dashboardApp && dashboardApp.renderView) {
+                    switch (target) {
+                        case 'my-learning':
+                            dashboardApp.renderView('dashboard-grid');
+                            break;
+                        case 'course-catalog':
+                            dashboardApp.renderView('course-catalog');
+                            break;
+                        case 'skill-paths':
+                            dashboardApp.renderView('skill-paths');
+                            break;
+                        case 'business-dashboard':
+                            dashboardApp.renderView('business-dashboard');
+                            break;
+                        case 'aveo-ai':
+                            dashboardApp.renderView('aveo-ai');
+                            break;
+                        default:
+                            console.warn('Unknown dashboard navigation target:', target);
+                    }
+                }
+            });
+        });
+    }
+
+    // Dashboard Search bar interaction
+    const dashSearch = document.querySelector('header input[placeholder*="Search"]');
+    if (dashSearch) {
+        dashSearch.addEventListener('input', (e) => {
+            console.log("Dashboard searching for:", e.target.value);
+        });
+    }
+
     // --- Intersection Observer for Fade-in Animations ---
     const observerOptions = {
         root: null,
@@ -135,6 +203,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadTemplate('header.html', 'header-placeholder'),
         loadTemplate('footer.html', 'footer-placeholder')
     ]);
+
+    // Load new-dash.js after header/footer, but before initializing site functionality
+    // This ensures new-dash.js can access the DOM and its functions are available for script.js
+    await loadTemplate('scripts/new-dash.js', 'new-dash-script-placeholder'); // Assuming a placeholder for scripts
+    if (window.initializeDashboardApp) window.initializeDashboardApp();
 
     // Initialize all scripts that depend on the loaded header and footer content.
     initializeSiteFunctionality();
