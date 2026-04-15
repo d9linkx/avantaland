@@ -481,5 +481,496 @@
             if (first) setActive(first);
         });
     </script>
+    
+    <script>
+        // Business Dashboard SPA renderer and wiring
+        document.addEventListener('DOMContentLoaded', function () {
+            const mainContent = document.getElementById('dashboard-main-content');
+            if (!mainContent) return;
+
+            function renderBusinessDashboard() {
+                // Basic template for the startup cockpit
+                return `
+                <div class="p-4">
+                    <div class="mb-6">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-2xl font-bold">Business Dashboard</h2>
+                                <button id="business-back" class="btn-gradient px-3 py-2 rounded">← Dashboard</button>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-2">Execution-first view for Prawnbox, YourHelpa & Avantaland</p>
+                        </div>
+
+                    <!-- Top action cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                        <div id="card-truths" class="p-4 glass-card cursor-pointer hover-border-brand transition text-center">
+                            <div class="text-xl font-bold mb-2">33 Truths Course</div>
+                            <div class="text-sm text-slate-500">Reference library & applied checklists</div>
+                        </div>
+                        <div id="card-planner" class="p-4 glass-card cursor-pointer hover-border-brand transition text-center">
+                            <div class="text-xl font-bold mb-2">Digital Planner</div>
+                            <div class="text-sm text-slate-500">Big 3, time-blocker & execution tools</div>
+                        </div>
+                        <div id="card-aveo" class="p-4 glass-card cursor-pointer hover-border-brand transition text-center">
+                            <div class="text-xl font-bold mb-2">Aveo 1</div>
+                            <div class="text-sm text-slate-500">Business consultant & troubleshooting</div>
+                        </div>
+                        <div id="card-finops" class="p-4 glass-card cursor-pointer hover-border-brand transition text-center">
+                            <div class="text-xl font-bold mb-2">Financial Ops</div>
+                            <div class="text-sm text-slate-500">Revenue, credits & test feedback</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Strategy Hub -->
+                        <section class="glass-card p-4 col-span-2">
+                            <h3 class="font-bold mb-3">Strategy Hub — Digital Planner</h3>
+                            <div class="mb-4">
+                                <label class="text-xs text-slate-400">Big 3 Daily Focus</label>
+                                <div id="big3" class="space-y-2 mt-2">
+                                    <div class="flex items-center gap-2">
+                                        <input class="flex-1 px-3 py-2 border border-slate-200 rounded" placeholder="Top task #1" />
+                                        <button class="btn-action" data-action="done">Done</button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input class="flex-1 px-3 py-2 border border-slate-200 rounded" placeholder="Top task #2" />
+                                        <button class="btn-action" data-action="done">Done</button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input class="flex-1 px-3 py-2 border border-slate-200 rounded" placeholder="Top task #3" />
+                                        <button class="btn-action" data-action="done">Done</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="text-xs text-slate-400">Mastery Progress</label>
+                                <div class="w-full bg-slate-100 h-3 rounded-full mt-2">
+                                    <div id="mastery-bar" class="h-3 rounded-full bg-brand" style="width:40%"></div>
+                                </div>
+                                <p id="mastery-text" class="text-xs text-slate-500 mt-2">Tier: Basic — 40% to Pro</p>
+                            </div>
+
+                            <div>
+                                <label class="text-xs text-slate-400">Time-Blocker (drag tasks into slots)</label>
+                                <div class="mt-3 grid grid-cols-3 gap-2">
+                                    <div class="p-2 bg-slate-50 rounded" data-slot="9am" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+                                        <div class="text-xs font-bold mb-2">9:00 — 10:00</div>
+                                        <div class="slot-contents" data-slot-contents="9am"></div>
+                                    </div>
+                                    <div class="p-2 bg-slate-50 rounded" data-slot="10am" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+                                        <div class="text-xs font-bold mb-2">10:00 — 11:00</div>
+                                        <div class="slot-contents" data-slot-contents="10am"></div>
+                                    </div>
+                                    <div class="p-2 bg-slate-50 rounded" data-slot="11am" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+                                        <div class="text-xs font-bold mb-2">11:00 — 12:00</div>
+                                        <div class="slot-contents" data-slot-contents="11am"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <label class="text-xs text-slate-400">Tasks</label>
+                                    <div id="task-pool" class="mt-2 space-y-2">
+                                        <div class="p-2 bg-white border border-slate-100 rounded draggable" draggable="true">Write VSL script</div>
+                                        <div class="p-2 bg-white border border-slate-100 rounded draggable" draggable="true">Fix sheets enrollment webhook</div>
+                                        <div class="p-2 bg-white border border-slate-100 rounded draggable" draggable="true">Launch Prawnbox promo</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Right column: Truths, Aveo, Metrics -->
+                        <aside class="space-y-4">
+                            <div class="glass-card p-4">
+                                <h4 class="font-bold mb-2">Truth of the Day</h4>
+                                <div id="truth-of-day" class="p-3 bg-white rounded border border-slate-100">Loading...</div>
+                                <div class="mt-3 text-right">
+                                    <button id="next-truth" class="btn-gradient px-3 py-2 rounded">Next</button>
+                                </div>
+                            </div>
+
+                            <div class="glass-card p-4">
+                                <h4 class="font-bold mb-2">The Vault — 33 Brutal Truths</h4>
+                                <input id="truth-search" class="w-full px-3 py-2 border border-slate-200 rounded text-sm" placeholder="Search truths..." />
+                                <div id="truth-list" class="mt-3 max-h-44 overflow-y-auto"></div>
+                            </div>
+
+                            <div class="glass-card p-4">
+                                <h4 class="font-bold mb-2">Aveo 1 — Business Consultant</h4>
+                                <div id="aveo-chat" class="border border-slate-100 rounded p-3 h-48 overflow-y-auto bg-white"></div>
+                                <div class="mt-2 flex gap-2">
+                                    <input id="aveo-input" class="flex-1 px-3 py-2 border border-slate-200 rounded" placeholder="Ask Aveo (paste URL or paste code snippet)..." />
+                                    <button id="aveo-send" class="btn-gradient px-3 py-2 rounded">Send</button>
+                                </div>
+                            </div>
+
+                            <div class="glass-card p-4">
+                                <h4 class="font-bold mb-2">Financial & Ops</h4>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="p-3 bg-white rounded border border-slate-100">
+                                        <div class="text-xs text-slate-400">Learning Credits</div>
+                                        <div id="credits" class="font-bold text-lg">120</div>
+                                    </div>
+                                    <div class="p-3 bg-white rounded border border-slate-100">
+                                        <div class="text-xs text-slate-400">Total Earnings</div>
+                                        <div id="earnings" class="font-bold text-lg">$8,420</div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="text-xs text-slate-400">Test Group Feedback</div>
+                                    <div id="feedback-feed" class="mt-2 max-h-28 overflow-y-auto"></div>
+                                    <div class="mt-2 flex gap-2">
+                                        <input id="feedback-input" class="flex-1 px-3 py-2 border border-slate-200 rounded" placeholder="Add feedback..." />
+                                        <button id="feedback-add" class="btn-action px-3 py-2 rounded">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+                `;
+            }
+
+            function showBusinessDashboard() {
+                // swap content
+                mainContent.innerHTML = renderBusinessDashboard();
+
+                // attach back button
+                const back = document.getElementById('business-back');
+                if (back) back.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    if (typeof window.showOriginalDashboard === 'function') {
+                        window.showOriginalDashboard();
+                    }
+                });
+
+                // Venture-select removed per mobile-first layout: presets no longer applied
+
+                // Mastery progress: read some page element for a quick sync (if exists)
+                const masteryBar = document.getElementById('mastery-bar');
+                const masteryText = document.getElementById('mastery-text');
+                try {
+                    const scoreEl = document.querySelector('.text-2xl.font-bold.text-slate-900');
+                    if (scoreEl) {
+                        const match = scoreEl.textContent.match(/(\d+)/);
+                        if (match) {
+                            const pct = Math.min(100, parseInt(match[1], 10));
+                            if (masteryBar) masteryBar.style.width = pct + '%';
+                            if (masteryText) masteryText.textContent = `Tier: Basic — ${pct}% to Pro`;
+                        }
+                    }
+                } catch (err) { /* ignore */ }
+
+                // Drag & drop tasks
+                function handleDragStart(e) {
+                    e.dataTransfer.setData('text/plain', e.target.textContent);
+                }
+                document.querySelectorAll('#task-pool .draggable').forEach(d => d.addEventListener('dragstart', handleDragStart));
+
+                window.handleDrop = function (e) {
+                    e.preventDefault();
+                    const text = e.dataTransfer.getData('text/plain');
+                    const slot = e.currentTarget.querySelector('.slot-contents');
+                    if (slot) {
+                        const node = document.createElement('div');
+                        node.className = 'p-2 bg-white border border-slate-100 rounded mt-2';
+                        node.textContent = text;
+                        slot.appendChild(node);
+                    }
+                };
+
+                // Truths: populate list and truth of the day (rotate)
+                const truthList = document.getElementById('truth-list');
+                const truthOfDay = document.getElementById('truth-of-day');
+                const truths = Array.from({length:33}, (_,i) => `truth${i+1}.html`);
+                let currentTruth = 0;
+
+                function renderTruthList(filter) {
+                    if (!truthList) return;
+                    truthList.innerHTML = '';
+                    truths.forEach((file, idx) => {
+                        if (filter && !file.includes(filter)) return;
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.className = 'block px-2 py-1 text-sm hover:bg-slate-50';
+                        a.textContent = file.replace('.html','').replace('truth','Truth ');
+                        a.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            fetch(file).then(r=>r.text()).then(t=>{
+                                // strip body content quickly
+                                truthOfDay.innerHTML = `<div class=\"text-sm text-slate-700\">${t}</div>`;
+                                // add checklist area
+                                const checklist = document.createElement('div');
+                                checklist.className = 'mt-3';
+                                checklist.innerHTML = ` <label class=\"text-xs text-slate-400\">Implementation Checklist</label><div class=\"mt-2\"><input class=\"w-full px-3 py-2 border border-slate-200 rounded\" placeholder=\"Add step...\" /></div>`;
+                                truthOfDay.appendChild(checklist);
+                            }).catch(()=>{ truthOfDay.textContent = 'Unable to load truth file.'; });
+                        });
+                        truthList.appendChild(a);
+                    });
+                }
+
+                function loadTruthOfDay() {
+                    const file = truths[currentTruth % truths.length];
+                    fetch(file).then(r=>r.text()).then(t=>{
+                        truthOfDay.innerHTML = `<div class=\"text-sm text-slate-700\">${t}</div>`;
+                    }).catch(()=>{ truthOfDay.textContent = 'Unable to load truth of the day.'; });
+                }
+
+                renderTruthList();
+                loadTruthOfDay();
+                const next = document.getElementById('next-truth');
+                if (next) next.addEventListener('click', function () { currentTruth = (currentTruth + 1) % truths.length; loadTruthOfDay(); });
+                const truthSearch = document.getElementById('truth-search');
+                if (truthSearch) truthSearch.addEventListener('input', function () { renderTruthList(this.value.trim()); });
+
+                // Aveo chat: simple mocked assistant with contextual memory
+                const aveoChat = document.getElementById('aveo-chat');
+                const aveoInput = document.getElementById('aveo-input');
+                const aveoSend = document.getElementById('aveo-send');
+                const sessionKey = 'aveo-memory';
+                const memory = JSON.parse(sessionStorage.getItem(sessionKey) || '[]');
+
+                function appendAveoMessage(who, text) {
+                    if (!aveoChat) return;
+                    const el = document.createElement('div');
+                    el.className = 'mb-2';
+                    el.innerHTML = `<div class=\"text-xs text-slate-400\">${who}</div><div class=\"p-2 bg-white border border-slate-100 rounded\">${text}</div>`;
+                    aveoChat.appendChild(el);
+                    aveoChat.scrollTop = aveoChat.scrollHeight;
+                }
+
+                // seed context from page if available (e.g., VSL Submission)
+                try {
+                    const milestone = document.querySelector('p:contains("VSL Script Submission")');
+                } catch(e) { /* ignore */ }
+
+                if (memory && memory.length) {
+                    memory.forEach(m => appendAveoMessage(m.who, m.text));
+                } else {
+                    appendAveoMessage('Aveo', 'Hi — I am Aveo, your business consultant. Tell me what to review (paste a URL or a short copy).');
+                }
+
+                if (aveoSend && aveoInput) {
+                    aveoSend.addEventListener('click', function () {
+                        const q = aveoInput.value.trim();
+                        if (!q) return;
+                        appendAveoMessage('You', q);
+                        aveoInput.value = '';
+                        // simple heuristics
+                        let reply = '';
+                        if (q.startsWith('http') || q.includes('www')) {
+                            reply = `Quick landing page critique: Headline clarity (7/10). CTA placement: good. Consider tightening above-the-fold copy and test a single CTA.`;
+                        } else if (q.toLowerCase().includes('error') || q.toLowerCase().includes('debug') || q.includes('console')) {
+                            reply = `Troubleshooter: paste the exact error and I will suggest the line & fix. Check console for network failures and ensure API keys are set.`;
+                        } else {
+                            reply = `Strategic advice: focus on 1) clarify offer, 2) shorten funnel steps, 3) run 3 quick tests this week. Need examples?`;
+                        }
+                        appendAveoMessage('Aveo', reply);
+                        memory.push({who:'You', text: q});
+                        memory.push({who:'Aveo', text: reply});
+                        sessionStorage.setItem(sessionKey, JSON.stringify(memory));
+                    });
+                }
+
+                // Feedback feed
+                const feed = document.getElementById('feedback-feed');
+                const feedInput = document.getElementById('feedback-input');
+                const feedAdd = document.getElementById('feedback-add');
+                if (feedAdd && feed && feedInput) {
+                    feedAdd.addEventListener('click', function () {
+                        const t = feedInput.value.trim();
+                        if (!t) return;
+                        const el = document.createElement('div');
+                        el.className = 'p-2 bg-white border border-slate-100 rounded mb-2 text-sm';
+                        el.textContent = t;
+                        feed.prepend(el);
+                        feedInput.value = '';
+                    });
+                }
+
+                // expose small API for tests
+                window.currentBusinessView = { open: showBusinessDashboard };
+            }
+
+            /* --- Individual SPA screens for top-cards --- */
+            function renderTruthsCourse() {
+                return `
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold">33 Truths — Course</h2>
+                        <button id="back-to-business" class="btn-gradient px-3 py-2 rounded">↩ Back</button>
+                    </div>
+                    <div class="glass-card p-4">
+                        <p class="text-sm text-slate-500 mb-3">Searchable truth vault with applied checklists under each truth. Use these as on-demand decision aids.</p>
+                        <input id="truth-course-search" class="w-full px-3 py-2 border border-slate-200 rounded mb-3" placeholder="Search truths..." />
+                        <div id="truth-course-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                    </div>
+                </div>
+                `;
+            }
+
+            function showTruthsCourse() {
+                mainContent.innerHTML = renderTruthsCourse();
+                document.getElementById('back-to-business')?.addEventListener('click', e => { e.preventDefault(); showBusinessDashboard(); });
+
+                const list = document.getElementById('truth-course-list');
+                const search = document.getElementById('truth-course-search');
+                const truths = Array.from({length:33}, (_,i) => ({ id: i+1, file:`truth${i+1}.html`, title:`Truth ${i+1}` }));
+
+                function renderList(filter) {
+                    if (!list) return;
+                    list.innerHTML = '';
+                    truths.filter(t => !filter || t.title.toLowerCase().includes(filter.toLowerCase())).forEach(t => {
+                        const el = document.createElement('div');
+                        el.className = 'p-3 bg-white border border-slate-100 rounded cursor-pointer';
+                        el.innerHTML = `<strong>${t.title}</strong><div class=\"text-sm text-slate-500\">Open & apply checklist</div>`;
+                        el.addEventListener('click', () => {
+                            fetch(t.file).then(r=>r.text()).then(txt=>{
+                                mainContent.innerHTML = `
+                                    <div class=\"p-4\"> 
+                                        <div class=\"flex items-center justify-between mb-4\"> 
+                                            <h2 class=\"text-2xl font-bold\">${t.title}</h2>
+                                            <button id=\"back-to-truths\" class=\"btn-gradient px-3 py-2 rounded\">↩ Back</button>
+                                        </div>
+                                        <div class=\"glass-card p-4\">${txt}<div class=\"mt-4\"><label class=\"text-xs text-slate-400\">Implementation Checklist</label><div class=\"mt-2\"><input class=\"w-full px-3 py-2 border border-slate-200 rounded\" placeholder=\"Add step...\" /></div></div></div>
+                                    </div>
+                                `;
+                                document.getElementById('back-to-truths')?.addEventListener('click', e=>{ e.preventDefault(); showTruthsCourse(); });
+                            }).catch(()=>{ alert('Unable to load truth file'); });
+                        });
+                        list.appendChild(el);
+                    });
+                }
+
+                renderList();
+                search?.addEventListener('input', function(){ renderList(this.value.trim()); });
+            }
+
+            function renderDigitalPlanner() {
+                return `
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold">Digital Planner</h2>
+                        <button id="back-to-business" class="btn-gradient px-3 py-2 rounded">↩ Back</button>
+                    </div>
+                    <section class="glass-card p-4">
+                        <label class="text-xs text-slate-400">Big 3 Daily Focus (persistent)</label>
+                        <div id="planner-big3" class="mt-2 space-y-2">
+                            <input id="planner-1" class="w-full px-3 py-2 border border-slate-200 rounded" placeholder="Top task #1" />
+                            <input id="planner-2" class="w-full px-3 py-2 border border-slate-200 rounded" placeholder="Top task #2" />
+                            <input id="planner-3" class="w-full px-3 py-2 border border-slate-200 rounded" placeholder="Top task #3" />
+                        </div>
+                        <div class="mt-4">
+                            <label class="text-xs text-slate-400">Quick schedule</label>
+                            <div id="planner-schedule" class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
+                                <div class="p-2 bg-slate-50 rounded" data-slot="9am">9:00 — 10:00<div class="slot-contents"></div></div>
+                                <div class="p-2 bg-slate-50 rounded" data-slot="10am">10:00 — 11:00<div class="slot-contents"></div></div>
+                                <div class="p-2 bg-slate-50 rounded" data-slot="11am">11:00 — 12:00<div class="slot-contents"></div></div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button id="save-planner" class="btn-gradient px-4 py-2 rounded">Save Plan</button>
+                        </div>
+                    </section>
+                </div>
+                `;
+            }
+
+            function showDigitalPlanner() {
+                mainContent.innerHTML = renderDigitalPlanner();
+                document.getElementById('back-to-business')?.addEventListener('click', e=>{ e.preventDefault(); showBusinessDashboard(); });
+                // load persistent Big3 from localStorage
+                const keys = ['planner-1','planner-2','planner-3'];
+                keys.forEach(k=>{ const el=document.getElementById(k); if(el) el.value = localStorage.getItem(k) || ''; el?.addEventListener('input', ()=> localStorage.setItem(k, el.value)); });
+                document.getElementById('save-planner')?.addEventListener('click', ()=> alert('Planner saved locally'));
+            }
+
+            function renderAveoScreen() {
+                return `
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold">Aveo 1 — Consultant</h2>
+                        <button id="back-to-business" class="btn-gradient px-3 py-2 rounded">↩ Back</button>
+                    </div>
+                    <div class="glass-card p-4">
+                        <div id="aveo-main-chat" class="h-64 overflow-y-auto border border-slate-100 rounded p-3 bg-white"></div>
+                        <div class="mt-3 flex gap-2">
+                            <input id="aveo-main-input" class="flex-1 px-3 py-2 border border-slate-200 rounded" placeholder="Paste URL or error text..." />
+                            <button id="aveo-main-send" class="btn-gradient px-3 py-2 rounded">Send</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+
+            function showAveoScreen() {
+                mainContent.innerHTML = renderAveoScreen();
+                document.getElementById('back-to-business')?.addEventListener('click', e=>{ e.preventDefault(); showBusinessDashboard(); });
+                const chat = document.getElementById('aveo-main-chat');
+                const input = document.getElementById('aveo-main-input');
+                const send = document.getElementById('aveo-main-send');
+                function append(who, text){ const el=document.createElement('div'); el.className='mb-2'; el.innerHTML=`<div class="text-xs text-slate-400">${who}</div><div class="p-2 bg-white border border-slate-100 rounded">${text}</div>`; chat.appendChild(el); chat.scrollTop = chat.scrollHeight; }
+                append('Aveo','Ready to review. Paste a URL or describe an error.');
+                send?.addEventListener('click', ()=>{ const q=input.value.trim(); if(!q) return; append('You',q); input.value=''; setTimeout(()=>append('Aveo','Quick take: Looks solid. Test headline variations and shorten the funnel.'),600); });
+            }
+
+            function renderFinancials() {
+                return `
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold">Financial & Ops</h2>
+                        <button id="back-to-business" class="btn-gradient px-3 py-2 rounded">↩ Back</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="glass-card p-4 text-center">
+                            <div class="text-xs text-slate-400">Learning Credits</div>
+                            <div class="font-bold text-2xl">120</div>
+                        </div>
+                        <div class="glass-card p-4 text-center">
+                            <div class="text-xs text-slate-400">Total Earnings</div>
+                            <div class="font-bold text-2xl">$8,420</div>
+                        </div>
+                        <div class="glass-card p-4 text-center">
+                            <div class="text-xs text-slate-400">Monthly Growth</div>
+                            <div class="font-bold text-2xl">+14%</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 glass-card p-4">
+                        <h4 class="font-bold mb-2">Test Group Feedback</h4>
+                        <div id="fin-feedback" class="max-h-48 overflow-y-auto"></div>
+                    </div>
+                </div>
+                `;
+            }
+
+            function showFinancials() {
+                mainContent.innerHTML = renderFinancials();
+                document.getElementById('back-to-business')?.addEventListener('click', e=>{ e.preventDefault(); showBusinessDashboard(); });
+                // seed sample feedback
+                const f = document.getElementById('fin-feedback');
+                if (f) { ['Landing CTA too weak','Price confusion for plan B','Great onboarding flow'].forEach(msg=>{ const el=document.createElement('div'); el.className='p-2 bg-white border border-slate-100 rounded mb-2'; el.textContent=msg; f.appendChild(el); }); }
+            }
+
+            // Attach top-card click handlers inside Business view
+            function attachBusinessCardHandlers() {
+                document.getElementById('card-truths')?.addEventListener('click', showTruthsCourse);
+                document.getElementById('card-planner')?.addEventListener('click', showDigitalPlanner);
+                document.getElementById('card-aveo')?.addEventListener('click', showAveoScreen);
+                document.getElementById('card-finops')?.addEventListener('click', showFinancials);
+            }
+
+            // attach handler by finding the sidebar link that matches text "Business Dashboard"
+            const sidebarLinks = document.querySelectorAll('#sidebar a');
+            sidebarLinks.forEach(a => {
+                const txt = (a.textContent || '').trim().toLowerCase();
+                if (txt === 'business dashboard') {
+                    a.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        showBusinessDashboard();
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
