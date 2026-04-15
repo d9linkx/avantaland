@@ -36,6 +36,30 @@ window.dashboardApp = (function() { // Wrap in IIFE and expose globally
         { id: 32, title: "Money won't fix a broken engine; it just makes the crash more spectacular" }
     ];
 
+    // --- View Templates (Tailwind optimized) ---
+    const templates = {
+        header: (name, sub) => `
+            <header class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10">
+                <div>
+                    <h2 class="text-xl lg:text-2xl font-bold text-slate-900">${name}</h2>
+                    <p class="text-slate-500 text-sm">${sub}</p>
+                </div>
+                <div class="flex flex-col md:flex-row lg:items-center gap-6">
+                    <div class="relative w-full md:w-auto">
+                        <input type="text" placeholder="Search..." class="w-full md:w-80 bg-white border border-slate-200 rounded-xl py-2 px-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-4 top-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </div>
+                    <div class="flex items-center gap-4 lg:border-l lg:border-slate-200 lg:pl-6">
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-[#2E7D32]" id="header-credits-balance">120 Credits</p>
+                            <p class="text-[10px] text-slate-400 uppercase">Balance</p>
+                        </div>
+                        <div class="w-10 h-10 bg-slate-200 rounded-full border-2 border-white shadow-sm flex items-center justify-center font-bold text-slate-600">LD</div>
+                    </div>
+                </div>
+            </header>`
+    };
+
     // --- DOM Elements ---
     let learningStage; // Will be set in init
     let sidebarMasteryPercent;
@@ -43,7 +67,7 @@ window.dashboardApp = (function() { // Wrap in IIFE and expose globally
     let dailyTruthText;
     let headerCreditsBalance;
 
-    const feedbackNotes = document.getElementById('feedback-notes');
+    let feedbackNotes;
 
     // --- State ---
     // Initial state structure, will be loaded from localStorage
@@ -72,8 +96,15 @@ window.dashboardApp = (function() { // Wrap in IIFE and expose globally
     let syncTimeout = null;
 
     // --- Initialization ---
-    function init() {
+    function initializeDashboardApp() {
         loadState();
+        
+        learningStage = document.getElementById('dashboard-main-content');
+        sidebarMasteryPercent = document.getElementById('sidebar-mastery-percent');
+        sidebarMasteryProgressBar = document.getElementById('sidebar-mastery-progress-bar');
+        dailyTruthText = document.getElementById('daily-truth-card')?.querySelector('p:last-child');
+        headerCreditsBalance = document.getElementById('header-credits-balance');
+        feedbackNotes = document.getElementById('feedback-notes');
         
         // Auth Check: Redirect if no email is found in the profile
         if (!currentState.profile || !currentState.profile.email) {
@@ -85,15 +116,10 @@ window.dashboardApp = (function() { // Wrap in IIFE and expose globally
         lastVisitTime = currentState.lastVisit;
         currentState.lastVisit = Date.now();
         saveState();
-
-        renderHackNavigator();
-        renderDesktopSidebar();
-        renderIntelligenceWing();
-        renderDashboardGrid(); // Default to dashboard view
-        setupMobileView(); // Initialize mobile UI
+        
+        renderDashboardGrid(); // Default View
         setupAveoDrawer(); // Initialize AI Agent
         setupEventListeners();
-        updateSidebarProfileDisplay(); // Update sidebar with profile data
 
         // Start the global task timer system
         if (!taskSystemInterval) taskSystemInterval = setInterval(checkTaskSystem, 1000);
@@ -185,32 +211,67 @@ window.dashboardApp = (function() { // Wrap in IIFE and expose globally
     }
 
     function setupEventListeners() {
-        feedbackNotes.value = currentState.notes;
-        feedbackNotes.addEventListener('input', (e) => {
-            currentState.notes = e.target.value;
-            saveState();
-        });
+        if (feedbackNotes) {
+            feedbackNotes.value = currentState.notes;
+            feedbackNotes.addEventListener('input', (e) => {
+                currentState.notes = e.target.value;
+                saveState();
+            });
+        }
     }
 
     // --- Rendering Functions ---
 
     function renderDashboardGrid() { // This is the "My Learning" view
+        const firstName = currentState.profile.name ? currentState.profile.name.split(' ')[0] : 'Founder';
+        const nextHackIndex = findNextUncompletedHack();
+
         learningStage.innerHTML = `
-            <!-- Content from new-dashboard.html's main area will be here -->
-            <!-- The existing header is outside this, so we only render the grid content -->
+            ${templates.header(`Welcome back, ${firstName}`, `You're mastering Truth #${nextHackIndex + 1} today.`)}
+            <div class="grid grid-cols-12 gap-6 items-stretch">
+                <!-- Progress Card -->
+                <div class="col-span-12 lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <span class="text-[10px] font-bold text-[#2E7D32] bg-[#ECFDF5] px-2 py-1 rounded uppercase tracking-wider">Overall Progress</span>
+                        <h3 class="text-2xl font-bold mt-4">Your Mastery Credits</h3>
+                        <p class="text-slate-500 text-sm mt-2 mb-6">Complete more lessons to unlock exclusive tier rewards.</p>
+                    </div>
+                    <button class="w-full bg-[#2E7D32] text-white font-bold py-4 rounded-xl hover:shadow-lg transition-all" onclick="dashboardApp.renderView('lesson', ${nextHackIndex})">RESUME LATEST TRUTH</button>
+                </div>
+
+                <!-- Continue Learning -->
+                <div class="col-span-12 lg:col-span-8 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm overflow-hidden">
+                    <h4 class="font-bold text-lg mb-6">Execution Status</h4>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-dashed border-slate-300">
+                        <p class="text-slate-500 italic">"Plan your work for today in the Execution Planner to see your roadmap here."</p>
+                        <button class="mt-4 text-[#2E7D32] font-bold text-sm" onclick="dashboardApp.renderView('planner')">Open Planner &rarr;</button>
+                    </div>
+                </div>
+                
+                <!-- Brutal Truth Card -->
+                <div class="col-span-12 lg:col-span-6 bg-[#F1FDF2] border-l-4 border-[#2E7D32] rounded-r-2xl p-5">
+                    <p class="text-[10px] font-bold text-[#2E7D32] uppercase mb-2">Brutal Truth of the Day</p>
+                    <p class="text-sm font-medium italic text-slate-700">"${truthsData[Math.floor(Math.random() * truthsData.length)].title}"</p>
+                </div>
+            </div>
         `;
-        const gridContainer = learningStage.querySelector('.dashboard-grid');
+        updateDashboardHeader();
+    }
 
-        // --- Card 1: Next Hack ---
-
-        // Restore default right sidebar
-        renderIntelligenceWing();
+    function renderCourseCatalog() {
+        learningStage.innerHTML = `
+            ${templates.header("Course Catalog", "Expand your arsenal with new skills.")}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4"><i class="ph-duotone ph-code text-blue-600 text-2xl"></i></div>
+                    <h3 class="font-bold text-lg mb-2">Python for Automation</h3>
+                    <p class="text-slate-500 text-sm mb-6">Learn to build bots and save 20 hours a week.</p>
+                    <button class="w-full py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold">Enroll Now</button>
+                </div>
+            </div>`;
     }
 
     async function updateDashboardHeader() { // Updates elements in new-dashboard.html's fixed header/aside
-        // Update Welcome message in main header
-        const welcomeHeader = document.querySelector('main header h2');
-        const welcomeSub = document.querySelector('main header p');
         const firstName = currentState.profile.name ? currentState.profile.name.split(' ')[0] : 'Founder';
 
         // --- 1. Master Card Logic ---

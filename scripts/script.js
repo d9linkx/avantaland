@@ -36,7 +36,7 @@ function initializeSiteFunctionality() {
 
     // --- Dashboard Interactions (new-dashboard.html) ---
     const dashSidebar = document.querySelector('aside.lg\\:flex');
-    const dashToggle = document.querySelector('.lg\\:hidden button');
+    const dashToggle = document.getElementById('mobile-sidebar-toggle');
 
     if (dashToggle && dashSidebar) {
         dashToggle.addEventListener('click', () => {
@@ -212,3 +212,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize all scripts that depend on the loaded header and footer content.
     initializeSiteFunctionality();
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
