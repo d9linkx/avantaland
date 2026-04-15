@@ -12,16 +12,16 @@
     --font-main: 'Plus Jakarta Sans', sans-serif;
     --transition: all 0.3s ease;
     --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --accent-blue: #00db87;
-    --accent-yellow: #00b771; /* Existing green-yellow, kept for compatibility */
+    --accent-blue: #0066ff;
+    --accent-yellow: #0040a0; /* Existing green-yellow, kept for compatibility */
 
     /* Brutalist Theme Colors (derived from new-dash.css and brutalist styles) */
-    --brand-blue: #00db87; /* Matches --accent-blue */
+    --brand-blue: #0066ff; /* Matches --accent-blue */
     --brand-blue-light: #e6fcf2;
-    --brand-blue-dark: #00b771; /* Darker green, used for master-title, btn-open-planner:hover */
+    --brand-blue-dark: #0040a0; /* Darker green, used for master-title, btn-open-planner:hover */
     --brand-yellow-actual: #e1c600; /* The specific yellow used in executor-focus-badge */
     --brand-yellow-light: #fef9e6; /* Lighter yellow for backgrounds, adjusted to complement brand-yellow-actual */
-    --brand-yellow-dark: #008f58; /* Darker green, used for borders/buttons, btn-open-planner */
+    --brand-yellow-dark: #6600ff; /* Darker green, used for borders/buttons, btn-open-planner */
     --text-primary: var(--text-main); /* Mapping for consistency with dashboard styles */
 }
 
@@ -117,9 +117,9 @@ ul { list-style: none; }
 }
 
 .btn-primary {
-    background: #008f58e7;
+    background: #0066ff;
     color: rgb(255, 255, 255);
-    border: #008f58 solid 3px;
+    border: #0066ff solid 3px;
     padding: 1rem 2rem;
     border-radius: 1px;
     font-weight: 700;
@@ -171,7 +171,7 @@ ul { list-style: none; }
 }
 
 .btn-secondary {
-    background-color: #00db87;
+    background-color: #ffffff;
     color: var(--text-main);
     border: 2px solid var(--border-color);
     margin-left: 10px;
@@ -188,7 +188,7 @@ ul { list-style: none; }
 
 .btn-whatsapp {
     background-color: #25D366;
-    border-color: #25D366;
+    border-color: #0066ff;
     color: white;
     display: flex;
     align-items: center;
@@ -202,8 +202,8 @@ ul { list-style: none; }
 }
 
 .btn-whatsapp:hover {
-    background-color: #1EBE57;
-    border-color: #1EBE57;
+    background-color: #004bbc;
+    border-color: #ffffff;
     color: white;
     transform: translateY(-2px);
 }

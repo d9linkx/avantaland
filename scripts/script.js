@@ -55,8 +55,8 @@ function initializeSiteFunctionality() {
         dashNavLinks.forEach(link => {
             link.addEventListener('click', () => {
                 // Handle active state
-                dashNavLinks.forEach(l => l.classList.remove('sidebar-active', 'text-[#2E7D32]', 'bg-[#ECFDF5]', 'border-r-4', 'border-[#2E7D32]'));
-                link.classList.add('sidebar-active', 'text-[#2E7D32]', 'bg-[#ECFDF5]', 'border-r-4', 'border-[#2E7D32]');
+                dashNavLinks.forEach(l => l.classList.remove('sidebar-active', 'text-brand', 'bg-[#ECFDF5]', 'border-r-4', 'border-brand'));
+                link.classList.add('sidebar-active', 'text-brand', 'bg-[#ECFDF5]', 'border-r-4', 'border-brand');
 
                 if (window.innerWidth < 1024) {
                     dashSidebar.classList.add('hidden');

@@ -46,12 +46,12 @@ window.dashboardApp = (function() { // Wrap in IIFE and expose globally
                 </div>
                 <div class="flex flex-col md:flex-row lg:items-center gap-6">
                     <div class="relative w-full md:w-auto">
-                        <input type="text" placeholder="Search..." class="w-full md:w-80 bg-white border border-slate-200 rounded-xl py-2 px-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/20">
+                        <input type="text" placeholder="Search..." class="w-full md:w-80 bg-white border border-slate-200 rounded-xl py-2 px-10 text-sm focus:outline-none focus-ring-brand">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-4 top-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     </div>
                     <div class="flex items-center gap-4 lg:border-l lg:border-slate-200 lg:pl-6">
-                        <div class="text-right">
-                            <p class="text-xs font-bold text-[#2E7D32]" id="header-credits-balance">120 Credits</p>
+                            <div class="text-right">
+                            <p class="text-xs font-bold text-brand" id="header-credits-balance">120 Credits</p>
                             <p class="text-[10px] text-slate-400 uppercase">Balance</p>
                         </div>
                         <div class="w-10 h-10 bg-slate-200 rounded-full border-2 border-white shadow-sm flex items-center justify-center font-bold text-slate-600">LD</div>
@@ -231,12 +231,12 @@ window.dashboardApp = (function() { // Wrap in IIFE and expose globally
             <div class="grid grid-cols-12 gap-6 items-stretch">
                 <!-- Progress Card -->
                 <div class="col-span-12 lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
-                    <div>
-                        <span class="text-[10px] font-bold text-[#2E7D32] bg-[#ECFDF5] px-2 py-1 rounded uppercase tracking-wider">Overall Progress</span>
+                            <div>
+                            <span class="text-[10px] font-bold text-brand bg-[#ECFDF5] px-2 py-1 rounded uppercase tracking-wider">Overall Progress</span>
                         <h3 class="text-2xl font-bold mt-4">Your Mastery Credits</h3>
                         <p class="text-slate-500 text-sm mt-2 mb-6">Complete more lessons to unlock exclusive tier rewards.</p>
                     </div>
-                    <button class="w-full bg-[#2E7D32] text-white font-bold py-4 rounded-xl hover:shadow-lg transition-all" onclick="dashboardApp.renderView('lesson', ${nextHackIndex})">RESUME LATEST TRUTH</button>
+                    <button class="w-full btn-gradient text-white font-bold py-4 rounded-xl hover:shadow-lg transition-all" onclick="dashboardApp.renderView('lesson', ${nextHackIndex})">RESUME LATEST TRUTH</button>
                 </div>
 
                 <!-- Continue Learning -->
@@ -244,13 +244,13 @@ window.dashboardApp = (function() { // Wrap in IIFE and expose globally
                     <h4 class="font-bold text-lg mb-6">Execution Status</h4>
                     <div class="bg-slate-50 p-6 rounded-xl border border-dashed border-slate-300">
                         <p class="text-slate-500 italic">"Plan your work for today in the Execution Planner to see your roadmap here."</p>
-                        <button class="mt-4 text-[#2E7D32] font-bold text-sm" onclick="dashboardApp.renderView('planner')">Open Planner &rarr;</button>
+                        <button class="mt-4 text-brand font-bold text-sm" onclick="dashboardApp.renderView('planner')">Open Planner &rarr;</button>
                     </div>
                 </div>
                 
                 <!-- Brutal Truth Card -->
-                <div class="col-span-12 lg:col-span-6 bg-[#F1FDF2] border-l-4 border-[#2E7D32] rounded-r-2xl p-5">
-                    <p class="text-[10px] font-bold text-[#2E7D32] uppercase mb-2">Brutal Truth of the Day</p>
+                <div class="col-span-12 lg:col-span-6 bg-[#F1FDF2] border-l-4 border-brand rounded-r-2xl p-5">
+                    <p class="text-[10px] font-bold text-brand uppercase mb-2">Brutal Truth of the Day</p>
                     <p class="text-sm font-medium italic text-slate-700">"${truthsData[Math.floor(Math.random() * truthsData.length)].title}"</p>
                 </div>
             </div>

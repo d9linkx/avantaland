@@ -1,5 +1,117 @@
 /* --- Dashboard Specific Styles (Tailwind-like, but custom for new-dash.js components) --- */
 
+/* Logo / brand styles used in new-dashboard header and sidebar */
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+.logo-img {
+    display: block;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+.logo-text {
+    line-height: 1;
+    color: var(--text-primary, #0f172a);
+    display: inline-block;
+}
+
+/* Responsive tweaks: keep logo image visible and compact on all devices */
+@media (max-width: 768px) {
+    .logo-img { width: 34px; height: 34px; }
+    .logo-text { font-size: 1rem; }
+}
+
+@media (min-width: 1024px) {
+    .logo-img { width: 44px; height: 44px; }
+    .logo-text { font-size: 1.125rem; }
+}
+
+/* Optional: add a subtle hover effect when logo is focused or hovered */
+.logo:hover .logo-img, .logo:focus .logo-img {
+    transform: translateY(-1px);
+    transition: transform 160ms ease;
+}
+
+/* Primary gradient button used across the dashboard */
+.btn-gradient {
+    background-image: linear-gradient(90deg, var(--brand-primary) 0%, var(--brand-accent) 100%);
+    color: var(--brand-contrast);
+    box-shadow: 0 6px 18px rgba(102,0,255,0.18);
+    transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(102,0,255,0.22);
+}
+.btn-gradient:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 14px rgba(102,0,255,0.12);
+}
+.btn-gradient:focus {
+    outline: 2px solid rgba(102,0,255,0.18);
+    outline-offset: 2px;
+}
+
+:root {
+    /* Core brand */
+    --brand-primary: #0066ff; /* Primary (blue) */
+    --brand-accent: #6600ff;  /* Accent (purple) - complementary */
+    --brand-contrast: #ffffff; /* Text/icon contrast on primary */
+
+    /* Subtle focus/overlay of primary at 10% */
+    --brand-primary-10: rgba(0,102,255,0.12);
+
+    /* Expanded brand shades (50 -> 900) for flexible theming */
+    --brand-50:  #f0f8ff;
+    --brand-100: #dceeff;
+    --brand-200: #b9ddff;
+    --brand-300: #8fc8ff;
+    --brand-400: #5fb0ff;
+    --brand-500: #0066ff; /* same as --brand-primary */
+    --brand-600: #0052cc;
+    --brand-700: #003f99;
+    --brand-800: #002b66;
+    --brand-900: #001733;
+
+    /* Button gradient endpoints */
+    --btn-start: var(--brand-primary);
+    --btn-end: var(--brand-accent);
+
+    /* Generic UI tokens */
+    --icon-color: var(--brand-primary);
+    --card-hover: rgba(0,102,255,0.06);
+    --bg-default: #ffffff;
+    --bg-light: #F8FAFC;
+    --text-primary: #0f172a;
+    --text-secondary: #374151;
+    --text-light: #6B7280;
+    --border-color: #E6E9EE;
+    --success-color: #10B981;
+
+    /* Backwards-compatible aliases used across the CSS/JS */
+    --brand-blue: var(--brand-primary);
+    --brand-blue-light: var(--brand-100);
+    --brand-blue-dark: var(--brand-700);
+}
+
+/* Brand utility classes to centralize color usage */
+.text-brand { color: var(--brand-primary) !important; }
+.bg-brand { background-color: var(--brand-primary) !important; color: var(--brand-contrast) !important; }
+.border-brand { border-color: var(--brand-primary) !important; }
+.hover-border-brand:hover { border-color: var(--brand-primary) !important; }
+.focus-ring-brand:focus { box-shadow: 0 0 0 6px var(--brand-primary-10); outline: none; }
+.ring-brand { box-shadow: 0 0 0 6px var(--brand-primary-10); }
+.group-hover-brand { transition: background-color .18s, color .18s; }
+.group:hover .group-hover-brand { background-color: var(--brand-primary) !important; color: var(--brand-contrast) !important; }
+.group-hover-text-brand { transition: color .18s; }
+.group:hover .group-hover-text-brand { color: var(--brand-contrast) !important; }
+
+
 /* Aveo AI Drawer */
 .aveo-drawer {
     position: fixed;
@@ -688,7 +800,7 @@
     width: 50px;
     text-align: right;
     font-size: 0.8rem;
-    color: #64748b;
+    color: #002aff;
     transform: translateY(-50%);
 }
 
