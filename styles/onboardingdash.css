@@ -1,6 +1,6 @@
 body {
     background-color: #F8FAFC;
-    color: #008f58e7;
+    color: #000000;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -35,7 +35,7 @@ body {
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
-    color: #00db87;
+    color: #0066ff;
     box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
 }
 
@@ -53,9 +53,9 @@ p {
 }
 
 .btn-enter {
-    background: #008f58;
+    background: #0066ff;
     color: rgb(255, 255, 255);
-    border: #008f58 solid 3px;
+    border: #0066ff solid 3px;
     padding: 1rem 2rem;
     border-radius: 1px;
     font-weight: 700;
@@ -71,7 +71,8 @@ p {
 }
 
 .btn-enter:hover {
-    background: #00b771;
+    background: #0040a0;
+    border-color: #0040a0;
     transform: translateY(-2px);
 }
 
@@ -98,14 +99,14 @@ p {
 }
 
 .auth-input:focus {
-    border-color: #00db87;
-    box-shadow: 2px 2px 0px rgba(0, 219, 135, 0.2);
+    border-color: #0066ff;
+    box-shadow: 2px 2px 0px rgba(0, 102, 255, 0.2);
     background: #FFFFFF;
 }
 
 .auth-message { font-size: 0.9rem; margin-top: 1rem; min-height: 1.2em; order: 10; }
 .auth-message.error { color: #EF4444; }
-.auth-message.success { color: #10B981; }
+.auth-message.success { color: #0066ff; }
 
 @media (max-width: 768px) {
     .onboarding-main {
