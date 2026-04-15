@@ -19,8 +19,8 @@
     --brand-blue: #0066ff; /* Matches --accent-blue */
     --brand-blue-light: #e6fcf2;
     --brand-blue-dark: #0040a0; /* Darker green, used for master-title, btn-open-planner:hover */
-    --brand-yellow-actual: #e1c600; /* The specific yellow used in executor-focus-badge */
-    --brand-yellow-light: #fef9e6; /* Lighter yellow for backgrounds, adjusted to complement brand-yellow-actual */
+    --brand-yellow-actual: #25D366; /* The specific yellow used in executor-focus-badge */
+    --brand-yellow-light: #cbe7d5; /* Lighter yellow for backgrounds, adjusted to complement brand-yellow-actual */
     --brand-yellow-dark: #6600ff; /* Darker green, used for borders/buttons, btn-open-planner */
     --text-primary: var(--text-main); /* Mapping for consistency with dashboard styles */
 }
@@ -128,6 +128,10 @@ ul { list-style: none; }
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    &:hover {
+        background-color: #0040ac;
+        border-color: #0040ac;
+    }
     justify-content: center;
     box-shadow: 0 4px 12px rgba(90, 90, 90, 0.3);
     transition: transform 0.2s ease;
@@ -692,7 +696,7 @@ ul { list-style: none; }
     width: 86px;
     height: 56px;
     background: var(--brand-blue-light);
-    color: #008f58;
+    color: #0066ff;
     border: #cdcdcd solid 2px;
     border-radius: 16px;
     display: flex;
@@ -706,7 +710,7 @@ ul { list-style: none; }
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #008f58;
+    color: #25d336;
     background: var(--brand-blue-light);
     padding: 4px 12px;
     border: #008f58 solid 1px;
@@ -717,7 +721,7 @@ ul { list-style: none; }
 
 .benefit-tag.after {
     color: #e6fcf2;
-    background: #008f58;
+    background: #25d336;
 }
 
 .benefit-card h3 { font-size: 1.25rem; margin-bottom: 0.75rem; line-height: 1.3; color: var(--text-main); }
@@ -734,7 +738,7 @@ ul { list-style: none; }
 
 /* Modern Testimonial Cards */
 .testimonial-card {
-    background: #00db87;
+    background: #0066ff;
     border: 1px solid var(--border-color);
     border-radius: 24px;
     padding: 2.5rem;
@@ -769,7 +773,7 @@ ul { list-style: none; }
     font-size: 1.05rem;
     font-style: italic;
     line-height: 1.7;
-    color: var(--text-main);
+    color: #ffffff;
     position: relative;
     z-index: 1;
     margin-bottom: 2rem;
@@ -1213,7 +1217,7 @@ ul { list-style: none; }
 
 .stat-item {
     text-align: center;
-    background-color: #008f58;
+    background-color: #0066ff;
     color: #fff;
     padding: 2rem 1rem;
     border-radius: 1px;
@@ -1221,7 +1225,7 @@ ul { list-style: none; }
 }
 
 .stat-item:hover {
-    background-color: #01774a;
+    background-color: #0040ac;
     transform: translateY(-5px);
 }
 
